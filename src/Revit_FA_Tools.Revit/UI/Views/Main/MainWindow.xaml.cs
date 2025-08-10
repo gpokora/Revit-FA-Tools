@@ -6904,9 +6904,21 @@ namespace Revit_FA_Tools
         {
             try
             {
-                // TODO: Create and show options dialog
-                DXMessageBox.Show("Application options dialog will be implemented in a future version.",
-                    "Feature Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Show available settings options
+                var result = DXMessageBox.Show(
+                    "Application Settings\n\n" +
+                    "Available configuration options:\n\n" +
+                    "• IDNAC Settings - Configure circuit limits and capacity\n" +
+                    "• Amplifier Config - Set amplifier types and ratings\n" +
+                    "• Device Mappings - Map Revit families to device types\n" +
+                    "• Import Catalog - Import family catalog data\n" +
+                    "• Theme Settings - Change application appearance\n\n" +
+                    "Access these options through the Settings section in the navigation menu.",
+                    "Application Options", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                // Navigate to Settings section
+                ToggleNavigationStep("Settings");
+                UpdateWorkflowStep("Settings");
             }
             catch (Exception ex)
             {
@@ -7401,31 +7413,31 @@ namespace Revit_FA_Tools
             }
         }
 
-        private void RunAmplifierAnalysis_Click(object sender, RoutedEventArgs e)
+        private async void RunAmplifierAnalysis_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Placeholder for Amplifier analysis
-                MessageBox.Show("Amplifier Analysis functionality would be implemented here.",
-                    "Amplifier Analysis", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Run the full analysis which includes amplifier analysis
+                await RunAnalysisInternalAsync();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error running amplifier analysis: {ex.Message}");
+                ShowErrorMessage($"Amplifier Analysis failed: {ex.Message}");
             }
         }
 
-        private void RunIDNACAnalysis_Click(object sender, RoutedEventArgs e)
+        private async void RunIDNACAnalysis_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Placeholder for IDNAC analysis
-                MessageBox.Show("IDNAC Analysis functionality would be implemented here.",
-                    "IDNAC Analysis", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Run the full analysis which includes IDNAC analysis
+                await RunAnalysisInternalAsync();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error running IDNAC analysis: {ex.Message}");
+                ShowErrorMessage($"IDNAC Analysis failed: {ex.Message}");
             }
         }
 

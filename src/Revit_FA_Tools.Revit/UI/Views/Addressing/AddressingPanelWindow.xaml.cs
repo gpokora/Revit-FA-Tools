@@ -489,7 +489,7 @@ namespace Revit_FA_Tools.Views
             }
         }
 
-        private void SaveToRevit_Click(object sender, RoutedEventArgs e)
+        private async void SaveToRevit_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -504,12 +504,22 @@ namespace Revit_FA_Tools.Views
                 if (result != MessageBoxResult.Yes)
                     return;
 
-                // For now, show placeholder message
-                // In a real implementation, this would use ExternalEventBridge
-                DXMessageBox.Show("Save to Revit functionality would be implemented here.\n\n" +
-                    "This would use ExternalEventBridge to batch update Revit parameters\n" +
-                    "with the assigned addresses and lock states.",
-                    "Save to Revit", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Apply pending changes to Revit model
+                var syncService = new ModelSyncService(_document, _uiDocument);
+                var syncResult = await syncService.ApplyPendingChangesToModel();
+
+                if (syncResult.Success)
+                {
+                    DXMessageBox.Show(
+                        $"Successfully saved {syncResult.UpdatedCount} changes to Revit model.",
+                        "Save Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    DXMessageBox.Show(
+                        $"Failed to save changes: {syncResult.Message}",
+                        "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
