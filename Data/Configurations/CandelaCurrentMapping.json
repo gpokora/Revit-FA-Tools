@@ -1,0 +1,177 @@
+{
+  "ConfigurationInfo": {
+    "Version": "1.0.0",
+    "Description": "Fire Alarm Notification Device Candela to Current Mapping",
+    "LastUpdated": "2024-01-15",
+    "Voltage": "24V DC",
+    "Notes": "Current values are based on manufacturer specifications for 24V DC operation"
+  },
+  "DeviceTypes": {
+    "WALL_STROBE": {
+      "Description": "Wall-Mount Strobe Devices - Standard Indoor",
+      "MountingType": "Wall",
+      "EnvironmentalRating": "Indoor",
+      "DeviceFunction": "Visual",
+      "CandelaCurrentMap": {
+        "15": 0.095,
+        "30": 0.115,
+        "75": 0.140,
+        "95": 0.160,
+        "110": 0.170,
+        "135": 0.185,
+        "177": 0.205,
+        "185": 0.210
+      }
+    },
+    "CEILING_STROBE": {
+      "Description": "Ceiling-Mount Strobe Devices - Higher current due to omnidirectional optics",
+      "MountingType": "Ceiling",
+      "EnvironmentalRating": "Indoor",
+      "DeviceFunction": "Visual",
+      "CandelaCurrentMap": {
+        "15": 0.110,
+        "30": 0.135,
+        "75": 0.165,
+        "95": 0.185,
+        "110": 0.195,
+        "135": 0.210,
+        "177": 0.230,
+        "185": 0.235
+      }
+    },
+    "WEATHERPROOF_STROBE": {
+      "Description": "Weatherproof Strobe Devices - Higher current due to sealed housing",
+      "MountingType": "Wall/Ceiling",
+      "EnvironmentalRating": "Weatherproof",
+      "DeviceFunction": "Visual",
+      "CandelaCurrentMap": {
+        "15": 0.105,
+        "30": 0.125,
+        "75": 0.155,
+        "95": 0.175,
+        "110": 0.185,
+        "135": 0.200,
+        "177": 0.220,
+        "185": 0.225
+      }
+    },
+    "WALL_SPEAKER_STROBE": {
+      "Description": "Wall-Mount Speaker/Strobe Combinations",
+      "MountingType": "Wall",
+      "EnvironmentalRating": "Indoor",
+      "DeviceFunction": "Audio + Visual",
+      "CandelaCurrentMap": {
+        "15": 0.143,
+        "30": 0.163,
+        "75": 0.188,
+        "95": 0.208,
+        "110": 0.218,
+        "135": 0.233,
+        "177": 0.253,
+        "185": 0.258
+      }
+    },
+    "CEILING_SPEAKER_STROBE": {
+      "Description": "Ceiling-Mount Speaker/Strobe Combinations",
+      "MountingType": "Ceiling",
+      "EnvironmentalRating": "Indoor",
+      "DeviceFunction": "Audio + Visual",
+      "CandelaCurrentMap": {
+        "15": 0.158,
+        "30": 0.183,
+        "75": 0.213,
+        "95": 0.233,
+        "110": 0.243,
+        "135": 0.258,
+        "177": 0.278,
+        "185": 0.283
+      }
+    },
+    "WEATHERPROOF_SPEAKER_STROBE": {
+      "Description": "Weatherproof Speaker/Strobe Combinations",
+      "MountingType": "Wall/Ceiling",
+      "EnvironmentalRating": "Weatherproof",
+      "DeviceFunction": "Audio + Visual",
+      "CandelaCurrentMap": {
+        "15": 0.153,
+        "30": 0.173,
+        "75": 0.203,
+        "95": 0.223,
+        "110": 0.233,
+        "135": 0.248,
+        "177": 0.268,
+        "185": 0.273
+      }
+    },
+    "WALL_HORN_STROBE": {
+      "Description": "Wall-Mount Horn/Strobe Combinations",
+      "MountingType": "Wall",
+      "EnvironmentalRating": "Indoor",
+      "DeviceFunction": "Audible + Visual",
+      "CandelaCurrentMap": {
+        "15": 0.125,
+        "30": 0.145,
+        "75": 0.170,
+        "95": 0.190,
+        "110": 0.200,
+        "135": 0.215,
+        "177": 0.235,
+        "185": 0.240
+      }
+    },
+    "CEILING_HORN_STROBE": {
+      "Description": "Ceiling-Mount Horn/Strobe Combinations",
+      "MountingType": "Ceiling",
+      "EnvironmentalRating": "Indoor",
+      "DeviceFunction": "Audible + Visual",
+      "CandelaCurrentMap": {
+        "15": 0.140,
+        "30": 0.165,
+        "75": 0.195,
+        "95": 0.215,
+        "110": 0.225,
+        "135": 0.240,
+        "177": 0.260,
+        "185": 0.265
+      }
+    },
+    "WEATHERPROOF_HORN_STROBE": {
+      "Description": "Weatherproof Horn/Strobe Combinations",
+      "MountingType": "Wall/Ceiling",
+      "EnvironmentalRating": "Weatherproof",
+      "DeviceFunction": "Audible + Visual",
+      "CandelaCurrentMap": {
+        "15": 0.135,
+        "30": 0.155,
+        "75": 0.185,
+        "95": 0.205,
+        "110": 0.215,
+        "135": 0.230,
+        "177": 0.250,
+        "185": 0.255
+      }
+    }
+  },
+  "FallbackHierarchy": {
+    "CEILING_STROBE": ["WALL_STROBE", "WEATHERPROOF_STROBE"],
+    "CEILING_SPEAKER_STROBE": ["WALL_SPEAKER_STROBE", "WEATHERPROOF_SPEAKER_STROBE"],
+    "CEILING_HORN_STROBE": ["WALL_HORN_STROBE", "WEATHERPROOF_HORN_STROBE"],
+    "WEATHERPROOF_STROBE": ["WALL_STROBE", "CEILING_STROBE"],
+    "WEATHERPROOF_SPEAKER_STROBE": ["WALL_SPEAKER_STROBE", "CEILING_SPEAKER_STROBE"],
+    "WEATHERPROOF_HORN_STROBE": ["WALL_HORN_STROBE", "CEILING_HORN_STROBE"],
+    "WALL_STROBE": ["CEILING_STROBE", "WEATHERPROOF_STROBE"],
+    "WALL_SPEAKER_STROBE": ["CEILING_SPEAKER_STROBE", "WEATHERPROOF_SPEAKER_STROBE"],
+    "WALL_HORN_STROBE": ["CEILING_HORN_STROBE", "WEATHERPROOF_HORN_STROBE"]
+  },
+  "DeviceRecognitionPatterns": {
+    "MountingTypes": {
+      "Ceiling": ["CEILING", "RECESSED", "SURFACE MOUNT", "FLUSH", "OVERHEAD"],
+      "Weatherproof": ["WEATHERPROOF", "WEATHER RESISTANT", "OUTDOOR", "EXTERIOR", "WP", "IP65", "IP66", "IP67", "NEMA", "MARINE", "SEALED"]
+    },
+    "DeviceFunctions": {
+      "Speaker": ["SPEAKER", "VOICE", "AUDIO", "MASS NOTIFICATION"],
+      "Horn": ["HORN", "AUDIBLE", "SOUND"],
+      "Strobe": ["STROBE", "VISUAL", "FLASH", "LIGHT"]
+    }
+  }
+}

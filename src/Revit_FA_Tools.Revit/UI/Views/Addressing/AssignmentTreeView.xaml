@@ -1,0 +1,388 @@
+<UserControl x:Class="Revit_FA_Tools.Views.AssignmentTreeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:local="clr-namespace:Revit_FA_Tools.Converters"
+             dx:ThemeManager.ThemeName="Win11Dark">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top toolbar -->
+        <DockPanel Grid.Row="0" Margin="5" LastChildFill="False">
+            <TextBox DockPanel.Dock="Left" Width="260" 
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Center" Margin="0,0,10,0">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="3">
+                                        <Grid>
+                                            <ScrollViewer x:Name="PART_ContentHost" 
+                                                        BorderThickness="0" 
+                                                        Background="Transparent" 
+                                                        Margin="5"/>
+                                            <TextBlock IsHitTestVisible="False" 
+                                                     Text="Filter devices, branches, panels..." 
+                                                     VerticalAlignment="Center" 
+                                                     HorizontalAlignment="Left" 
+                                                     Margin="7,0,0,0" 
+                                                     Foreground="Gray">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            
+            <CheckBox DockPanel.Dock="Left" Content="Only Violations" 
+                      IsChecked="{Binding ShowOnlyViolations}" 
+                      VerticalAlignment="Center" Margin="0,0,15,0"/>
+            
+            <Button DockPanel.Dock="Left" Content="Add Panel" 
+                    Command="{Binding AddPanelCmd}" 
+                    Margin="0,0,5,0" Padding="10,3"/>
+            
+            <Button DockPanel.Dock="Left" Content="Add Branch" 
+                    Command="{Binding AddBranchCmd}" 
+                    Margin="0,0,5,0" Padding="10,3"/>
+            
+            <Button DockPanel.Dock="Left" Content="Add Device" 
+                    Command="{Binding AddDeviceCmd}" 
+                    Margin="0,0,5,0" Padding="10,3"/>
+            
+            <Button DockPanel.Dock="Left" Content="Recompute" 
+                    Command="{Binding RecomputeCmd}" 
+                    Margin="0,0,15,0" Padding="10,3" Background="LightBlue"/>
+            
+            <Button DockPanel.Dock="Left" Content="Undo" 
+                    Command="{Binding UndoCmd}" 
+                    Margin="0,0,5,0" Padding="8,3"/>
+            
+            <Button DockPanel.Dock="Left" Content="Redo" 
+                    Command="{Binding RedoCmd}" 
+                    Margin="0,0,15,0" Padding="8,3"/>
+            
+            <Button DockPanel.Dock="Right" Content="Save to Revit" 
+                    Command="{Binding SaveToRevitCmd}" 
+                    Padding="12,3" Background="Orange" FontWeight="Bold"/>
+        </DockPanel>
+
+        <!-- Main TreeView with header -->
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Column Headers -->
+            <Border Grid.Row="0" Background="LightGray" BorderBrush="Gray" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Text="Name" FontWeight="Bold" Padding="5" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="Level" FontWeight="Bold" Padding="5" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="Current (A)" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="3" Text="UL" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="4" Text="VD %" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="5" Text="Spare %" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="6" Text="Limiter" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="7" Text="Addr" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="8" Text="Slots" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="9" Text="Lock" FontWeight="Bold" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+            </Border>
+            
+            <TreeView x:Name="AssignmentTree"
+                     Grid.Row="1"
+                     ItemsSource="{Binding Panels}"
+                     AllowDrop="True"
+                     BorderThickness="1"
+                     BorderBrush="Gray">
+
+            <!-- TreeView hierarchical template -->
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Branches}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- Name column with icon -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock Text="📁" VerticalAlignment="Center" Margin="0,0,5,0" 
+                                      Visibility="Visible"/>
+                            <TextBlock Text="📂" VerticalAlignment="Center" Margin="0,0,5,0" 
+                                      Visibility="Collapsed"/>
+                            <TextBlock Text="🔧" VerticalAlignment="Center" Margin="0,0,5,0" 
+                                      Visibility="Collapsed"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasViolation}" Value="True">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                        
+                        <!-- Level -->
+                        <TextBlock Grid.Column="1" Text="{Binding Level}" VerticalAlignment="Center"/>
+                        
+                        <!-- Current -->
+                        <TextBlock Grid.Column="2" Text="{Binding CurrentA, StringFormat=F3}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        
+                        <!-- Unit Loads -->
+                        <TextBlock Grid.Column="3" Text="{Binding UnitLoads}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        
+                        <!-- Voltage Drop -->
+                        <TextBlock Grid.Column="4" Text="{Binding VoltageDropPct, StringFormat=F1}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        
+                        <!-- Spare % -->
+                        <TextBlock Grid.Column="5" Text="{Binding SparePct, StringFormat=F1}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        
+                        <!-- Limiter -->
+                        <TextBlock Grid.Column="6" Text="{Binding Limiter}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Limiter}" Value="">
+                                            <Setter Property="Text" Value="OK"/>
+                                            <Setter Property="Foreground" Value="Green"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding HasViolation}" Value="True">
+                                            <Setter Property="Foreground" Value="Red"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        
+                        <!-- Address -->
+                        <TextBlock Grid.Column="7" Text="{Binding Address}" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Address}" Value="0">
+                                            <Setter Property="Text" Value="-"/>
+                                            <Setter Property="Foreground" Value="Gray"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        
+                        <!-- Address Slots -->
+                        <TextBlock Grid.Column="8" Text="{Binding AddressSlots}" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AddressSlots}" Value="0">
+                                            <Setter Property="Text" Value="-"/>
+                                            <Setter Property="Foreground" Value="Gray"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        
+                        <!-- Lock State -->
+                        <TextBlock Grid.Column="9" Text="{Binding LockState}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LockState}" Value="Locked">
+                                            <Setter Property="Text" Value="🔒"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding LockState}" Value="Manual">
+                                            <Setter Property="Text" Value="✏️"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding LockState}" Value="Unlocked">
+                                            <Setter Property="Text" Value="🔓"/>
+                                            <Setter Property="Foreground" Value="Gray"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    
+                    <!-- Nested template for branches -->
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Devices}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="250"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="60"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <TextBlock Text="📂" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasViolation}" Value="True">
+                                                        <Setter Property="Foreground" Value="Red"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                
+                                <TextBlock Grid.Column="1" Text="{Binding Level}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding CurrentA, StringFormat=F3}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="{Binding UnitLoads}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Text="{Binding VoltageDropPct, StringFormat=F1}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="5" Text="{Binding SparePct, StringFormat=F1}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="6" Text="{Binding Limiter}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="7" Text="{Binding Address}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="8" Text="{Binding AddressSlots}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="9" Text="{Binding LockState}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <!-- Device template -->
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="250"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="60"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <TextBlock Text="🔧" VerticalAlignment="Center" Margin="20,0,5,0"/>
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        
+                                        <TextBlock Grid.Column="1" Text="{Binding Level}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding CurrentA, StringFormat=F3}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding UnitLoads}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="-" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="Gray"/>
+                                        <TextBlock Grid.Column="5" Text="-" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="Gray"/>
+                                        <TextBlock Grid.Column="6" Text="-" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray"/>
+                                        <TextBlock Grid.Column="7" Text="{Binding Address}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="8" Text="{Binding AddressSlots}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="9" Text="{Binding LockState}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
+                        </HierarchicalDataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+            <!-- Context menu -->
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add Panel" Command="{Binding AddPanelCmd}"/>
+                    <MenuItem Header="Add Branch" Command="{Binding AddBranchCmd}"/>
+                    <MenuItem Header="Add Device" Command="{Binding AddDeviceCmd}"/>
+                    <Separator/>
+                    <MenuItem Header="Lock Address" IsEnabled="False"/>
+                    <MenuItem Header="Unlock Address" IsEnabled="False"/>
+                    <MenuItem Header="Re-sequence Addresses" IsEnabled="False"/>
+                    <Separator/>
+                    <MenuItem Header="Remove Selected" IsEnabled="False"/>
+                    <MenuItem Header="Move To..." IsEnabled="False"/>
+                </ContextMenu>
+            </TreeView.ContextMenu>
+
+        </TreeView>
+        </Grid>
+
+        <!-- Status bar -->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding TotalDevices, StringFormat='Devices: {0}'}"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Text="{Binding TotalViolations, StringFormat='Violations: {0}'}" Foreground="Red"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Text="{Binding SelectedBranchLoadA, StringFormat='Selected Branch: {0:F2}A'}"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding SelectedBranchLoadUL, StringFormat='{}{0} UL'}"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+
+    <!-- Resources -->
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Styles -->
+            <Style TargetType="TreeView">
+                <Setter Property="Background" Value="White"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+</UserControl>

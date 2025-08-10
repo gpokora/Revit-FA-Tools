@@ -1,0 +1,788 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-01-20T00:00:00Z",
+  "description": "AutoCall 4100ES Parameter-Driven Device Repository with FQQ Excel Accurate Specifications",
+  "manufacturer": "Johnson Controls - AutoCall",
+  "systemCompatibility": ["AutoCall 4100ES", "IDNAC"],
+  "deviceFunctions": {
+    "hornStrobe": {
+      "description": "Horn/Strobe Combination Devices",
+      "mountingTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4090-0015",
+                  "description": "AutoCall Wall Horn/Strobe 15cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.088,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "30": {
+                  "sku": "A4090-0030",
+                  "description": "AutoCall Wall Horn/Strobe 30cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.109,
+                  "combinedCurrent": 0.132,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "75": {
+                  "sku": "A4090-1075",
+                  "description": "AutoCall Wall Horn/Strobe 75cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.221,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "95": {
+                  "sku": "A4090-1095",
+                  "description": "AutoCall Wall Horn/Strobe 95cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.228,
+                  "combinedCurrent": 0.251,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "110": {
+                  "sku": "A4090-1110",
+                  "description": "AutoCall Wall Horn/Strobe 110cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.305,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "135": {
+                  "sku": "A4090-1135",
+                  "description": "AutoCall Wall Horn/Strobe 135cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.321,
+                  "combinedCurrent": 0.344,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "177": {
+                  "sku": "A4090-1177",
+                  "description": "AutoCall Wall Horn/Strobe 177cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.354,
+                  "combinedCurrent": 0.377,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "185": {
+                  "sku": "A4090-1185",
+                  "description": "AutoCall Wall Horn/Strobe 185cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.375,
+                  "combinedCurrent": 0.398,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              },
+              "specialFrequency": [
+                {
+                  "sku": "A4090-2075",
+                  "description": "AutoCall Wall Horn/Strobe 75cd 520Hz Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.221,
+                  "unitLoads": 2,
+                  "ttapCompatible": true,
+                  "frequency": 520,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              ]
+            }
+          },
+          "weatherproof": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4090-0015-WP",
+                  "description": "AutoCall Wall Horn/Strobe 15cd Weatherproof",
+                  "hornCurrent": 0.025,
+                  "strobeCurrent": 0.068,
+                  "combinedCurrent": 0.093,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                },
+                "75": {
+                  "sku": "A4090-1075-WP",
+                  "description": "AutoCall Wall Horn/Strobe 75cd Weatherproof",
+                  "hornCurrent": 0.025,
+                  "strobeCurrent": 0.195,
+                  "combinedCurrent": 0.228,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                },
+                "110": {
+                  "sku": "A4090-1110-WP",
+                  "description": "AutoCall Wall Horn/Strobe 110cd Weatherproof",
+                  "hornCurrent": 0.025,
+                  "strobeCurrent": 0.276,
+                  "combinedCurrent": 0.313,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                }
+              }
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4091-0015",
+                  "description": "AutoCall Ceiling Horn/Strobe 15cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.088,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "75": {
+                  "sku": "A4091-1075",
+                  "description": "AutoCall Ceiling Horn/Strobe 75cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.221,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "110": {
+                  "sku": "A4091-1110",
+                  "description": "AutoCall Ceiling Horn/Strobe 110cd Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.305,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "strobe": {
+      "description": "Strobe-Only Devices",
+      "mountingTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4092-0015",
+                  "description": "AutoCall Wall Strobe 15cd Indoor",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.065,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "75": {
+                  "sku": "A4092-1075",
+                  "description": "AutoCall Wall Strobe 75cd Indoor",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.186,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "110": {
+                  "sku": "A4092-1110",
+                  "description": "AutoCall Wall Strobe 110cd Indoor",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.269,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "185": {
+                  "sku": "A4092-1185",
+                  "description": "AutoCall Wall Strobe 185cd Indoor",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.375,
+                  "combinedCurrent": 0.375,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4093-0015",
+                  "description": "AutoCall Ceiling Strobe 15cd Indoor",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.065,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "75": {
+                  "sku": "A4093-1075",
+                  "description": "AutoCall Ceiling Strobe 75cd Indoor",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.186,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "horn": {
+      "description": "Horn-Only Devices",
+      "mountingTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "0": {
+                  "sku": "A4094-0400",
+                  "description": "AutoCall Wall Horn 400Hz Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.023,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              },
+              "specialFrequency": [
+                {
+                  "sku": "A4094-0520",
+                  "description": "AutoCall Wall Horn 520Hz Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.023,
+                  "unitLoads": 2,
+                  "ttapCompatible": true,
+                  "frequency": 520,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              ]
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "0": {
+                  "sku": "A4095-0400",
+                  "description": "AutoCall Ceiling Horn 400Hz Indoor",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.023,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "speaker": {
+      "description": "Speaker Devices for Voice Communications",
+      "mountingTypes": {
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "wattageRatings": {
+                "0.25": {
+                  "sku": "A4098-SP025",
+                  "description": "AutoCall Ceiling Speaker 1/4W",
+                  "currentDraw": 0.021,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "0.5": {
+                  "sku": "A4098-SP050",
+                  "description": "AutoCall Ceiling Speaker 1/2W",
+                  "currentDraw": 0.031,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "1.0": {
+                  "sku": "A4098-SP100",
+                  "description": "AutoCall Ceiling Speaker 1W",
+                  "currentDraw": 0.042,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "2.0": {
+                  "sku": "A4098-SP200",
+                  "description": "AutoCall Ceiling Speaker 2W",
+                  "currentDraw": 0.083,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                },
+                "4.0": {
+                  "sku": "A4098-SP400",
+                  "description": "AutoCall Ceiling Speaker 4W",
+                  "currentDraw": 0.167,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          }
+        },
+        "wall": {
+          "indoor": {
+            "standard": {
+              "wattageRatings": {
+                "1.0": {
+                  "sku": "A4097-SP100",
+                  "description": "AutoCall Wall Speaker 1W",
+                  "currentDraw": 0.042,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "2.0": {
+                  "sku": "A4097-SP200",
+                  "description": "AutoCall Wall Speaker 2W",
+                  "currentDraw": 0.083,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          },
+          "weatherproof": {
+            "standard": {
+              "wattageRatings": {
+                "1.0": {
+                  "sku": "A4097-SP100-WP",
+                  "description": "AutoCall Wall Speaker 1W Weatherproof",
+                  "currentDraw": 0.045,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                },
+                "2.0": {
+                  "sku": "A4097-SP200-WP",
+                  "description": "AutoCall Wall Speaker 2W Weatherproof",
+                  "currentDraw": 0.087,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "speakerStrobe": {
+      "description": "Speaker/Strobe Combination Devices",
+      "mountingTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4099-1015",
+                  "description": "AutoCall Speaker/Strobe 15cd 1W Indoor",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.107,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0
+                },
+                "75": {
+                  "sku": "A4099-1075",
+                  "description": "AutoCall Speaker/Strobe 75cd 1W Indoor",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.228,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0
+                },
+                "110": {
+                  "sku": "A4099-1110",
+                  "description": "AutoCall Speaker/Strobe 110cd 1W Indoor",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.311,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0
+                }
+              }
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4099-2015",
+                  "description": "AutoCall Ceiling Speaker/Strobe 15cd 1W Indoor",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.107,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0
+                },
+                "75": {
+                  "sku": "A4099-2075",
+                  "description": "AutoCall Ceiling Speaker/Strobe 75cd 1W Indoor",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.228,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "chime": {
+      "description": "Chime Devices for Non-Emergency Notifications",
+      "mountingTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "candelaRatings": {
+                "0": {
+                  "sku": "A4096-CHM1",
+                  "description": "AutoCall Wall Chime Single Tone",
+                  "hornCurrent": 0.020,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.020,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 800,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "massNotificationSpeaker": {
+      "description": "High-Power Mass Notification Speakers",
+      "mountingTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "wattageRatings": {
+                "15.0": {
+                  "sku": "A4110-MN15",
+                  "description": "AutoCall Mass Notification Speaker 15W",
+                  "currentDraw": 0.625,
+                  "unitLoads": 1,
+                  "ttapCompatible": false,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                },
+                "30.0": {
+                  "sku": "A4110-MN30",
+                  "description": "AutoCall Mass Notification Speaker 30W",
+                  "currentDraw": 1.250,
+                  "unitLoads": 1,
+                  "ttapCompatible": false,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor"
+                }
+              }
+            }
+          },
+          "weatherproof": {
+            "standard": {
+              "wattageRatings": {
+                "15.0": {
+                  "sku": "A4110-MN15-WP",
+                  "description": "AutoCall Mass Notification Speaker 15W Weatherproof",
+                  "currentDraw": 0.650,
+                  "unitLoads": 1,
+                  "ttapCompatible": false,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                },
+                "30.0": {
+                  "sku": "A4110-MN30-WP",
+                  "description": "AutoCall Mass Notification Speaker 30W Weatherproof",
+                  "currentDraw": 1.300,
+                  "unitLoads": 1,
+                  "ttapCompatible": false,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "specialDevices": {
+    "isolators": {
+      "A4080-ISO": {
+        "description": "AutoCall IDNAC Isolator Module",
+        "currentDraw": 0.003,
+        "unitLoads": 4,
+        "ttapCompatible": true,
+        "mounting": "junction_box",
+        "environmentalRating": "indoor"
+      }
+    },
+    "repeaters": {
+      "A4081-RPT": {
+        "description": "AutoCall IDNAC Repeater Panel",
+        "currentDraw": 0.050,
+        "unitLoads": 8,
+        "ttapCompatible": false,
+        "mounting": "wall",
+        "environmentalRating": "indoor"
+      }
+    }
+  },
+  "electricalLimits": {
+    "idnacCircuit": {
+      "maxCurrent": 3.0,
+      "maxVoltage": 27.6,
+      "minVoltage": 16.0,
+      "maxDevices": 159,
+      "maxWireDistance": 10000,
+      "voltageDropLimit": 3.0
+    },
+    "ttapLimits": {
+      "maxVoltageDropTotal": 3.0,
+      "maxBranchLength": 500,
+      "maxCurrentPerBranch": 0.500,
+      "shieldContinuityRequired": true
+    }
+  },
+  "wireSpecifications": {
+    "18awg": {
+      "resistance": 6.385,
+      "maxCurrent": 0.760,
+      "recommended": true
+    },
+    "16awg": {
+      "resistance": 4.016,
+      "maxCurrent": 1.200,
+      "recommended": false
+    },
+    "14awg": {
+      "resistance": 2.525,
+      "maxCurrent": 1.900,
+      "recommended": false
+    }
+  },
+  "parameterMappingRules": {
+    "candelaExtraction": {
+      "patterns": ["(\\d+)\\s*(?:CD|CANDELA|CANDELAS)\\b"],
+      "validValues": [15, 30, 75, 95, 110, 135, 177, 185],
+      "defaultValue": 75
+    },
+    "wattageExtraction": {
+      "patterns": ["(\\d+(?:\\.\\d+)?)\\s*(?:W|WATT|WATTS)\\b"],
+      "validRange": [0.1, 100.0],
+      "defaultValue": 1.0
+    },
+    "frequencyExtraction": {
+      "patterns": ["(\\d+)\\s*(?:HZ|HERTZ)\\b"],
+      "validValues": [400, 520, 800],
+      "defaultValue": 400,
+      "specialHandling": {
+        "520": {
+          "unitLoads": 2,
+          "description": "Special 520Hz frequency requires 2 unit loads"
+        }
+      }
+    }
+  },
+  "deviceClassificationRules": {
+    "familyNamePatterns": {
+      "hornStrobe": ["HORN.*STROBE", "STROBE.*HORN", "HORN/STROBE", "COMBINATION"],
+      "strobe": ["STROBE(?!.*HORN)(?!.*SPEAKER)", "FLASH", "VISUAL"],
+      "horn": ["HORN(?!.*STROBE)(?!.*SPEAKER)", "AUDIBLE(?!.*STROBE)"],
+      "speaker": ["SPEAKER(?!.*STROBE)", "AUDIO", "VOICE", "MASS.*NOTIFICATION"],
+      "speakerStrobe": ["SPEAKER.*STROBE", "STROBE.*SPEAKER", "AUDIO.*VISUAL"],
+      "chime": ["CHIME", "TONE", "BELL"]
+    },
+    "mountingTypePatterns": {
+      "wall": ["WALL", "VERTICAL", "SURFACE"],
+      "ceiling": ["CEILING", "OVERHEAD", "RECESSED", "PENDANT"]
+    },
+    "environmentalPatterns": {
+      "weatherproof": ["WEATHERPROOF", "WP", "OUTDOOR", "NEMA", "IP65", "IP66"],
+      "indoor": ["INDOOR", "STANDARD", "REGULAR"]
+    }
+  },
+  "validationRules": {
+    "addressRange": {
+      "min": 1,
+      "max": 159,
+      "description": "IDNAC circuit supports addresses 1-159"
+    },
+    "currentLimits": {
+      "perDevice": {
+        "max": 2.0,
+        "warning": 1.0
+      },
+      "perCircuit": {
+        "max": 3.0,
+        "warning": 2.7
+      }
+    },
+    "unitLoadLimits": {
+      "perDevice": {
+        "max": 8,
+        "typical": 1
+      },
+      "perCircuit": {
+        "max": 139,
+        "warning": 125
+      }
+    }
+  },
+  "compatibilityMatrix": {
+    "AutoCall4100ES": {
+      "supports": ["hornStrobe", "strobe", "horn", "speaker", "speakerStrobe", "chime", "massNotificationSpeaker"],
+      "addressRange": [1, 159],
+      "ttapSupport": true,
+      "isolatorSupport": true
+    }
+  }
+}

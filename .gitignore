@@ -1,0 +1,36 @@
+# Visual Studio files
+.vs/
+bin/
+obj/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]ins/
+[Oo]bjs/
+
+# MSTest test results
+TestResults/
+
+# IntelliSense and debugging files
+*.tmp
+*.cache
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

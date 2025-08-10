@@ -1,0 +1,208 @@
+<dx:ThemedWindow x:Class="Revit_FA_Tools.Views.AssignmentTreeEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/treelist"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             Title="Assignment Tree Editor" 
+             Height="600" 
+             Width="900"
+             WindowStartupLocation="CenterOwner"
+             ShowInTaskbar="False">
+    
+    <dx:ThemedWindow.Resources>
+        <Style x:Key="TreeNodeStyle" TargetType="ContentPresenter">
+            <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
+        </Style>
+        
+        <HierarchicalDataTemplate x:Key="PanelTemplate" ItemsSource="{Binding Circuits}">
+            <StackPanel Orientation="Horizontal">
+                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_DeviceHub.svg}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="DarkBlue"/>
+                <TextBlock Text="{Binding StatusText}" Margin="10,0,0,0" FontSize="10" Foreground="Gray"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        
+        <HierarchicalDataTemplate x:Key="CircuitTemplate" ItemsSource="{Binding Devices}">
+            <StackPanel Orientation="Horizontal">
+                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Circuit.svg}" Width="14" Height="14" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="DarkGreen"/>
+                <Border Background="LightBlue" CornerRadius="2" Padding="3,1" Margin="5,0">
+                    <TextBlock Text="{Binding UtilizationText}" FontSize="9" Foreground="DarkBlue"/>
+                </Border>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        
+        <DataTemplate x:Key="DeviceTemplate">
+            <StackPanel Orientation="Horizontal">
+                <dx:DXImage Source="{Binding IconSource}" Width="12" Height="12" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" Foreground="DarkSlateGray"/>
+                <TextBlock Text="{Binding Details}" Margin="10,0,0,0" FontSize="9" Foreground="Gray"/>
+            </StackPanel>
+        </DataTemplate>
+    </dx:ThemedWindow.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Toolbar -->
+        <dxb:ToolBarControl Grid.Row="0" BarItemDisplayMode="Content">
+            <dxb:BarButtonItem Content="Expand All" 
+                              Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Expand.svg}"
+                              ItemClick="ExpandAll_Click"/>
+            <dxb:BarButtonItem Content="Collapse All" 
+                              Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Collapse.svg}"
+                              ItemClick="CollapseAll_Click"/>
+            <dxb:BarItemSeparator/>
+            <dxb:BarButtonItem Content="Auto-Balance" 
+                              Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Balance.svg}"
+                              ItemClick="AutoBalance_Click"
+                              Hint="Automatically balance device assignments"/>
+            <dxb:BarButtonItem Content="Validate Assignments" 
+                              Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_CheckCircled.svg}"
+                              ItemClick="ValidateAssignments_Click"/>
+            <dxb:BarItemSeparator/>
+            <dxb:BarButtonItem Content="Add Panel" 
+                              Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}"
+                              ItemClick="AddPanel_Click"/>
+            <dxb:BarButtonItem Content="Add Circuit" 
+                              Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_AddCircuit.svg}"
+                              ItemClick="AddCircuit_Click"/>
+            <dxb:BarItemSeparator/>
+            <dxb:BarCheckItem x:Name="EnableDragDropCheck" Content="Enable Drag &amp; Drop" 
+                             IsChecked="True"
+                             CheckedChanged="EnableDragDrop_CheckedChanged"/>
+        </dxb:ToolBarControl>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Assignment Tree -->
+            <GroupBox Grid.Column="0" Header="System Assignment Tree" Margin="5">
+                <TreeView x:Name="AssignmentTree" 
+                         AllowDrop="True"
+                         SelectedItemChanged="AssignmentTree_SelectedItemChanged">
+                    <!-- TreeView uses ItemTemplate for display -->
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" Width="200" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Type}" Width="80" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Current, StringFormat='{}{0:F2} A'}" Width="80" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding UnitLoads}" Width="50" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Status}" Width="100"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </GroupBox>
+            
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="LightGray"/>
+            
+            <!-- Properties Panel -->
+            <GroupBox Grid.Column="2" Header="Properties" Margin="5">
+                <StackPanel x:Name="PropertiesPanel" Margin="10">
+                    <TextBlock Text="Select an item to view properties" 
+                              FontStyle="Italic" 
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"
+                              x:Name="NoSelectionText"/>
+                              
+                    <!-- Panel Properties -->
+                    <StackPanel x:Name="PanelProperties" Visibility="Collapsed">
+                        <TextBlock Text="Panel Properties" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Name:"/>
+                        <TextBox x:Name="PanelNameBox" Margin="0,2,0,10"/>
+                        <TextBlock Text="Type:"/>
+                        <ComboBox x:Name="PanelTypeCombo" Margin="0,2,0,10">
+                            <ComboBoxItem Content="FACP"/>
+                            <ComboBoxItem Content="Expansion"/>
+                            <ComboBoxItem Content="Repeater"/>
+                        </ComboBox>
+                        <TextBlock Text="Location:"/>
+                        <TextBox x:Name="PanelLocationBox" Margin="0,2,0,10"/>
+                        <Button Content="Update Panel" Click="UpdatePanel_Click" Margin="0,5"/>
+                    </StackPanel>
+                    
+                    <!-- Circuit Properties -->
+                    <StackPanel x:Name="CircuitProperties" Visibility="Collapsed">
+                        <TextBlock Text="Circuit Properties" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Circuit Name:"/>
+                        <TextBox x:Name="CircuitNameBox" Margin="0,2,0,10"/>
+                        <TextBlock Text="Circuit Type:"/>
+                        <ComboBox x:Name="CircuitTypeCombo" Margin="0,2,0,10">
+                            <ComboBoxItem Content="IDNAC"/>
+                            <ComboBoxItem Content="IDNET"/>
+                            <ComboBoxItem Content="Signaling"/>
+                        </ComboBox>
+                        <TextBlock Text="Primary Level:"/>
+                        <TextBox x:Name="CircuitLevelBox" Margin="0,2,0,10"/>
+                        <Button Content="Update Circuit" Click="UpdateCircuit_Click" Margin="0,5"/>
+                        <Separator Margin="0,10"/>
+                        <TextBlock Text="Capacity Usage" FontWeight="SemiBold" Margin="0,5"/>
+                        <ProgressBar x:Name="CurrentUsageBar" Height="8" Margin="0,2" Maximum="100"/>
+                        <TextBlock x:Name="CurrentUsageText" FontSize="10" Margin="0,2"/>
+                        <ProgressBar x:Name="ULUsageBar" Height="8" Margin="0,2" Maximum="100"/>
+                        <TextBlock x:Name="ULUsageText" FontSize="10" Margin="0,2"/>
+                    </StackPanel>
+                    
+                    <!-- Device Properties -->
+                    <StackPanel x:Name="DeviceProperties" Visibility="Collapsed">
+                        <TextBlock Text="Device Properties" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Device Name:"/>
+                        <TextBlock x:Name="DeviceNameText" FontWeight="SemiBold" Margin="0,2,0,10"/>
+                        <TextBlock Text="Family:"/>
+                        <TextBlock x:Name="DeviceFamilyText" Margin="0,2,0,5"/>
+                        <TextBlock Text="Type:"/>
+                        <TextBlock x:Name="DeviceTypeText" Margin="0,2,0,10"/>
+                        <TextBlock Text="Level:"/>
+                        <TextBox x:Name="DeviceLevelBox" Margin="0,2,0,10"/>
+                        <TextBlock Text="Zone:"/>
+                        <TextBox x:Name="DeviceZoneBox" Margin="0,2,0,10"/>
+                        <TextBlock Text="Address:"/>
+                        <dxe:SpinEdit x:Name="DeviceAddressSpinner" MinValue="1" MaxValue="254" Margin="0,2,0,10"/>
+                        <Button Content="Update Device" Click="UpdateDevice_Click" Margin="0,5"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+        
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Height="25" Background="LightGray">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Ready"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Total Devices: "/>
+                    <TextBlock x:Name="TotalDevicesText" FontWeight="Bold"/>
+                </StackPanel>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Unassigned: "/>
+                    <TextBlock x:Name="UnassignedDevicesText" FontWeight="Bold" Foreground="Red"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+        
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom">
+            <Button Content="Apply Changes" Width="100" Height="25" Click="ApplyChanges_Click" Margin="5,0"/>
+            <Button Content="Close" Width="75" Height="25" Click="Close_Click" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</dx:ThemedWindow>

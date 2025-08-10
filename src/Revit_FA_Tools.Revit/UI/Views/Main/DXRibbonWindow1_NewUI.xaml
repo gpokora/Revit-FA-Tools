@@ -1,0 +1,675 @@
+<!-- Main Content Area - Replacing navigation tree with tab-based structure -->
+<dxdo:DockLayoutManager Grid.Row="0">
+    <dxdo:LayoutGroup>
+        <dxdo:DocumentGroup x:Name="MainDocumentGroup" ShowHeader="False">
+            
+            <!-- Overview Tab -->
+            <dxdo:DocumentPanel Caption="Overview" x:Name="OverviewPanel">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- KPI Cards Strip -->
+                    <Grid Grid.Row="0" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- IDNAC KPI Card -->
+                        <Border Grid.Column="0" Style="{StaticResource DarkCardStyle}" Margin="0,0,5,0">
+                            <StackPanel Margin="15">
+                                <TextBlock Text="IDNAC System" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="IDNACSystemDevicesText" Text="0" FontWeight="Bold" Foreground="#FF0078D4" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Circuits:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="IDNACSystemCircuitsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Strobe Current:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="IDNACSystemCurrentText" Text="0.0A" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Speaker Power:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="IDNACSystemWattageText" Text="0W" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- IDNET KPI Card -->
+                        <Border Grid.Column="1" Style="{StaticResource DarkCardStyle}" Margin="5,0">
+                            <StackPanel Margin="15">
+                                <TextBlock Text="IDNET System" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="IDNETSystemDevicesText" Text="0" FontWeight="Bold" Foreground="#FF32CD32" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Channels:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="IDNETSystemChannelsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Unit Loads:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="IDNETSystemUnitLoadsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Segments:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="IDNETSystemSegmentsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Panels KPI Card -->
+                        <Border Grid.Column="2" Style="{StaticResource DarkCardStyle}" Margin="5,0,0,0">
+                            <StackPanel Margin="15">
+                                <TextBlock Text="Panels & Equipment" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Nodes:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="PanelSystemNodesText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Transponders:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="PanelSystemTranspondersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Amplifiers:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="PanelSystemAmplifiersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Repeaters:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="PanelSystemRepeatersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    
+                    <!-- By-Level Snapshot Grid -->
+                    <dxg:GridControl Grid.Row="1" x:Name="SystemOverviewGrid" 
+                                     AutoGenerateColumns="None"
+                                     SelectionMode="Row"
+                                     ShowLoadingPanel="False">
+                        <dxg:GridControl.View>
+                            <dxg:BandedGridView x:Name="SystemOverviewView"
+                                                ShowGroupPanel="False"
+                                                ShowAutoFilterRow="True"
+                                                AutoWidth="True"
+                                                AllowEditing="False"
+                                                ShowTotalSummary="True"
+                                                TotalSummaryPosition="Bottom">
+                                
+                                <!-- Level Band -->
+                                <dxg:GridViewBand Header="Level" Fixed="Left">
+                                    <dxg:GridColumn FieldName="Level" Header="Level" Width="120"/>
+                                    <dxg:GridColumn FieldName="Elevation" Header="Elevation" Width="80"/>
+                                    <dxg:GridColumn FieldName="Zone" Header="Zone" Width="100"/>
+                                </dxg:GridViewBand>
+                                
+                                <!-- IDNAC Band -->
+                                <dxg:GridViewBand Header="IDNAC">
+                                    <dxg:GridColumn FieldName="IDNACDevices" Header="Devices" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="IDNACCurrent" Header="Current (A)" Width="80">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:F1}A"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="IDNACWattage" Header="Wattage (W)" Width="90">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:F0}W"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="IDNACCircuits" Header="Circuits" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                </dxg:GridViewBand>
+                                
+                                <!-- IDNET Band -->
+                                <dxg:GridViewBand Header="IDNET">
+                                    <dxg:GridColumn FieldName="IDNETDevices" Header="Devices" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="IDNETPoints" Header="Points" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="IDNETUnitLoads" Header="Unit Loads" Width="80">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="IDNETChannels" Header="Channels" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                </dxg:GridViewBand>
+                                
+                                <!-- Utilization Band -->
+                                <dxg:GridViewBand Header="Utilization">
+                                    <dxg:GridColumn FieldName="UtilizationPercent" Header="Utilization %" Width="90">
+                                        <dxg:GridColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding UtilizationPercent, StringFormat='{}{0:F1}%'}"
+                                                           Foreground="{Binding UtilizationPercent, Converter={StaticResource UtilizationToColorConverter}}"/>
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellTemplate>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="LimitingFactor" Header="Limiting Factor" Width="120"/>
+                                </dxg:GridViewBand>
+                                
+                                <!-- Notes Band -->
+                                <dxg:GridViewBand Header="Notes">
+                                    <dxg:GridColumn FieldName="Comments" Header="Comments" Width="200"/>
+                                </dxg:GridViewBand>
+                                
+                            </dxg:BandedGridView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </Grid>
+            </dxdo:DocumentPanel>
+            
+            <!-- Devices Tab -->
+            <dxdo:DocumentPanel Caption="Devices" x:Name="DevicesPanel">
+                <dx:DXTabControl TabContentCacheMode="CacheTabsOnSelecting">
+                    
+                    <!-- IDNET Devices Subtab -->
+                    <dx:DXTabItem Header="IDNET Devices">
+                        <dxg:GridControl x:Name="IDNETDevicesGrid" 
+                                         AutoGenerateColumns="None"
+                                         SelectionMode="Row"
+                                         ShowLoadingPanel="False">
+                            <dxg:GridControl.View>
+                                <dxg:BandedGridView x:Name="IDNETDevicesView"
+                                                    ShowGroupPanel="False"
+                                                    ShowAutoFilterRow="True"
+                                                    AutoWidth="True"
+                                                    AllowEditing="True">
+                                    
+                                    <!-- Identity Band -->
+                                    <dxg:GridViewBand Header="Identity" Fixed="Left">
+                                        <dxg:GridColumn FieldName="DeviceID" Header="Device ID" Width="100" AllowEditing="False"/>
+                                        <dxg:GridColumn FieldName="ElementId" Header="Element ID" Width="80" AllowEditing="False"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Location Band -->
+                                    <dxg:GridViewBand Header="Location">
+                                        <dxg:GridColumn FieldName="Level" Header="Level" Width="100"/>
+                                        <dxg:GridColumn FieldName="Elevation" Header="Elevation" Width="80"/>
+                                        <dxg:GridColumn FieldName="Zone" Header="Zone" Width="100"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Type Band -->
+                                    <dxg:GridViewBand Header="Type">
+                                        <dxg:GridColumn FieldName="FamilyName" Header="Family Name" Width="150" AllowEditing="False"/>
+                                        <dxg:GridColumn FieldName="DeviceType" Header="Device Type" Width="120" AllowEditing="False"/>
+                                        <dxg:GridColumn FieldName="Mounting" Header="Mounting" Width="80"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Network Band -->
+                                    <dxg:GridViewBand Header="Network">
+                                        <dxg:GridColumn FieldName="Segment" Header="Segment" Width="80"/>
+                                        <dxg:GridColumn FieldName="Channel" Header="Channel" Width="80"/>
+                                        <dxg:GridColumn FieldName="Address" Header="Address" Width="80"/>
+                                        <dxg:GridColumn FieldName="UnitLoad" Header="Unit Load" Width="80"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Electrical Band -->
+                                    <dxg:GridViewBand Header="Electrical">
+                                        <dxg:GridColumn FieldName="Current" Header="Current (A)" Width="80"/>
+                                        <dxg:GridColumn FieldName="PowerSource" Header="Power Source" Width="100"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Compliance Band -->
+                                    <dxg:GridViewBand Header="Compliance">
+                                        <dxg:GridColumn FieldName="ValidationStatus" Header="Status" Width="80">
+                                            <dxg:GridColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <dx:DXImage Source="{Binding ValidationStatus, Converter={StaticResource StatusToImageConverter}}" 
+                                                                Width="16" Height="16"/>
+                                                </DataTemplate>
+                                            </dxg:GridColumn.CellTemplate>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn FieldName="Issues" Header="Issues" Width="200"/>
+                                    </dxg:GridViewBand>
+                                    
+                                </dxg:BandedGridView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dx:DXTabItem>
+                    
+                    <!-- IDNAC Devices Subtab -->
+                    <dx:DXTabItem Header="IDNAC Devices">
+                        <dxg:GridControl x:Name="IDNACDevicesGrid" 
+                                         AutoGenerateColumns="None"
+                                         SelectionMode="Row"
+                                         ShowLoadingPanel="False">
+                            <dxg:GridControl.View>
+                                <dxg:BandedGridView x:Name="IDNACDevicesView"
+                                                    ShowGroupPanel="False"
+                                                    ShowAutoFilterRow="True"
+                                                    AutoWidth="True"
+                                                    AllowEditing="True">
+                                    
+                                    <!-- Identity Band -->
+                                    <dxg:GridViewBand Header="Identity" Fixed="Left">
+                                        <dxg:GridColumn FieldName="DeviceID" Header="Device ID" Width="100" AllowEditing="False"/>
+                                        <dxg:GridColumn FieldName="ElementId" Header="Element ID" Width="80" AllowEditing="False"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Location Band -->
+                                    <dxg:GridViewBand Header="Location">
+                                        <dxg:GridColumn FieldName="Level" Header="Level" Width="100"/>
+                                        <dxg:GridColumn FieldName="Elevation" Header="Elevation" Width="80"/>
+                                        <dxg:GridColumn FieldName="Zone" Header="Zone" Width="100"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Notification Band -->
+                                    <dxg:GridViewBand Header="Notification">
+                                        <dxg:GridColumn FieldName="DeviceType" Header="Device Type" Width="120" AllowEditing="False"/>
+                                        <dxg:GridColumn FieldName="Candela" Header="Candela" Width="80"/>
+                                        <dxg:GridColumn FieldName="Mounting" Header="Mounting" Width="80"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Electrical Band -->
+                                    <dxg:GridViewBand Header="Electrical">
+                                        <dxg:GridColumn FieldName="Current" Header="Current (A)" Width="80"/>
+                                        <dxg:GridColumn FieldName="Wattage" Header="Wattage (W)" Width="80"/>
+                                        <dxg:GridColumn FieldName="UnitLoads" Header="Unit Loads" Width="80"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Addressing Band -->
+                                    <dxg:GridViewBand Header="Addressing">
+                                        <dxg:GridColumn FieldName="Panel" Header="Panel" Width="100"/>
+                                        <dxg:GridColumn FieldName="Branch" Header="Branch" Width="80"/>
+                                        <dxg:GridColumn FieldName="NACAddress" Header="NAC Address" Width="80"/>
+                                    </dxg:GridViewBand>
+                                    
+                                    <!-- Compliance Band -->
+                                    <dxg:GridViewBand Header="Compliance">
+                                        <dxg:GridColumn FieldName="ValidationStatus" Header="Status" Width="80">
+                                            <dxg:GridColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <dx:DXImage Source="{Binding ValidationStatus, Converter={StaticResource StatusToImageConverter}}" 
+                                                                Width="16" Height="16"/>
+                                                </DataTemplate>
+                                            </dxg:GridColumn.CellTemplate>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn FieldName="Issues" Header="Issues" Width="200"/>
+                                    </dxg:GridViewBand>
+                                    
+                                </dxg:BandedGridView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dx:DXTabItem>
+                    
+                </dx:DXTabControl>
+            </dxdo:DocumentPanel>
+            
+            <!-- Analysis Tab -->
+            <dxdo:DocumentPanel Caption="Analysis" x:Name="AnalysisPanel">
+                <dx:DXTabControl TabContentCacheMode="CacheTabsOnSelecting">
+                    
+                    <!-- IDNAC Analysis Subtab -->
+                    <dx:DXTabItem Header="IDNAC Analysis">
+                        <dxg:GridControl x:Name="IDNACAnalysisGrid" 
+                                         AutoGenerateColumns="None"
+                                         SelectionMode="Row"
+                                         ShowLoadingPanel="False">
+                            <dxg:GridControl.View>
+                                <dxg:TableView x:Name="IDNACAnalysisView"
+                                               ShowGroupPanel="False"
+                                               ShowAutoFilterRow="True"
+                                               AutoWidth="True"
+                                               AllowEditing="True"
+                                               ShowTotalSummary="True">
+                                    
+                                    <dxg:GridColumn FieldName="Panel" Header="Panel" Width="100"/>
+                                    <dxg:GridColumn FieldName="Branch" Header="Branch" Width="80"/>
+                                    <dxg:GridColumn FieldName="Name" Header="Name" Width="150"/>
+                                    <dxg:GridColumn FieldName="Devices" Header="Devices" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="TotalCurrent" Header="Total Current (A)" Width="100">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:F1}A"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="TotalWattage" Header="Total Wattage (W)" Width="110">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:F0}W"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="TotalUnitLoads" Header="Total Unit Loads" Width="100">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="UtilizationPercent" Header="Utilization %" Width="90">
+                                        <dxg:GridColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding UtilizationPercent, StringFormat='{}{0:F1}%'}"
+                                                           Foreground="{Binding UtilizationPercent, Converter={StaticResource UtilizationToColorConverter}}"/>
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellTemplate>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="VoltageDropPercent" Header="Voltage Drop %" Width="100"/>
+                                    <dxg:GridColumn FieldName="LimitingFactor" Header="Limiting Factor" Width="120"/>
+                                    <dxg:GridColumn FieldName="Length" Header="Length" Width="70"/>
+                                    <dxg:GridColumn FieldName="WireGauge" Header="Wire Gauge" Width="80"/>
+                                    <dxg:GridColumn FieldName="EOL" Header="EOL" Width="50"/>
+                                    <dxg:GridColumn FieldName="HasIsolator" Header="Has Isolator?" Width="80"/>
+                                    <dxg:GridColumn FieldName="HasRepeater" Header="Has Repeater?" Width="90"/>
+                                    <dxg:GridColumn FieldName="Validation" Header="Validation" Width="200"/>
+                                    
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dx:DXTabItem>
+                    
+                    <!-- IDNET Analysis Subtab -->
+                    <dx:DXTabItem Header="IDNET Analysis">
+                        <dxg:GridControl x:Name="IDNETAnalysisGrid" 
+                                         AutoGenerateColumns="None"
+                                         SelectionMode="Row"
+                                         ShowLoadingPanel="False">
+                            <dxg:GridControl.View>
+                                <dxg:TableView x:Name="IDNETAnalysisView"
+                                               ShowGroupPanel="False"
+                                               ShowAutoFilterRow="True"
+                                               AutoWidth="True"
+                                               AllowEditing="True"
+                                               ShowTotalSummary="True">
+                                    
+                                    <dxg:GridColumn FieldName="Channel" Header="Channel" Width="80"/>
+                                    <dxg:GridColumn FieldName="Segment" Header="Segment" Width="80"/>
+                                    <dxg:GridColumn FieldName="PanelTransponder" Header="Panel/Transponder" Width="150"/>
+                                    <dxg:GridColumn FieldName="TotalDevices" Header="Total Devices" Width="90">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="Detectors" Header="Detectors" Width="80">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="Modules" Header="Modules" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="Points" Header="Points" Width="70">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="UnitLoads" Header="Unit Loads" Width="80">
+                                        <dxg:GridColumn.TotalSummary>
+                                            <dxg:GridSummaryItem SummaryType="Sum" DisplayFormat="{}{0:N0}"/>
+                                        </dxg:GridColumn.TotalSummary>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="UtilizationPercent" Header="Utilization %" Width="90">
+                                        <dxg:GridColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding UtilizationPercent, StringFormat='{}{0:F1}%'}"
+                                                           Foreground="{Binding UtilizationPercent, Converter={StaticResource UtilizationToColorConverter}}"/>
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellTemplate>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn FieldName="LimitingFactor" Header="Limiting Factor" Width="120"/>
+                                    <dxg:GridColumn FieldName="ChannelsRequired" Header="Channels Required" Width="120"/>
+                                    <dxg:GridColumn FieldName="CableLength" Header="Cable Length" Width="90"/>
+                                    <dxg:GridColumn FieldName="LoopRedundancy" Header="Loop Redundancy" Width="110"/>
+                                    <dxg:GridColumn FieldName="Isolators" Header="Isolators" Width="70"/>
+                                    <dxg:GridColumn FieldName="Validation" Header="Validation" Width="200"/>
+                                    
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dx:DXTabItem>
+                    
+                </dx:DXTabControl>
+            </dxdo:DocumentPanel>
+            
+            <!-- Panels & Equipment Tab -->
+            <dxdo:DocumentPanel Caption="Panels & Equipment" x:Name="PanelsEquipmentPanel">
+                <dx:DXTabControl TabContentCacheMode="CacheTabsOnSelecting">
+                    
+                    <!-- Equipment Tree View -->
+                    <dx:DXTabItem Header="Equipment Tree">
+                        <dxg:TreeListControl x:Name="EquipmentTreeList"
+                                             KeyFieldName="Id"
+                                             ParentFieldName="ParentId"
+                                             AutoGenerateColumns="None"
+                                             SelectionMode="Row"
+                                             ShowLoadingPanel="False">
+                            <dxg:TreeListControl.View>
+                                <dxg:TreeListView x:Name="EquipmentTreeView"
+                                                  ShowGroupPanel="False"
+                                                  ShowAutoFilterRow="True"
+                                                  AutoWidth="True"
+                                                  AllowEditing="True">
+                                    
+                                    <!-- Identity Band -->
+                                    <dxg:TreeListBand Header="Identity" Fixed="Left">
+                                        <dxg:TreeListColumn FieldName="Type" Header="Type" Width="100"/>
+                                        <dxg:TreeListColumn FieldName="Name" Header="Name" Width="150"/>
+                                        <dxg:TreeListColumn FieldName="Model" Header="Model" Width="120"/>
+                                        <dxg:TreeListColumn FieldName="Manufacturer" Header="Manufacturer" Width="100"/>
+                                        <dxg:TreeListColumn FieldName="Firmware" Header="Firmware" Width="80"/>
+                                    </dxg:TreeListBand>
+                                    
+                                    <!-- Location Band -->
+                                    <dxg:TreeListBand Header="Location">
+                                        <dxg:TreeListColumn FieldName="Level" Header="Level" Width="100"/>
+                                        <dxg:TreeListColumn FieldName="Room" Header="Room" Width="100"/>
+                                        <dxg:TreeListColumn FieldName="Elevation" Header="Elevation" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="Zone" Header="Zone" Width="100"/>
+                                    </dxg:TreeListBand>
+                                    
+                                    <!-- Electrical Band -->
+                                    <dxg:TreeListBand Header="Electrical">
+                                        <dxg:TreeListColumn FieldName="CapacityA" Header="Capacity (A)" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="CapacityW" Header="Capacity (W)" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="CapacityUL" Header="Capacity (UL)" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="AssignedLoadA" Header="Load (A)" Width="70"/>
+                                        <dxg:TreeListColumn FieldName="AssignedLoadW" Header="Load (W)" Width="70"/>
+                                        <dxg:TreeListColumn FieldName="AssignedLoadUL" Header="Load (UL)" Width="70"/>
+                                        <dxg:TreeListColumn FieldName="SparePercent" Header="Spare %" Width="70"/>
+                                        <dxg:TreeListColumn FieldName="BatteryAh" Header="Battery (Ah)" Width="80"/>
+                                    </dxg:TreeListBand>
+                                    
+                                    <!-- Network Band -->
+                                    <dxg:TreeListBand Header="Network">
+                                        <dxg:TreeListColumn FieldName="Address" Header="Address" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="Segment" Header="Segment" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="Channel" Header="Channel" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="Topology" Header="Topology" Width="100"/>
+                                        <dxg:TreeListColumn FieldName="Redundancy" Header="Redundancy" Width="100"/>
+                                    </dxg:TreeListBand>
+                                    
+                                    <!-- Compliance Band -->
+                                    <dxg:TreeListBand Header="Compliance">
+                                        <dxg:TreeListColumn FieldName="ValidationStatus" Header="Status" Width="80">
+                                            <dxg:TreeListColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <dx:DXImage Source="{Binding ValidationStatus, Converter={StaticResource StatusToImageConverter}}" 
+                                                                Width="16" Height="16"/>
+                                                </DataTemplate>
+                                            </dxg:TreeListColumn.CellTemplate>
+                                        </dxg:TreeListColumn>
+                                        <dxg:TreeListColumn FieldName="Issues" Header="Issues" Width="200"/>
+                                    </dxg:TreeListBand>
+                                    
+                                    <!-- Maintenance Band -->
+                                    <dxg:TreeListBand Header="Maintenance">
+                                        <dxg:TreeListColumn FieldName="Enclosure" Header="Enclosure" Width="100"/>
+                                        <dxg:TreeListColumn FieldName="RackUnits" Header="Rack Units" Width="80"/>
+                                        <dxg:TreeListColumn FieldName="Notes" Header="Notes" Width="200"/>
+                                    </dxg:TreeListBand>
+                                    
+                                </dxg:TreeListView>
+                            </dxg:TreeListControl.View>
+                        </dxg:TreeListControl>
+                    </dx:DXTabItem>
+                    
+                    <!-- Panels Flat Grid -->
+                    <dx:DXTabItem Header="Panels">
+                        <dxg:GridControl x:Name="PanelsGrid" 
+                                         AutoGenerateColumns="None"
+                                         SelectionMode="Row"
+                                         ShowLoadingPanel="False">
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowGroupPanel="False"
+                                               ShowAutoFilterRow="True"
+                                               AutoWidth="True"
+                                               AllowEditing="True"/>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dx:DXTabItem>
+                    
+                    <!-- Other equipment tabs would follow similar pattern -->
+                    
+                </dx:DXTabControl>
+            </dxdo:DocumentPanel>
+            
+            <!-- Optimization Tab -->
+            <dxdo:DocumentPanel Caption="Optimization" x:Name="OptimizationPanel">
+                <dx:DXTabControl TabContentCacheMode="CacheTabsOnSelecting">
+                    
+                    <!-- IDNET Optimization -->
+                    <dx:DXTabItem Header="IDNET Optimization">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Current Configuration -->
+                            <GroupBox Grid.Column="0" Header="Current Configuration" Margin="5">
+                                <dxg:GridControl x:Name="IDNETOptimizationCurrentGrid"/>
+                            </GroupBox>
+                            
+                            <!-- Proposed Configuration -->
+                            <GroupBox Grid.Column="1" Header="Proposed Configuration" Margin="5">
+                                <dxg:GridControl x:Name="IDNETOptimizationProposedGrid"/>
+                            </GroupBox>
+                        </Grid>
+                    </dx:DXTabItem>
+                    
+                    <!-- IDNAC Optimization -->
+                    <dx:DXTabItem Header="IDNAC Optimization">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Current Configuration -->
+                            <GroupBox Grid.Column="0" Header="Current Configuration" Margin="5">
+                                <dxg:GridControl x:Name="IDNACOptimizationCurrentGrid"/>
+                            </GroupBox>
+                            
+                            <!-- Proposed Configuration -->
+                            <GroupBox Grid.Column="1" Header="Proposed Configuration" Margin="5">
+                                <dxg:GridControl x:Name="IDNACOptimizationProposedGrid"/>
+                            </GroupBox>
+                        </Grid>
+                    </dx:DXTabItem>
+                    
+                </dx:DXTabControl>
+            </dxdo:DocumentPanel>
+            
+            <!-- Reports Tab -->
+            <dxdo:DocumentPanel Caption="Reports" x:Name="ReportsPanel">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Export Toolbar -->
+                    <ToolBar Grid.Row="0" Margin="5">
+                        <Button Content="Export to Excel" Click="ExportToExcel_Click" Margin="0,0,5,0">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <dx:DXImage Source="{dx:DXImage SvgImages/Export/ExportToXLSX.svg}" Width="16" Height="16" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Export to Excel"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button Content="Export to CSV" Click="ExportToCSV_Click" Margin="0,0,5,0">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <dx:DXImage Source="{dx:DXImage SvgImages/Export/ExportToCSV.svg}" Width="16" Height="16" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Export to CSV"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button Content="Export to PDF" Click="ExportToPDF_Click">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <dx:DXImage Source="{dx:DXImage SvgImages/Export/ExportToPDF.svg}" Width="16" Height="16" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Export to PDF"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                    </ToolBar>
+                    
+                    <!-- Report Selection -->
+                    <ListBox Grid.Row="1" x:Name="ReportsList" Margin="5">
+                        <ListBoxItem Content="System Overview Report"/>
+                        <ListBoxItem Content="IDNET Device List"/>
+                        <ListBoxItem Content="IDNAC Device List"/>
+                        <ListBoxItem Content="Circuit Analysis Report"/>
+                        <ListBoxItem Content="Channel Analysis Report"/>
+                        <ListBoxItem Content="Panel Equipment Report"/>
+                        <ListBoxItem Content="Optimization Recommendations"/>
+                        <ListBoxItem Content="Compliance Report"/>
+                    </ListBox>
+                </Grid>
+            </dxdo:DocumentPanel>
+            
+        </dxdo:DocumentGroup>
+    </dxdo:LayoutGroup>
+</dxdo:DockLayoutManager>

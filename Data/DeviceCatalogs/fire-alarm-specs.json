@@ -1,0 +1,804 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "source": "Combined FQQ_Autocall_1641.xlsm and 4100ES Technical Documentation",
+    "description": "Complete technical specifications for 4100ES Fire Alarm System - IDNAC, NAC, IDNet, and Voice/Audio Systems",
+    "lastUpdated": "2025-01-08",
+    "units": {
+      "current": "milliamps (mA) unless otherwise specified",
+      "resistance": "ohms per 1000 feet",
+      "voltage": "VDC unless otherwise specified",
+      "power": "watts",
+      "temperature": "Celsius",
+      "distance": "feet",
+      "unitLoad": "0.8 mA per unit load"
+    }
+  },
+  
+  "systemParameters": {
+    "nominalVoltage": 24,
+    "voltageRange": {
+      "min": 16,
+      "max": 33,
+      "idnacRegulated": 29,
+      "idnacRegulatedNote": "IDNAC provides regulated 29V for all alarm conditions"
+    },
+    "defaultWireLength": 50,
+    "defaultWireGauge": "14 AWG",
+    "defaultTemperature": "20°C (68°F)",
+    "voltageDropAllowance": {
+      "typical": 3,
+      "min": 2,
+      "max": 4,
+      "idnacMax": 6,
+      "idnacNote": "IDNAC allows 6V drop due to 29V regulated output"
+    },
+    "circuitTypes": [
+      {
+        "type": "Class A",
+        "description": "4-wire circuit with return path supervision",
+        "wires": 4,
+        "resistanceCalculation": "Double for return path"
+      },
+      {
+        "type": "Class B", 
+        "description": "2-wire circuit with end-of-line resistor",
+        "wires": 2,
+        "endOfLineResistor": 4700
+      }
+    ],
+    "spareCapacity": {
+      "electrical": 0.20,
+      "deviceCount": 0.20,
+      "description": "20% spare capacity applied to all calculations"
+    }
+  },
+
+  "idnacSpecifications": {
+    "circuitLimits": {
+      "maxCurrent_A": 3.0,
+      "usableCurrent_A": 2.4,
+      "maxDevices": 127,
+      "usableDevices": 101,
+      "maxUnitLoads": 139,
+      "usableUnitLoads": 111,
+      "maxDistanceToDevice_ft": 4000,
+      "maxTotalWireLength_ft": 10000,
+      "circuitsPerPowerSupply": 3,
+      "regulatedVoltage": 29,
+      "voltageDropAllowed": 6
+    },
+    "unitLoadDefinitions": {
+      "standardDevice": 1,
+      "multiTone520Hz": 2,
+      "isolatorModule": 4,
+      "repeaterModule": 4,
+      "unitLoadCurrent_mA": 0.8
+    },
+    "repeaterSpecifications": {
+      "unitLoadsProvided": 139,
+      "currentProvided_A": 3.0,
+      "description": "Provides fresh 139 unit loads and 3A signal"
+    },
+    "wiringRequirements": {
+      "preferredType": "Unshielded Twisted Pair (UTP)",
+      "maxCapacitance_uF": 0.60,
+      "maxCablePerChannel_ft": 10000,
+      "maxDistanceToFurthest_ft": 4000,
+      "wireGaugeRange": "18 AWG to 12 AWG"
+    }
+  },
+
+  "idnetSpecifications": {
+    "circuitLimits": {
+      "maxDevices": 250,
+      "maxUnitLoads": 250,
+      "maxDistanceClass_B_ft": 5000,
+      "maxDistanceClass_A_ft": 10000,
+      "maxTotalWireLength_ft": 12500,
+      "maxResistance_ohms": 50,
+      "reducedResistanceAt250Devices_ohms": 35
+    },
+    "wiringRequirements": {
+      "idnetPlus": "Unshielded Twisted Pair (UTP)",
+      "idnetLegacy": "Shielded Twisted Pair (STP)",
+      "maxCapacitance_uF": 0.60,
+      "wireGaugeRange": "18 AWG to 12 AWG"
+    },
+    "isolatorRequirements": {
+      "maxResistanceBetweenIsolators_ohms": 10,
+      "maxDistanceBetweenIsolators_ft": 780,
+      "wireGaugeForIsolatorSpacing": "18 AWG"
+    }
+  },
+
+  "powerSupplySpecifications": {
+    "esps": {
+      "model": "ES-PS",
+      "acInput": {
+        "voltage": "120-240 VAC",
+        "current_120VAC": 3.72,
+        "current_240VAC": 1.82
+      },
+      "dcOutput": {
+        "withoutFan_A": 9.5,
+        "withFanAndIDNAC_A": 9.7,
+        "withFanOnly_A": 12.7,
+        "withRegulated24V_A": 5.0
+      },
+      "auxiliaryPower_A": 2.0,
+      "nacProgrammedAux_A": 3.0,
+      "batteryCharger": {
+        "type": "Sealed Lead-Acid",
+        "maxCapacity_Ah": 110,
+        "remoteCabinetRequired_Ah": 50,
+        "rechargeTime_hours": 48,
+        "temperatureCompensated": true
+      },
+      "environmental": {
+        "operatingTemp_F": "32 to 120",
+        "operatingTemp_C": "0 to 49",
+        "humidity": "93% RH non-condensing at 90°F"
+      },
+      "notes": [
+        "Battery charger not available when powering Flex amplifiers",
+        "3 IDNAC circuits per ES-PS"
+      ]
+    }
+  },
+
+  "amplifierSpecifications": {
+    "flex35": {
+      "model": "Flex-35",
+      "maxPower_W": 35,
+      "usablePower_W": 28,
+      "outputVoltage": ["25 VRMS", "70.7 VRMS"],
+      "maxSpeakers": 100,
+      "nacRating": {
+        "25V_A": 1.4,
+        "70V_A": 0.5
+      },
+      "powerConsumption": {
+        "supervisory_mA": 425,
+        "lowPower_mA": 85,
+        "alarmContinuous_A": 5.5,
+        "alarmTemporal_A": 1.64
+      },
+      "blocksRequired": 2,
+      "classB_NACs": 3,
+      "nonAlarmAudioDerating": 0.70,
+      "deratedPower_W": 24.5
+    },
+    "flex50": {
+      "model": "Flex-50",
+      "maxPower_W": 50,
+      "usablePower_W": 40,
+      "outputVoltage": ["25 VRMS", "70.7 VRMS"],
+      "maxSpeakers": 100,
+      "nacRating": {
+        "25V_A": 2.0,
+        "70V_A": 0.707
+      },
+      "powerConsumption": {
+        "supervisory_mA": 425,
+        "lowPower_mA": 85,
+        "alarmContinuous_A": 5.55,
+        "alarmTemporal_A": 2.27
+      },
+      "blocksRequired": 2,
+      "classB_NACs": 3,
+      "nonAlarmAudioDerating": 0.70,
+      "deratedPower_W": 35
+    },
+    "flex100": {
+      "model": "100W Amplifier",
+      "maxPower_W": 100,
+      "usablePower_W": 80,
+      "outputVoltage": ["25 VRMS", "70.7 VRMS"],
+      "maxSpeakers": 100,
+      "nacRating": {
+        "25V_50W_A": 2.0,
+        "70V_100W_A": 1.414
+      },
+      "powerConsumption": {
+        "supervisoryAnalog_mA": 400,
+        "supervisoryDigital_mA": 220,
+        "lowPower_mA": 85,
+        "alarmContinuous_A": 9.6,
+        "alarmTemporal_A": 3.8
+      },
+      "powerSupply": {
+        "120VAC_A": 4.0,
+        "240VAC_A": 2.0
+      },
+      "blocksRequired": 4,
+      "classB_NACs": 6,
+      "nonAlarmAudioDerating": 0.70,
+      "deratedPower_W": 70
+    },
+    "systemLimits": {
+      "maxTotalPowerPerCabinet_W": 300,
+      "builtInTone_Hz": 500,
+      "temporalPattern": true
+    }
+  },
+
+  "audioControlModules": [
+    {
+      "model": "Single Channel",
+      "sku": "A100-1252",
+      "channels": 1
+    },
+    {
+      "model": "1.5 Channel",
+      "sku": "A100-1253",
+      "channels": 1.5
+    },
+    {
+      "model": "Dual Channel",
+      "sku": "A100-1254",
+      "channels": 2
+    },
+    {
+      "model": "3-8 Channel",
+      "sku": "A100-1255",
+      "channels": "3-8"
+    }
+  ],
+
+  "cabinetSpecifications": {
+    "expansionBays": {
+      "singleBay": {
+        "totalBlocks": 8,
+        "availableBlocks": 4,
+        "blocksUsed": "A,B (Audio Controller), G,H (ES-PS)"
+      },
+      "twoBay": {
+        "totalBlocks": 16,
+        "availableBlocks": 12,
+        "blocksUsed": "A,B (Audio Controller)"
+      },
+      "threeBay": {
+        "totalBlocks": 24,
+        "availableBlocks": 20,
+        "blocksUsed": "A,B (Audio Controller)"
+      }
+    }
+  },
+
+  "idnacDevices": [
+    {
+      "category": "Modules",
+      "devices": [
+        {"deviceType": "Isolator+ Module", "setting": null, "colorCover": null, "currentDraw_mA": 10, "unitLoads": 4},
+        {"deviceType": "IDNAC Isolator2 Module", "setting": null, "colorCover": null, "currentDraw_mA": 3, "unitLoads": 4},
+        {"deviceType": "Adapter Module - Special Applications", "setting": "Audible 50mA - Visual 250mA", "colorCover": null, "currentDraw_mA": 300, "unitLoads": 1},
+        {"deviceType": "Adapter Module - Regulated 24V", "setting": "Audible 30mA - Visual 180mA", "colorCover": null, "currentDraw_mA": 210, "unitLoads": 1},
+        {"deviceType": "IDNAC Repeater", "setting": null, "colorCover": "Red", "currentDraw_mA": 3.2, "unitLoads": 4, "provides": "139 unit loads, 3A"},
+        {"deviceType": "IDNAC Repeater", "setting": null, "colorCover": "Platinum", "currentDraw_mA": 3.2, "unitLoads": 4, "provides": "139 unit loads, 3A"}
+      ]
+    },
+    {
+      "category": "Wall Mounted Devices",
+      "devices": [
+        {"deviceType": "Wall Horn", "setting": "Horn", "colorCover": "Red Fire", "currentDraw_mA": 23, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe", "setting": "15 cd", "colorCover": "Red Fire", "currentDraw_mA": 59, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe", "setting": "30 cd", "colorCover": "Red Fire", "currentDraw_mA": 67, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe", "setting": "75 cd", "colorCover": "Red Fire", "currentDraw_mA": 107, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 139, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe", "setting": "135 cd", "colorCover": "Red Fire", "currentDraw_mA": 166, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe", "setting": "185 cd", "colorCover": "Red Fire", "currentDraw_mA": 215, "unitLoads": 1},
+        {"deviceType": "Wall Horn Strobe WP", "setting": "WP75 cd 32-150°F", "colorCover": "Red Fire", "currentDraw_mA": 163, "unitLoads": 1},
+        {"deviceType": "Wall Strobe", "setting": "15 cd", "colorCover": "Red Fire", "currentDraw_mA": 47, "unitLoads": 1},
+        {"deviceType": "Wall Strobe", "setting": "30 cd", "colorCover": "Red Fire", "currentDraw_mA": 57, "unitLoads": 1},
+        {"deviceType": "Wall Strobe", "setting": "75 cd", "colorCover": "Red Fire", "currentDraw_mA": 100, "unitLoads": 1},
+        {"deviceType": "Wall Strobe", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 132, "unitLoads": 1},
+        {"deviceType": "Wall Strobe", "setting": "135 cd", "colorCover": "Red Fire", "currentDraw_mA": 160, "unitLoads": 1},
+        {"deviceType": "Wall Strobe", "setting": "185 cd", "colorCover": "Red Fire", "currentDraw_mA": 208, "unitLoads": 1},
+        {"deviceType": "Wall Strobe WP", "setting": "WP75 cd 32-150°F", "colorCover": "Red Fire", "currentDraw_mA": 160, "unitLoads": 1},
+        {"deviceType": "Wall Multi Tone Horn", "setting": "520Hz High", "colorCover": "Red Fire", "currentDraw_mA": 99, "unitLoads": 2},
+        {"deviceType": "Wall Multi Tone Horn Strobe", "setting": "520Hz High 110 cd", "colorCover": "Red Fire", "currentDraw_mA": 230, "unitLoads": 2},
+        {"deviceType": "Wall Multi Tone Horn Strobe", "setting": "520Hz High 185 cd", "colorCover": "Red Fire", "currentDraw_mA": 299, "unitLoads": 2}
+      ]
+    },
+    {
+      "category": "Ceiling Mounted Devices",
+      "devices": [
+        {"deviceType": "Ceiling Horn", "setting": "Horn", "colorCover": "Red Fire", "currentDraw_mA": 18, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn WP", "setting": "Horn", "colorCover": "Red Fire", "currentDraw_mA": 18, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe", "setting": "15 cd", "colorCover": "Red Fire", "currentDraw_mA": 67, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe", "setting": "30 cd", "colorCover": "Red Fire", "currentDraw_mA": 92, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe", "setting": "75 cd", "colorCover": "Red Fire", "currentDraw_mA": 159, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 215, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe Hi Cd", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 300, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe Hi Cd", "setting": "135 cd", "colorCover": "Red Fire", "currentDraw_mA": 330, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe Hi Cd", "setting": "185 cd", "colorCover": "Red Fire", "currentDraw_mA": 391, "unitLoads": 1},
+        {"deviceType": "Ceiling Horn Strobe Hi Cd WP", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 323, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe", "setting": "15 cd", "colorCover": "Red Fire", "currentDraw_mA": 55, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe", "setting": "30 cd", "colorCover": "Red Fire", "currentDraw_mA": 83, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe", "setting": "75 cd", "colorCover": "Red Fire", "currentDraw_mA": 153, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 199, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe Hi Cd", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 253, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe Hi Cd", "setting": "135 cd", "colorCover": "Red Fire", "currentDraw_mA": 296, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe Hi Cd", "setting": "185 cd", "colorCover": "Red Fire", "currentDraw_mA": 377, "unitLoads": 1},
+        {"deviceType": "Ceiling Strobe Hi Cd WP", "setting": "110 cd", "colorCover": "Red Fire", "currentDraw_mA": 298, "unitLoads": 1}
+      ]
+    }
+  ],
+
+  "nacConventionalDevices": [
+    {
+      "category": "Wall Devices",
+      "devices": [
+        {"deviceType": "Wall Horn", "setting": "Red Wall Mounted Horn with White FIRE Lettering", "currentDraw_mA": 27},
+        {"deviceType": "Wall Horn", "setting": "Red Eluxa Wall Horn", "currentDraw_mA": 28},
+        {"deviceType": "Wall Horn Strobes", "setting": "15 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 75},
+        {"deviceType": "Wall Horn Strobes", "setting": "30 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 116},
+        {"deviceType": "Wall Horn Strobes", "setting": "75 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 221},
+        {"deviceType": "Wall Horn Strobes", "setting": "110 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 285},
+        {"deviceType": "Wall Horn Strobes", "setting": "135 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 333},
+        {"deviceType": "Wall Horn Strobes", "setting": "177 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 418},
+        {"deviceType": "Wall Horn Strobes", "setting": "185 cd Red Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 433},
+        {"deviceType": "Wall Horn Strobes", "setting": "15 cd Red Eluxa Wall Horn Strobe FIRE Lettering", "currentDraw_mA": 37},
+        {"deviceType": "Wall Strobes", "setting": "15 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 60},
+        {"deviceType": "Wall Strobes", "setting": "30 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 94},
+        {"deviceType": "Wall Strobes", "setting": "75 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 186},
+        {"deviceType": "Wall Strobes", "setting": "110 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 252},
+        {"deviceType": "Wall Strobes", "setting": "135 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 314},
+        {"deviceType": "Wall Strobes", "setting": "177 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 390},
+        {"deviceType": "Wall Strobes", "setting": "185 cd Red Wall Strobe FIRE Lettering", "currentDraw_mA": 409},
+        {"deviceType": "Wall Strobes", "setting": "15 cd Red Eluxa Wall Strobe FIRE Lettering", "currentDraw_mA": 22},
+        {"deviceType": "Wall Strobes Colored Lens", "setting": "15 cd Red Eluxa Wall AMBER Lens Strobe ALERT Lettering", "currentDraw_mA": 22},
+        {"deviceType": "Wall 520Hz Horn", "setting": "Red Wall 520Hz Horn FIRE Lettering High", "currentDraw_mA": 139},
+        {"deviceType": "Wall 520Hz Horn Strobe", "setting": "15 cd Red Wall 520Hz Horn Strobe FIRE High", "currentDraw_mA": 207},
+        {"deviceType": "Wall 520Hz Sounders", "setting": "Red Eluxa Wall 520Hz Sounder FIRE Lettering", "currentDraw_mA": 98},
+        {"deviceType": "Wall 520Hz Sounder Strobes", "setting": "110 cd Red Eluxa Wall 520Hz Sounder Strobe FIRE Lettering", "currentDraw_mA": 165}
+      ]
+    },
+    {
+      "category": "Weatherproof Devices",
+      "devices": [
+        {"deviceType": "WP Wall Horn Strobes", "setting": "75 cd WP75 (32°F to 150°F) Red Wall WP Horn Strobe", "currentDraw_mA": 205},
+        {"deviceType": "WP Wall Strobes", "setting": "75 cd WP75 (32°F to 150°F) Red Wall WP Strobe", "currentDraw_mA": 189},
+        {"deviceType": "WP Horn", "setting": "WP NEMA 3R Wall or Ceiling Horn Red", "currentDraw_mA": 52},
+        {"deviceType": "WP Multi Tone Horn", "setting": "Eluxa NEMA 3R Multitone Horn Red", "currentDraw_mA": 108},
+        {"deviceType": "WP Horn Strobes", "setting": "15 cd Red Eluxa NEMA 3R Horn Strobe Clear Lens FIRE Lettering", "currentDraw_mA": 63},
+        {"deviceType": "WP Multi Tone Strobes", "setting": "15 cd Red Eluxa NEMA 3R Multitone Horn Strobe Clear Lens FIRE Lettering", "currentDraw_mA": 134},
+        {"deviceType": "WP Strobes", "setting": "15 cd Red Eluxa NEMA 3R Strobe Clear Lens FIRE Lettering", "currentDraw_mA": 26}
+      ]
+    },
+    {
+      "category": "Ceiling Devices",
+      "devices": [
+        {"deviceType": "Ceiling Horn", "setting": "Red Eluxa Ceiling Horn", "currentDraw_mA": 28},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "15 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 86},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "30 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 132},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "75 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 250},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "110 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 320},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "135 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 389},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "177 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 456},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "185 cd Red Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 463},
+        {"deviceType": "Ceiling Horn Strobes", "setting": "15 cd Red Eluxa Ceiling Horn Strobe FIRE Lettering", "currentDraw_mA": 37},
+        {"deviceType": "Ceiling Strobes", "setting": "15 cd Red Ceiling Strobe FIRE Lettering", "currentDraw_mA": 75},
+        {"deviceType": "Ceiling Strobes", "setting": "30 cd Red Ceiling Strobe FIRE Lettering", "currentDraw_mA": 125},
+        {"deviceType": "Ceiling Strobes", "setting": "75 cd Red Ceiling Strobe FIRE Lettering", "currentDraw_mA": 233},
+        {"deviceType": "Ceiling Strobes", "setting": "110 Red Ceiling Strobe FIRE Lettering", "currentDraw_mA": 316},
+        {"deviceType": "Ceiling Strobes", "setting": "135 cd White Ceiling Strobe FIRE Lettering", "currentDraw_mA": 356},
+        {"deviceType": "Ceiling Strobes", "setting": "177 cd Red Ceiling Strobe FIRE Lettering", "currentDraw_mA": 431},
+        {"deviceType": "Ceiling Strobes", "setting": "185 cd Red Ceiling Strobe FIRE Lettering", "currentDraw_mA": 447},
+        {"deviceType": "Ceiling Strobes", "setting": "15 cd Red Eluxa Ceiling Strobe FIRE Lettering", "currentDraw_mA": 22},
+        {"deviceType": "Ceiling Strobes Colored Lens", "setting": "15 cd Red Eluxa Ceiling AMBER Lens Strobe ALERT Lettering", "currentDraw_mA": 22},
+        {"deviceType": "Ceiling 520Hz Sounders", "setting": "Red Eluxa Ceiling 520Hz Sounder FIRE Lettering", "currentDraw_mA": 98},
+        {"deviceType": "Ceiling 520Hz Sounder Strobes", "setting": "110 cd Red Eluxa Ceiling 520Hz Sounder Strobe FIRE Lettering", "currentDraw_mA": 165}
+      ]
+    },
+    {
+      "category": "Speaker Devices",
+      "devices": [
+        {"deviceType": "Wall Speaker Strobes", "setting": "15 cd Red Eluxa Wall Speaker Strobe FIRE Lettering", "currentDraw_mA": 22},
+        {"deviceType": "Ceiling Speaker Strobes", "setting": "15 cd Red Eluxa Ceiling Speaker Strobe FIRE Lettering", "currentDraw_mA": 22},
+        {"deviceType": "WP Speaker Strobes", "setting": "15 cd Red Eluxa NEMA 3R Speaker Strobe Clear Lens FIRE Lettering", "currentDraw_mA": 26}
+      ]
+    }
+  ],
+
+  "wireSpecifications": [
+    {
+      "wireGauge": "18 AWG",
+      "resistance": {
+        "temp_20C": 6.39,
+        "temp_50C": 7.14,
+        "temp_75C": 7.77
+      },
+      "maxDistance": {
+        "idnet_ft": 4000,
+        "idnac_ft": 4000
+      }
+    },
+    {
+      "wireGauge": "16 AWG",
+      "resistance": {
+        "temp_20C": 4.02,
+        "temp_50C": 4.50,
+        "temp_75C": 4.89
+      },
+      "maxDistance": {
+        "idnet_ft": 5000,
+        "idnac_ft": 4000
+      }
+    },
+    {
+      "wireGauge": "14 AWG",
+      "resistance": {
+        "temp_20C": 2.52,
+        "temp_50C": 2.82,
+        "temp_75C": 3.07
+      },
+      "maxDistance": {
+        "idnet_ft": 5000,
+        "idnac_ft": 4000
+      }
+    },
+    {
+      "wireGauge": "12 AWG",
+      "resistance": {
+        "temp_20C": 1.58,
+        "temp_50C": 1.77,
+        "temp_75C": 1.93
+      },
+      "maxDistance": {
+        "idnet_ft": 5000,
+        "idnac_ft": 4000
+      }
+    },
+    {
+      "wireGauge": "1.5mm2",
+      "resistance": {
+        "temp_20C": 3.41,
+        "temp_50C": 3.81,
+        "temp_75C": 4.14
+      },
+      "metric_equivalent": "~16 AWG"
+    },
+    {
+      "wireGauge": "2.5mm2",
+      "resistance": {
+        "temp_20C": 2.05,
+        "temp_50C": 2.29,
+        "temp_75C": 2.48
+      },
+      "metric_equivalent": "~14 AWG"
+    }
+  ],
+
+  "speakerSpecifications": {
+    "tapSettings": [
+      {
+        "tap": "¼ - Watt",
+        "value": 0.25,
+        "impedance_70V": 19600,
+        "impedance_25V": 2500
+      },
+      {
+        "tap": "½ - Watt",
+        "value": 0.5,
+        "impedance_70V": 9800,
+        "impedance_25V": 1250
+      },
+      {
+        "tap": "1 - Watt",
+        "value": 1.0,
+        "impedance_70V": 4900,
+        "impedance_25V": 625
+      },
+      {
+        "tap": "2 - Watts",
+        "value": 2.0,
+        "impedance_70V": 2450,
+        "impedance_25V": 312.5
+      },
+      {
+        "tap": "4 - Watts",
+        "value": 4.0,
+        "impedance_70V": 1225,
+        "impedance_25V": 156.25
+      },
+      {
+        "tap": "8 - Watts",
+        "value": 8.0,
+        "impedance_70V": 612.5,
+        "impedance_25V": 78.125
+      }
+    ],
+    "audioSystems": [
+      {
+        "type": "70.7V",
+        "description": "High impedance distributed audio system",
+        "maxVoltage": 70.7,
+        "typicalApplication": "Large facilities"
+      },
+      {
+        "type": "25V",
+        "description": "Low voltage distributed audio system",
+        "maxVoltage": 25,
+        "typicalApplication": "Smaller facilities"
+      }
+    ]
+  },
+
+  "idnetModules": [
+    {
+      "category": "Input/Output Modules",
+      "devices": [
+        {"model": "Relay IAM with T-Sense Input", "sku": "A4090-9118", "points": 2, "unitLoads": 1},
+        {"model": "Relay IAM with feedback", "sku": "A4090-9119", "points": 1, "unitLoads": 1},
+        {"model": "Six-point Module", "sku": "A4090-9120", "points": 6, "unitLoads": 1, "description": "4 T-Sense inputs, 2 relays"},
+        {"model": "Security Monitor IAM", "sku": "A4090-9121", "points": 1, "unitLoads": 2},
+        {"model": "Relay IAM", "sku": "A4090-9002", "points": 1, "unitLoads": 1},
+        {"model": "8A Relay IAM", "sku": "A4090-9010", "points": 1, "unitLoads": 1}
+      ]
+    },
+    {
+      "category": "Isolators",
+      "devices": [
+        {"model": "IDNet Communications Isolator", "sku": "A4090-9116", "unitLoads": 1},
+        {"model": "Addressable Power Isolator", "sku": "A4090-9117", "unitLoads": 1},
+        {"model": "Isolator Base", "sku": "A4098-9793", "unitLoads": 1, "note": "Not compatible with A100-3103"}
+      ]
+    },
+    {
+      "category": "NAC Extenders",
+      "devices": [
+        {"model": "4009 IDNet NAC Extender", "sku": "A009-9201", "voltage": "120VAC", "nacCircuits": 4, "points": 4},
+        {"model": "4009 IDNet NAC Extender", "sku": "A009-9301", "voltage": "240VAC", "nacCircuits": 4, "points": 4},
+        {"model": "Additional 4 NAC circuits", "sku": "A009-9807", "nacCircuits": 4, "points": 4}
+      ]
+    }
+  ],
+
+  "calculationFormulas": {
+    "voltageDrop": {
+      "formula": "VD = (2 × L × R × I) / 1000",
+      "variables": {
+        "VD": "Voltage drop (V)",
+        "L": "One-way wire length (ft)",
+        "R": "Wire resistance (ohms/1000ft)",
+        "I": "Current (A)"
+      },
+      "note": "Multiply by 2 for round-trip resistance"
+    },
+    "minimumVoltage": {
+      "formula": "Vmin = Vsupply - VD",
+      "variables": {
+        "Vmin": "Minimum voltage at device",
+        "Vsupply": "Supply voltage (24V typical, 29V for IDNAC)",
+        "VD": "Total voltage drop"
+      }
+    },
+    "totalCircuitCurrent": {
+      "formula": "Itotal = Σ(In × Qn) × SF",
+      "variables": {
+        "Itotal": "Total circuit current",
+        "In": "Individual device current",
+        "Qn": "Quantity of device type n",
+        "SF": "Safety factor (1.2 for 20% spare)"
+      }
+    },
+    "unitLoadCalculation": {
+      "formula": "UL = Σ(Dn × ULn)",
+      "variables": {
+        "UL": "Total unit loads",
+        "Dn": "Number of devices of type n",
+        "ULn": "Unit loads per device type"
+      },
+      "note": "Each unit load = 0.8mA standby current"
+    },
+    "speakerPower": {
+      "formula": "P = V² / Z",
+      "variables": {
+        "P": "Power (watts)",
+        "V": "Voltage (70.7V or 25V)",
+        "Z": "Speaker impedance at tap setting"
+      }
+    },
+    "amplifierLoad": {
+      "formula": "Ptotal = Σ(Sn × Tn)",
+      "variables": {
+        "Ptotal": "Total amplifier load (watts)",
+        "Sn": "Number of speakers at tap n",
+        "Tn": "Tap wattage setting"
+      }
+    },
+    "batteryCapacity": {
+      "formula": "AH = [(Istandby × Tstandby) + (Ialarm × Talarm / 60)] × 1.2",
+      "variables": {
+        "AH": "Required battery capacity (amp-hours)",
+        "Istandby": "Standby current (A)",
+        "Tstandby": "Standby time (hours)",
+        "Ialarm": "Alarm current (A)",
+        "Talarm": "Alarm time (minutes)"
+      },
+      "nfpaRequirements": {
+        "standardStandby_hours": 24,
+        "standardAlarm_minutes": 5,
+        "voiceStandby_hours": 24,
+        "voiceAlarm_minutes": 15
+      }
+    },
+    "idnacsRequired": {
+      "formula": "N = MAX(Ncurrent, Ndevices, Nunitloads)",
+      "variables": {
+        "N": "Number of IDNACs required",
+        "Ncurrent": "CEIL(Itotal / 2.4A)",
+        "Ndevices": "CEIL(Devices / 101)",
+        "Nunitloads": "CEIL(UnitLoads / 111)"
+      }
+    }
+  },
+
+  "designLimits": {
+    "idnac": {
+      "maxDevicesPerCircuit": 127,
+      "usableDevicesPerCircuit": 101,
+      "maxUnitLoadsPerCircuit": 139,
+      "usableUnitLoadsPerCircuit": 111,
+      "maxCurrentPerCircuit_A": 3.0,
+      "usableCurrentPerCircuit_A": 2.4,
+      "maxBranches": 8,
+      "maxRepeatersPerBranch": 8,
+      "maxCableLength_ft": 10000,
+      "maxDistanceToDevice_ft": 4000,
+      "minOperatingVoltage": 16,
+      "maxOperatingVoltage": 33,
+      "regulatedVoltage": 29
+    },
+    "idnet": {
+      "maxDevicesPerChannel": 250,
+      "maxUnitLoadsPerChannel": 250,
+      "maxCableLength_ft": 12500,
+      "maxDistanceClassB_ft": 5000,
+      "maxResistance_ohms": 50,
+      "minOperatingVoltage": 16,
+      "maxOperatingVoltage": 33
+    },
+    "nac": {
+      "maxCircuitCurrent_A": 3,
+      "maxVoltageDropAllowed_V": 4,
+      "endOfLineResistor_ohms": 4700,
+      "minOperatingVoltage": 16,
+      "maxOperatingVoltage": 33
+    },
+    "speakers": {
+      "max70VAmplifierPower_W": 100,
+      "max25VAmplifierPower_W": 50,
+      "maxSpeakersPerCircuit": 100,
+      "constantSupervisionDerating": 0.70
+    },
+    "powerSupply": {
+      "espsMaxOutput_A": 12.7,
+      "espsWithIDNAC_A": 9.7,
+      "espsRegulated24V_A": 5.0,
+      "maxBatteryCapacity_Ah": 110,
+      "remoteBatteryThreshold_Ah": 50
+    }
+  },
+
+  "temperatureRatings": [
+    {
+      "celsius": 20,
+      "fahrenheit": 68,
+      "label": "20°C (68°F)",
+      "description": "Room temperature"
+    },
+    {
+      "celsius": 50,
+      "fahrenheit": 122,
+      "label": "50°C (122°F)",
+      "description": "Elevated temperature"
+    },
+    {
+      "celsius": 75,
+      "fahrenheit": 167,
+      "label": "75°C (167°F)",
+      "description": "High temperature"
+    }
+  ],
+
+  "compatibilityNotes": {
+    "idnet": {
+      "description": "Individual Device Network - Latest generation addressable communications",
+      "versions": [
+        "IDNet - Legacy, requires STP",
+        "IDNet+ - Electrically isolated, improved noise immunity, uses UTP",
+        "IDNet 2 - 250 point isolated with 2 short circuit isolating outputs",
+        "IDNet 2+2 - 250 point isolated with 4 short circuit isolating outputs"
+      ],
+      "facuSupport": {
+        "4007ES": "IDNet+ with up to 250 devices (optional)",
+        "4010ES": "IDNet 2 or IDNet 2+2",
+        "4100ES": "IDNet 2 or IDNet 2+2"
+      }
+    },
+    "idnac": {
+      "description": "Addressable Notification Appliance Circuit",
+      "advantages": [
+        "Regulated 29V output for consistent operation",
+        "6V allowed voltage drop vs 3V for standard NAC",
+        "Lower current draw due to higher voltage",
+        "Longer circuit distances possible",
+        "Individual device addressing and control"
+      ]
+    },
+    "trueAlert": {
+      "description": "TAA - TrueAlert Addressable for TPS and 4009T SLCs",
+      "maxDistance_ft": 2500,
+      "voltageDropAllowed": 3
+    }
+  },
+
+  "installationGuidelines": {
+    "wiringRequirements": {
+      "idnac": {
+        "preferred": "Unshielded Twisted Pair (UTP)",
+        "capacitance_uF": 0.60,
+        "gaugeRange": "18-12 AWG",
+        "maxLength_ft": 10000,
+        "maxToDevice_ft": 4000
+      },
+      "idnet": {
+        "idnetPlus": "Unshielded Twisted Pair (UTP)",
+        "idnetLegacy": "Shielded Twisted Pair (STP)",
+        "capacitance_uF": 0.60,
+        "gaugeRange": "18-12 AWG",
+        "maxLength_ft": 12500,
+        "isolatorSpacing_ft": 780,
+        "isolatorResistance_ohms": 10
+      },
+      "audioNac": {
+        "type": "Standard fire alarm cable",
+        "classB": "2-wire",
+        "classA": "4-wire with return"
+      }
+    },
+    "grounding": {
+      "requirement": "Single point ground at panel",
+      "shieldGrounding": "One end only to prevent ground loops"
+    },
+    "conduitFill": {
+      "maxLoadCircuit": "10A at 240VAC allowed in same conduit",
+      "separation": "No special separation required for IDNet+"
+    }
+  },
+
+  "usageNotes": {
+    "currentCalculation": "Always use exact current values from device specifications, never use averaged values",
+    "temperatureDerating": "Select appropriate wire resistance based on ambient temperature conditions",
+    "safetyFactors": "Apply 20% safety margin for circuit loading calculations",
+    "voltageDropLimits": "Ensure minimum 16V at furthest device for proper operation (23V for IDNAC due to 29V supply)",
+    "classACircuits": "Double the wire resistance calculation for return path",
+    "speakerCircuits": "Calculate based on total wattage, not current draw",
+    "batteryCalculations": "Include both standby and alarm loads with appropriate time durations",
+    "unitLoadTracking": "Track unit loads separately - different devices require different unit loads",
+    "amplifierDerating": "Non-alarm audio reduces amplifier capacity to 70% for constant supervision",
+    "panelConfiguration": "Audio controller uses blocks A&B, ES-PS location determines available amplifier blocks"
+  },
+
+  "defaultSettings": {
+    "idnacWorstCase": {
+      "alarmLoad_mA": 3000,
+      "addresses": 127,
+      "unitLoads": 139,
+      "note": "Selection Navigator defaults to worst case - adjust for actual design"
+    },
+    "spareCapacity": {
+      "electrical": 0.20,
+      "devices": 0.20,
+      "unitLoads": 0.20
+    },
+    "batteryCalculation": {
+      "standbyHours": 24,
+      "alarmMinutes": 5,
+      "voiceAlarmMinutes": 15
+    }
+  }
+}

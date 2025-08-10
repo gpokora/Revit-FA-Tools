@@ -1,0 +1,1040 @@
+﻿<dx:ThemedWindow
+    x:Class="Revit_FA_Tools.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+    xmlns:local="clr-namespace:Revit_FA_Tools.Converters"
+    Title="IDNAC Calculator - Fire Alarm System Design Tool" 
+    Height="900" Width="1400"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Normal"
+    UseLayoutRounding="True"
+    ResizeMode="CanResize"
+    WindowStyle="SingleBorderWindow"
+    ShowActivated="True"
+    ShowInTaskbar="True"
+    Topmost="False"
+    dx:ThemedWindow.ShowIcon="True"
+    ShowBackButton="False" 
+    ShowStatusPanel="True"
+    Loaded="Window_Loaded" 
+    ControlBoxButtonSet="Close,Minimize,MaximizeRestore" 
+    WindowKind="Normal">
+
+    <dx:ThemedWindow.Resources>
+        
+        <SolidColorBrush x:Key="DarkBackgroundBrush" Color="#FF1E1E1E"/>
+        <SolidColorBrush x:Key="DarkCardBackgroundBrush" Color="#FF2D2D30"/>
+        <SolidColorBrush x:Key="DarkBorderBrush" Color="#FF3F3F46"/>
+        <SolidColorBrush x:Key="DarkTextBrush" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="DarkSecondaryTextBrush" Color="#FFB0B0B0"/>
+        
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="10,5"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+        </Style>
+
+
+        <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+        </Style>
+
+
+        <Style x:Key="DarkGroupBoxStyle" TargetType="GroupBox">
+            <Setter Property="Background" Value="{StaticResource DarkCardBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+        </Style>
+
+        <Style x:Key="DarkTabContentStyle" TargetType="Grid">
+            <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+        </Style>
+
+        <Style x:Key="DarkScrollViewerStyle" TargetType="ScrollViewer">
+            <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+        </Style>
+
+        <Style x:Key="DarkStackPanelStyle" TargetType="StackPanel">
+            <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+        </Style>
+
+        <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource DarkSecondaryTextBrush}"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Margin" Value="10,5"/>
+        </Style>
+
+        <!-- Action Button Styles -->
+        <Style x:Key="ActionButtonStyle" TargetType="dx:SimpleButton">
+            <Setter Property="Background" Value="{StaticResource DarkCardBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="#FF0078D4"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="MinHeight" Value="120"/>
+        </Style>
+
+        <Style x:Key="ActionButtonLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#FF0078D4"/>
+        </Style>
+
+        <Style x:Key="ActionButtonDescStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkSecondaryTextBrush}"/>
+            <Setter Property="Margin" Value="0,3,0,0"/>
+        </Style>
+
+        <Style x:Key="StatusCardStyle" TargetType="dx:SimpleButton">
+            <Setter Property="Background" Value="{StaticResource DarkCardBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="20,15"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="IsEnabled" Value="False"/>
+        </Style>
+
+        <!-- Window control button styling for dark theme -->
+        <SolidColorBrush x:Key="WindowControlButtonForeground" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="WindowControlButtonBackground" Color="Transparent"/>
+        <SolidColorBrush x:Key="WindowControlButtonHoverBackground" Color="#FF404040"/>
+        <SolidColorBrush x:Key="WindowControlButtonPressedBackground" Color="#FF606060"/>
+
+        <!-- Navigation Styles -->
+        <Style x:Key="NavigationStepStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF404040"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF606060"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NavigationSubItemStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkSecondaryTextBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF303030"/>
+                                <Setter Property="Foreground" Value="{StaticResource DarkTextBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF505050"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="DarkHeaderBrush" Color="#FF2D2D30"/>
+        <Style x:Key="ZoomButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="ToolTip" Value="Zoom to device"/>
+        </Style>
+    </dx:ThemedWindow.Resources>
+    <dx:ThemedWindow.ContextMenu>
+        <ContextMenu/>
+    </dx:ThemedWindow.ContextMenu>
+    <DockPanel LastChildFill="True" Background="{StaticResource DarkBackgroundBrush}">
+        <!-- DevExpress Ribbon Control -->
+        <dxr:RibbonControl x:Name="MainRibbon" DockPanel.Dock="Top" RibbonStyle="Office2019" ToolbarShowMode="Hide" MinimizationButtonVisibility="Visible">
+            <dxr:RibbonControl.ApplicationMenu>
+                <dxr:ApplicationMenu>
+                    <!-- File Operations -->
+                    <dxb:BarButtonItem Content="New Analysis" 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_New.svg}"
+                                       ItemClick="NewAnalysis_Click"
+                                       Hint="Start a new analysis session"/>
+                    
+                    <dxb:BarButtonItem Content="Open Results" 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Open.svg}"
+                                       ItemClick="OpenResults_Click"
+                                       Hint="Open previously saved analysis results"/>
+                    
+                    <dxb:BarButtonItem Content="Save Analysis" 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Save.svg}"
+                                       ItemClick="SaveAnalysis_Click"
+                                       Hint="Save current analysis results"/>
+                    
+                    <dxb:BarButtonItem Content="Save As..." 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_SaveAs.svg}"
+                                       ItemClick="SaveAsAnalysis_Click"
+                                       Hint="Save analysis with a new name"/>
+                    
+                    <dxb:BarItemSeparator/>
+                    
+                    <!-- Export Operations -->
+                    <dxb:BarSubItem Content="Export" 
+                                    LargeGlyph="{dx:DXImage SvgImages/Export/Export.svg}"
+                                    Hint="Export analysis data">
+                        <dxb:BarButtonItem Content="Export IDNAC Results" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Speaker.svg}"
+                                           ItemClick="ExportResults_Click"
+                                           Hint="Export IDNAC analysis to CSV/Excel"/>
+                        <dxb:BarButtonItem Content="Export IDNET Results" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_DetectionZone.svg}"
+                                           ItemClick="ExportIDNETResults_Click"
+                                           Hint="Export IDNET analysis to CSV/Excel"/>
+                        <dxb:BarButtonItem Content="Export IDNET Devices" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Properties.svg}"
+                                           ItemClick="ExportIDNETDeviceList_Click"
+                                           Hint="Export IDNET device list to CSV/Excel"/>
+                        <dxb:BarItemSeparator/>
+                        <dxb:BarButtonItem Content="Export All Data" 
+                                           Glyph="{dx:DXImage SvgImages/Export/ExportToPDF.svg}"
+                                           ItemClick="ExportAllData_Click"
+                                           Hint="Export complete analysis package"/>
+                    </dxb:BarSubItem>
+                    
+                    <!-- Print Operations -->
+                    <dxb:BarSubItem Content="Print" 
+                                    LargeGlyph="{dx:DXImage SvgImages/Print/Print.svg}"
+                                    Hint="Print analysis reports">
+                        <dxb:BarButtonItem Content="Print Summary Report" 
+                                           Glyph="{dx:DXImage SvgImages/Reports/Report.svg}"
+                                           ItemClick="PrintSummaryReport_Click"
+                                           Hint="Print analysis summary"/>
+                        <dxb:BarButtonItem Content="Print Detailed Report" 
+                                           Glyph="{dx:DXImage SvgImages/Reports/ReportDesigner.svg}"
+                                           ItemClick="PrintDetailedReport_Click"
+                                           Hint="Print complete analysis report"/>
+                        <dxb:BarButtonItem Content="Print Preview" 
+                                           Glyph="{dx:DXImage SvgImages/Print/PrintPreview.svg}"
+                                           ItemClick="PrintPreview_Click"
+                                           Hint="Preview before printing"/>
+                    </dxb:BarSubItem>
+                    
+                    <dxb:BarItemSeparator/>
+                    
+                    <!-- Recent Files -->
+                    <dxb:BarSubItem Content="Recent Files" 
+                                    LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clock.svg}"
+                                    Hint="Open recent analysis files">
+                        <dxb:BarButtonItem Content="No recent files" 
+                                           IsEnabled="False"
+                                           Hint="No recent files available"/>
+                    </dxb:BarSubItem>
+                    
+                    <dxb:BarItemSeparator/>
+                    
+                    <!-- Application Operations -->
+                    <dxb:BarButtonItem Content="Options" 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Properties.svg}"
+                                       ItemClick="Options_Click"
+                                       Hint="Application settings and preferences"/>
+                    
+                    <dxb:BarButtonItem Content="About" 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_About.svg}"
+                                       ItemClick="About_Click"
+                                       Hint="About IDNAC Calculator"/>
+                    
+                    <dxb:BarButtonItem Content="Exit" 
+                                       LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Close.svg}"
+                                       ItemClick="Exit_Click"
+                                       Hint="Exit application"/>
+                    
+                </dxr:ApplicationMenu>
+            </dxr:RibbonControl.ApplicationMenu>
+
+            <!-- Quick Access Toolbar -->
+            <dxr:RibbonControl.ToolbarItems>
+                <dxb:BarButtonItem Content="Run Analysis" 
+                                   Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Execute.svg}"
+                                   ItemClick="RunAnalysis_Click"
+                                   Hint="Quick run analysis"/>
+                <dxb:BarButtonItem Content="Export Results" 
+                                   Glyph="{dx:DXImage SvgImages/Export/Export.svg}"
+                                   ItemClick="ExportResults_Click"
+                                   Hint="Export analysis results"/>
+            </dxr:RibbonControl.ToolbarItems>
+
+            <!-- Ribbon Pages -->
+            <dxr:RibbonDefaultPageCategory>
+
+                <!-- Unified Analysis Tab -->
+                <dxr:RibbonPage Caption="Analysis" x:Name="AnalysisPage">
+
+                    <!-- IDNAC Group -->
+                    <dxr:RibbonPageGroup Caption="IDNAC">
+                        <dxb:BarButtonItem Content="Run IDNAC" 
+                                           LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Execute.svg}"
+                                           RibbonStyle="Large"
+                                           ItemClick="RunAnalysis_Click"
+                                           Hint="Run IDNAC analysis (Ctrl+R)"
+                                           KeyGesture="Ctrl+R"/>
+                        <dxb:BarButtonItem Content="IDNAC Settings" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Properties.svg}"
+                                           ItemClick="IDNACSettings_Click"
+                                           Hint="Configure IDNAC parameters"/>
+                        <dxb:BarButtonItem Content="Amplifier Config" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Engineering.svg}"
+                                           ItemClick="AmplifierConfig_Click"
+                                           Hint="Configure amplifier settings"/>
+                    </dxr:RibbonPageGroup>
+
+                    <!-- IDNET Group -->
+                    <dxr:RibbonPageGroup Caption="IDNET">
+                        <dxb:BarButtonItem Content="Run IDNET" 
+                                           LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Execute.svg}"
+                                           RibbonStyle="Large"
+                                           ItemClick="RunIDNETAnalysis_Click"
+                                           Hint="Run IDNET analysis"/>
+                        <dxb:BarButtonItem Content="Device Summary" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Summary.svg}"
+                                           ItemClick="IDNETDeviceSummary_Click"
+                                           Hint="Show IDNET device summary"/>
+                        <dxb:BarButtonItem Content="Network Topology" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Network.svg}"
+                                           ItemClick="IDNETNetworkTopology_Click"
+                                           Hint="View network topology"/>
+                        <dxb:BarButtonItem Content="Address Planning" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_AddressBook.svg}"
+                                           ItemClick="IDNETAddressPlanning_Click"
+                                           Hint="Plan device addressing"/>
+                    </dxr:RibbonPageGroup>
+
+                    <!-- Combined Analysis Group -->
+                    <dxr:RibbonPageGroup Caption="Combined">
+                        <dxb:BarButtonItem Content="Combined Analysis" 
+                                           LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Merge.svg}"
+                                           RibbonStyle="Large"
+                                           ItemClick="RunCombinedAnalysis_Click"
+                                           Hint="Run combined IDNAC + IDNET analysis"/>
+                        <dxb:BarButtonItem Content="Sync Analysis" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Synchronize.svg}"
+                                           ItemClick="SyncWithIDNAC_Click"
+                                           Hint="Synchronize analysis results"/>
+                    </dxr:RibbonPageGroup>
+
+                    <!-- Scope Group -->
+                    <dxr:RibbonPageGroup Caption="Scope">
+                        <dxb:BarSubItem Content="Analysis Scope" 
+                                        RibbonStyle="Large"
+                                        Hint="Select analysis scope">
+                            <dxb:BarCheckItem Content="Active View" 
+                                              x:Name="MainScopeActiveViewItem"
+                                              IsChecked="True"
+                                              ItemClick="ScopeActiveView_Click"/>
+                            <dxb:BarCheckItem Content="Selection" 
+                                              x:Name="MainScopeSelectionItem"
+                                              ItemClick="ScopeSelection_Click"/>
+                            <dxb:BarCheckItem Content="Entire Model" 
+                                              x:Name="MainScopeEntireModelItem"
+                                              ItemClick="ScopeEntireModel_Click"/>
+                        </dxb:BarSubItem>
+                    </dxr:RibbonPageGroup>
+
+                </dxr:RibbonPage>
+
+                <!-- Export & Reports Tab -->
+                <dxr:RibbonPage Caption="Export And Reports" x:Name="ExportPage">
+
+                    <!-- Export Group -->
+                    <dxr:RibbonPageGroup Caption="Export">
+                        <dxb:BarButtonItem Content="Export IDNAC" 
+                                           RibbonStyle="Large"
+                                           ItemClick="ExportResults_Click"
+                                           Hint="Export IDNAC results to Excel/CSV"/>
+                        <dxb:BarButtonItem Content="Export IDNET" 
+                                           RibbonStyle="Large"
+                                           ItemClick="ExportIDNETResults_Click"
+                                           Hint="Export IDNET results to Excel/CSV"/>
+                        <dxb:BarButtonItem Content="Device List" 
+                                           ItemClick="ExportIDNETDeviceList_Click"
+                                           Hint="Export device list report"/>
+                    </dxr:RibbonPageGroup>
+
+                    <!-- Reports Group -->
+                    <dxr:RibbonPageGroup Caption="Reports">
+                        <dxb:BarButtonItem Content="Print Report" 
+                                           RibbonStyle="Large"
+                                           ItemClick="PrintReport_Click"
+                                           Hint="Print analysis report"/>
+                        <dxb:BarButtonItem Content="Model Analysis" 
+                                           ItemClick="AnalyzeModel_Click"
+                                           Hint="Generate model analysis report"/>
+                    </dxr:RibbonPageGroup>
+
+                </dxr:RibbonPage>
+
+                <!-- Addressing Tab -->
+                <dxr:RibbonPage Caption="Addressing" Name="AddressingPage">
+                    <dxr:RibbonPageGroup Caption="Device Management">
+                        <dxb:BarButtonItem Name="OpenAddressingTool" 
+                                          Content="Device Addressing" 
+                                          LargeGlyph="{dx:DXImage SvgImages/Navigation/Home_32x32.png}"
+                                          RibbonStyle="Large"
+                                          ItemClick="OpenAddressingTool_Click"
+                                          Hint="Open device addressing tool"/>
+                        <dxb:BarButtonItem Name="AutoAssignAddresses" 
+                                          Content="Auto Assign" 
+                                          LargeGlyph="{dx:DXImage SvgImages/Actions/New_32x32.png}"
+                                          RibbonStyle="Large"
+                                          ItemClick="AutoAssignAddresses_Click"
+                                          Hint="Automatically assign addresses to devices"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Validation">
+                        <dxb:BarButtonItem Name="ValidateAddresses" 
+                                          Content="Validate All" 
+                                          LargeGlyph="{dx:DXImage SvgImages/Actions/Apply_32x32.png}"
+                                          RibbonStyle="Large"
+                                          ItemClick="ValidateAddresses_Click"
+                                          Hint="Validate all device addresses"/>
+                        <dxb:BarButtonItem Name="LockAllAddresses" 
+                                          Content="Lock Installed" 
+                                          LargeGlyph="{dx:DXImage SvgImages/Actions/Lock_32x32.png}"
+                                          RibbonStyle="Large"
+                                          ItemClick="LockAllAddresses_Click"
+                                          Hint="Lock addresses for installed devices"/>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+
+                <!-- Settings Tab -->
+                <dxr:RibbonPage Caption="Settings" x:Name="SettingsPage">
+
+                    <!-- Configuration Group -->
+                    <dxr:RibbonPageGroup Caption="Configuration">
+                        <dxb:BarButtonItem Content="Spare Capacity: 20%" 
+                                          x:Name="SpareCapacityButton"
+                                          ItemClick="SpareCapacityButton_ItemClick"
+                                          Hint="Click to adjust spare capacity percentage"/>
+                        
+                        <dxb:BarStaticItem x:Name="MainValidationStatusItem" Content="Configuration valid"/>
+                    </dxr:RibbonPageGroup>
+
+                    <!-- Appearance Group -->
+                    <dxr:RibbonPageGroup Caption="Appearance">
+                        <dxb:BarButtonItem Content="Theme" 
+                                           RibbonStyle="Large"
+                                           ItemClick="ThemeSettings_Click"
+                                           Hint="Change application theme"/>
+                    </dxr:RibbonPageGroup>
+
+                    <!-- Help Group -->
+                    <dxr:RibbonPageGroup Caption="Help">
+                        <dxb:BarButtonItem Content="About" 
+                                           LargeGlyph="{dx:DXImage SvgImages/Icon Builder/Actions_Info.svg}"
+                                           RibbonStyle="Large"
+                                           ItemClick="About_Click"
+                                           Hint="About IDNAC Calculator"/>
+                        <dxb:BarButtonItem Content="User Guide" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Help.svg}"
+                                           ItemClick="Help_Click"
+                                           Hint="View user guide"/>
+                    </dxr:RibbonPageGroup>
+
+                </dxr:RibbonPage>
+
+            </dxr:RibbonDefaultPageCategory>
+
+        </dxr:RibbonControl>
+
+        <!-- Main Content Area -->
+        <Grid DockPanel.Dock="Bottom" Style="{StaticResource DarkTabContentStyle}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Content Container with Navigation -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Navigation Tree -->
+                <Border Grid.Column="0" Background="{StaticResource DarkCardBackgroundBrush}" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Navigation Header -->
+                        <Border Grid.Row="0" Background="{StaticResource DarkHeaderBrush}" Padding="15,10">
+                            <StackPanel>
+                                <TextBlock Text="Workflow" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}"/>
+                                <TextBlock x:Name="CurrentStepText" Text="Ready to Start" FontSize="11" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Navigation Tree -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="10">
+                                <!-- Step 1: Scope -->
+                                <Border x:Name="ScopeStepBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" CornerRadius="5" Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <Button x:Name="ScopeStepButton" Style="{StaticResource NavigationStepStyle}" Click="NavigationStep_Click" Tag="Scope">
+                                            <StackPanel Orientation="Horizontal">
+                                                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Scope.svg}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                                <TextBlock Text="1. Define Scope" VerticalAlignment="Center"/>
+                                                <dx:DXImage x:Name="ScopeStepIcon" Source="{dx:DXImage SvgImages/Icon Builder/Actions_Time.svg}" Width="12" Height="12" Margin="5,0,0,0"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <StackPanel x:Name="ScopeSubItems" Margin="24,5,0,0" Visibility="Collapsed">
+                                            <Button Content="Active View" Style="{StaticResource NavigationSubItemStyle}" Click="ScopeActiveView_Click"/>
+                                            <Button Content="Selection" Style="{StaticResource NavigationSubItemStyle}" Click="ScopeSelection_Click"/>
+                                            <Button Content="Entire Model" Style="{StaticResource NavigationSubItemStyle}" Click="ScopeEntireModel_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Step 2: Analysis -->
+                                <Border x:Name="AnalysisStepBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" CornerRadius="5" Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <Button x:Name="AnalysisStepButton" Style="{StaticResource NavigationStepStyle}" Click="NavigationStep_Click" Tag="Analysis">
+                                            <StackPanel Orientation="Horizontal">
+                                                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Calculate.svg}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                                <TextBlock Text="2. Run Analysis" VerticalAlignment="Center"/>
+                                                <dx:DXImage x:Name="AnalysisStepIcon" Source="{dx:DXImage SvgImages/Icon Builder/Actions_Time.svg}" Width="12" Height="12" Margin="5,0,0,0"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <StackPanel x:Name="AnalysisSubItems" Margin="24,5,0,0" Visibility="Collapsed">
+                                            <Button Content="IDNAC Analysis" Style="{StaticResource NavigationSubItemStyle}" Click="RunIDNACAnalysis_Click"/>
+                                            <Button Content="IDNET Analysis" Style="{StaticResource NavigationSubItemStyle}" Click="RunIDNETAnalysis_Click"/>
+                                            <Button Content="Amplifier Analysis" Style="{StaticResource NavigationSubItemStyle}" Click="RunAmplifierAnalysis_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Step 3: Assignment -->
+                                <Border x:Name="AssignmentStepBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" CornerRadius="5" Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <Button x:Name="AssignmentStepButton" Style="{StaticResource NavigationStepStyle}" Click="NavigationStep_Click" Tag="Assignment">
+                                            <StackPanel Orientation="Horizontal">
+                                                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Assign.svg}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                                <TextBlock Text="3. Device Assignment" VerticalAlignment="Center"/>
+                                                <dx:DXImage x:Name="AssignmentStepIcon" Source="{dx:DXImage SvgImages/Icon Builder/Actions_Time.svg}" Width="12" Height="12" Margin="5,0,0,0"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <StackPanel x:Name="AssignmentSubItems" Margin="24,5,0,0" Visibility="Collapsed">
+                                            <Button Content="Tree View Editor" Style="{StaticResource NavigationSubItemStyle}" Click="OpenAssignmentTreeView_Click"/>
+                                            <Button Content="Addressing Tool" Style="{StaticResource NavigationSubItemStyle}" Click="OpenAddressingTool_Click"/>
+                                            <Button Content="Circuit Balancing" Style="{StaticResource NavigationSubItemStyle}" Click="RunCircuitBalancing_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Step 4: Reports -->
+                                <Border x:Name="ReportsStepBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" CornerRadius="5" Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <Button x:Name="ReportsStepButton" Style="{StaticResource NavigationStepStyle}" Click="NavigationStep_Click" Tag="Reports">
+                                            <StackPanel Orientation="Horizontal">
+                                                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Report.svg}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                                <TextBlock Text="4. Generate Reports" VerticalAlignment="Center"/>
+                                                <dx:DXImage x:Name="ReportsStepIcon" Source="{dx:DXImage SvgImages/Icon Builder/Actions_Time.svg}" Width="12" Height="12" Margin="5,0,0,0"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <StackPanel x:Name="ReportsSubItems" Margin="24,5,0,0" Visibility="Collapsed">
+                                            <Button Content="Export Excel" Style="{StaticResource NavigationSubItemStyle}" Click="ExportResults_Click"/>
+                                            <Button Content="Export PDF" Style="{StaticResource NavigationSubItemStyle}" Click="ExportPDF_Click"/>
+                                            <Button Content="Battery Report" Style="{StaticResource NavigationSubItemStyle}" Click="GenerateBatteryReport_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Step 5: Settings -->
+                                <Border x:Name="SettingsStepBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" CornerRadius="5" Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <Button x:Name="SettingsStepButton" Style="{StaticResource NavigationStepStyle}" Click="NavigationStep_Click" Tag="Settings">
+                                            <StackPanel Orientation="Horizontal">
+                                                <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Settings.svg}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                                <TextBlock Text="5. Configuration" VerticalAlignment="Center"/>
+                                                <dx:DXImage x:Name="SettingsStepIcon" Source="{dx:DXImage SvgImages/Icon Builder/Actions_Settings.svg}" Width="12" Height="12" Margin="5,0,0,0"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <StackPanel x:Name="SettingsSubItems" Margin="24,5,0,0" Visibility="Collapsed">
+                                            <Button Content="Device Mappings" Style="{StaticResource NavigationSubItemStyle}" Click="EditDeviceMappings_Click"/>
+                                            <Button Content="Import Catalog" Style="{StaticResource NavigationSubItemStyle}" Click="ImportFamilyCatalog_Click"/>
+                                            <Button Content="Assignment Tree Editor" Style="{StaticResource NavigationSubItemStyle}" Click="OpenAssignmentTreeEditor_Click"/>
+                                            <Button Content="System Settings" Style="{StaticResource NavigationSubItemStyle}" Click="OpenSystemSettings_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Active Scope Display -->
+                        <Border Grid.Row="2" Background="{StaticResource DarkHeaderBrush}" Padding="15,10" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0,1,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Active Scope" FontWeight="Bold" FontSize="12" Foreground="{StaticResource DarkTextBrush}"/>
+                                <TextBlock x:Name="ActiveScopeText" Text="None Selected" FontSize="11" Foreground="#FF0078D4" Margin="0,2,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <TextBlock Text="Devices: " FontSize="10" Foreground="{StaticResource DarkSecondaryTextBrush}"/>
+                                    <TextBlock x:Name="ActiveScopeDeviceCount" Text="0" FontSize="10" FontWeight="Bold" Foreground="{StaticResource DarkTextBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Main Content Area -->
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                <!-- Compact Analysis Dashboard -->
+                <Border Grid.Row="0" Background="{StaticResource DarkCardBackgroundBrush}" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0,0,0,1" Padding="10,5">
+                    <Grid x:Name="DashboardGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Status Display -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <dx:DXImage x:Name="StatusIcon" Source="{dx:DXImage SvgImages/Icon Builder/Actions_Time.svg}" Width="14" Height="14" Margin="0,0,5,0"/>
+                            <TextBlock x:Name="SystemStatusText" Text="Ready" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Compact Metrics Row -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,0,0">
+                            
+                            <!-- Key Metrics - Inline -->
+                            <TextBlock Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="10" Margin="0,0,3,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TotalFireAlarmDevicesText" Text="0" Foreground="{StaticResource DarkTextBrush}" FontSize="11" FontWeight="Bold" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                            
+                            <TextBlock Text="IDNAC:" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="10" Margin="0,0,3,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="IDNACDevicesText" Text="0" Foreground="#FF0078D4" FontSize="11" FontWeight="Bold" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                            
+                            <TextBlock Text="IDNET:" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="10" Margin="0,0,3,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="IDNETDevicesText" Text="0" Foreground="#FF32CD32" FontSize="11" FontWeight="Bold" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                            
+                            <TextBlock Text="Circuits:" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="10" Margin="0,0,3,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="IDNACsRequiredText" Text="0" Foreground="{StaticResource DarkTextBrush}" FontSize="11" FontWeight="Bold" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                            
+                            <TextBlock Text="Power:" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="10" Margin="0,0,3,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TotalPowerText" Text="0A" Foreground="{StaticResource DarkTextBrush}" FontSize="11" FontWeight="Bold" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                            
+                            <TextBlock Text="Amplifiers:" Foreground="{StaticResource DarkSecondaryTextBrush}" FontSize="10" Margin="0,0,3,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="AmplifiersText" Text="0" Foreground="{StaticResource DarkTextBrush}" FontSize="11" FontWeight="Bold" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                            
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+                <!-- Detailed Analysis Results -->
+                <!-- Main Content Area with DockLayoutManager -->
+                <dxdo:DockLayoutManager x:Name="MainDockLayoutManager" Grid.Row="1" Margin="5">
+                    <dxdo:LayoutGroup>
+                        <dxdo:DocumentGroup x:Name="MainDocumentGroup">
+                            
+                            <!-- Overview Tab -->
+                            <dxdo:DocumentPanel Caption="Overview" x:Name="OverviewPanel">
+                            <Grid Style="{StaticResource DarkTabContentStyle}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- KPI Cards Strip -->
+                                <Grid Grid.Row="0" Margin="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- IDNAC KPI Card -->
+                                    <Border Grid.Column="0" Background="{StaticResource DarkCardBackgroundBrush}" 
+                                            BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1" 
+                                            CornerRadius="5" Margin="0,0,5,0">
+                                        <StackPanel Margin="15">
+                                            <TextBlock Text="IDNAC System" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="IDNACSystemDevicesText" Text="0" FontWeight="Bold" Foreground="#FF0078D4" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Circuits:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="IDNACSystemCircuitsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Strobe Current:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="IDNACSystemCurrentText" Text="0.0A" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Speaker Power:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="IDNACSystemWattageText" Text="0W" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                    
+                                    <!-- IDNET KPI Card -->
+                                    <Border Grid.Column="1" Background="{StaticResource DarkCardBackgroundBrush}" 
+                                            BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1" 
+                                            CornerRadius="5" Margin="5,0">
+                                        <StackPanel Margin="15">
+                                            <TextBlock Text="IDNET System" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="IDNETSystemDevicesText" Text="0" FontWeight="Bold" Foreground="#FF32CD32" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Channels:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="IDNETSystemChannelsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Unit Loads:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="IDNETSystemUnitLoadsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Segments:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="IDNETSystemSegmentsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                    
+                                    <!-- Panels KPI Card -->
+                                    <Border Grid.Column="2" Background="{StaticResource DarkCardBackgroundBrush}" 
+                                            BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1" 
+                                            CornerRadius="5" Margin="5,0,0,0">
+                                        <StackPanel Margin="15">
+                                            <TextBlock Text="Panels &amp; Equipment" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Nodes:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="PanelSystemNodesText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Transponders:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="PanelSystemTranspondersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Amplifiers:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="PanelSystemAmplifiersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                
+                                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Repeaters:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="PanelSystemRepeatersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Combined Level Analysis -->
+                                <!-- By-Level Snapshot Grid -->
+                                <dxg:GridControl Grid.Row="1" x:Name="SystemOverviewGrid" 
+                                                 AutoGenerateColumns="None"
+                                                 SelectionMode="Row"
+                                                 ShowLoadingPanel="False"
+                                                 CurrentItemChanged="SystemOverviewGrid_CurrentItemChanged"
+                                                 MouseDoubleClick="SystemOverviewGrid_MouseDoubleClick">
+                                    <dxg:GridControl.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Show Level Details..." Click="ShowLevelDetailsMenuItem_Click">
+                                                <MenuItem.Icon>
+                                                    <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Info.svg}" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator/>
+                                            <MenuItem Header="Export to Excel..." Click="ExportGridMenuItem_Click">
+                                                <MenuItem.Icon>
+                                                    <dx:DXImage Source="{dx:DXImage SvgImages/Outlook Inspired/ExportToExcel.svg}" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:GridControl.ContextMenu>
+                                    <dxg:GridControl.Bands>
+                                        <!-- Level Band -->
+                                        <dxg:GridControlBand Header="Level" Fixed="Left">
+                                            <dxg:GridColumn FieldName="Level" Header="Level" Width="120"/>
+                                            <dxg:GridColumn FieldName="Elevation" Header="Elevation" Width="80"/>
+                                            <dxg:GridColumn FieldName="Zone" Header="Zone" Width="100"/>
+                                        </dxg:GridControlBand>
+                                        
+                                        <!-- IDNAC Band -->
+                                        <dxg:GridControlBand Header="IDNAC">
+                                            <dxg:GridColumn FieldName="IDNACDevices" Header="Devices" Width="70"/>
+                                            <dxg:GridColumn FieldName="IDNACCurrent" Header="Current (A)" Width="80">
+                                                <dxg:GridColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding IDNACCurrent, StringFormat='{}{0:F1}'}"/>
+                                                    </DataTemplate>
+                                                </dxg:GridColumn.CellTemplate>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn FieldName="IDNACWattage" Header="Wattage (W)" Width="90">
+                                                <dxg:GridColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding IDNACWattage, StringFormat='{}{0:F0}'}"/>
+                                                    </DataTemplate>
+                                                </dxg:GridColumn.CellTemplate>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn FieldName="IDNACCircuits" Header="Circuits" Width="70"/>
+                                        </dxg:GridControlBand>
+                                        
+                                        <!-- IDNET Band -->
+                                        <dxg:GridControlBand Header="IDNET">
+                                            <dxg:GridColumn FieldName="IDNETDevices" Header="Devices" Width="70"/>
+                                            <dxg:GridColumn FieldName="IDNETPoints" Header="Points" Width="70"/>
+                                            <dxg:GridColumn FieldName="IDNETUnitLoads" Header="Unit Loads" Width="80"/>
+                                            <dxg:GridColumn FieldName="IDNETChannels" Header="Channels" Width="70"/>
+                                        </dxg:GridControlBand>
+                                        
+                                        <!-- Utilization Band -->
+                                        <dxg:GridControlBand Header="Utilization">
+                                            <dxg:GridColumn FieldName="UtilizationPercent" Header="Utilization %" Width="90">
+                                                <dxg:GridColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding UtilizationPercent, StringFormat='{}{0:F1}%'}" 
+                                                                   VerticalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </dxg:GridColumn.CellTemplate>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn FieldName="LimitingFactor" Header="Limiting Factor" Width="120"/>
+                                        </dxg:GridControlBand>
+                                        
+                                        <!-- Notes Band -->
+                                        <dxg:GridControlBand Header="Notes">
+                                            <dxg:GridColumn FieldName="Comments" Header="Comments" Width="200"/>
+                                        </dxg:GridControlBand>
+                                    </dxg:GridControl.Bands>
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView ShowGroupPanel="False"
+                                                       ShowAutoFilterRow="True"
+                                                       AutoWidth="True"
+                                                       AllowEditing="False"
+                                                       ShowTotalSummary="False"/>
+                                    </dxg:GridControl.View>
+                                </dxg:GridControl>
+                                </Grid>
+                            </dxdo:DocumentPanel>
+                            
+                            <!-- Additional tabs will be added here in future -->
+                            
+                        </dxdo:DocumentGroup>
+                    </dxdo:LayoutGroup>
+                </dxdo:DockLayoutManager>
+
+            </Grid>
+
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="1" 
+                    Background="{StaticResource DarkCardBackgroundBrush}"
+                    BorderBrush="{StaticResource DarkBorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    Padding="10,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" x:Name="StatusMessage" 
+                               Text="Ready - Select scope and click 'Run Analysis'"
+                               Foreground="{StaticResource DarkTextBrush}"
+                               VerticalAlignment="Center" Margin="5,0"/>
+
+                    <Separator Grid.Column="1" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="10,0"/>
+
+                    <TextBlock Grid.Column="2" x:Name="DeviceCount" 
+                               Text="Devices: 0" 
+                               Foreground="{StaticResource DarkTextBrush}"
+                               VerticalAlignment="Center" Margin="10,0"/>
+
+                    <TextBlock Grid.Column="3" x:Name="IDNACCount" 
+                               Text="IDNACs: 0" 
+                               Foreground="{StaticResource DarkTextBrush}"
+                               VerticalAlignment="Center" Margin="10,0"/>
+
+                    <TextBlock Grid.Column="4" x:Name="CurrentLoad" 
+                               Text="Load: 0.0A" 
+                               Foreground="{StaticResource DarkTextBrush}"
+                               VerticalAlignment="Center" Margin="10,0"/>
+                </Grid>
+            </Border>
+
+        </Grid>
+
+        <!-- Status Bar -->
+        <StatusBar x:Name="MainStatusBar" DockPanel.Dock="Bottom" 
+                   Background="{StaticResource DarkCardBackgroundBrush}" 
+                   Foreground="{StaticResource DarkTextBrush}"
+                   BorderBrush="{StaticResource DarkBorderBrush}" 
+                   BorderThickness="0,1,0,0"
+                   Height="25">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel LastChildFill="False"/>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            
+            <!-- Active Scope -->
+            <StatusBarItem DockPanel.Dock="Left">
+                <StackPanel Orientation="Horizontal">
+                    <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_ViewSettings.svg}" Width="12" Height="12" Margin="0,0,5,0"/>
+                    <TextBlock x:Name="StatusActiveScope" Text="Active View" FontSize="10"/>
+                </StackPanel>
+            </StatusBarItem>
+            
+            <Separator DockPanel.Dock="Left" Style="{StaticResource {x:Type Separator}}"/>
+            
+            <!-- Device Count -->
+            <StatusBarItem DockPanel.Dock="Left">
+                <StackPanel Orientation="Horizontal">
+                    <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_DeviceList.svg}" Width="12" Height="12" Margin="0,0,5,0"/>
+                    <TextBlock x:Name="StatusDeviceCount" Text="0 devices" FontSize="10"/>
+                </StackPanel>
+            </StatusBarItem>
+            
+            <Separator DockPanel.Dock="Left" Style="{StaticResource {x:Type Separator}}"/>
+            
+            <!-- Unsynced Changes Indicator -->
+            <StatusBarItem x:Name="UnsyncedChangesStatusItem" DockPanel.Dock="Left" Visibility="Collapsed">
+                <Button x:Name="UnsyncedChangesButton" 
+                       Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                       Click="ShowUnsyncedChanges_Click"
+                       ToolTip="Click to view unsynced changes">
+                    <StackPanel Orientation="Horizontal">
+                        <dx:DXImage Source="{dx:DXImage SvgImages/Icon Builder/Actions_Warning.svg}" Width="12" Height="12" Margin="0,0,5,0"/>
+                        <TextBlock x:Name="UnsyncedChangesText" Text="0 unsynced changes" FontSize="10" Foreground="Orange"/>
+                    </StackPanel>
+                </Button>
+            </StatusBarItem>
+            
+            <!-- Last Analysis Time -->
+            <StatusBarItem DockPanel.Dock="Right">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Last Analysis:" FontSize="10" Margin="0,0,5,0"/>
+                    <TextBlock x:Name="StatusLastAnalysis" Text="Never" FontSize="10"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+        
+        <!-- Hidden placeholder controls to prevent compilation errors -->
+        <Grid x:Name="HiddenControlsGrid" Visibility="Collapsed">
+            <!-- Text Controls (only those NOT already defined in visible UI) -->
+            <TextBlock x:Name="IDNETWireLengthText"/>
+            <TextBlock x:Name="IDNETSystemPowerText"/>
+            <TextBlock x:Name="IDNETRepeatersText"/>
+            <TextBlock x:Name="IDNETPowerText"/>
+            <TextBlock x:Name="IDNETChannelsText"/>
+
+            
+            <!-- Grid Controls -->
+            <dxg:GridControl x:Name="RawDataGrid"/>
+            <dxg:GridControl x:Name="LevelGrid"/>
+            <dxg:GridControl x:Name="DeviceGrid"/>
+            <dxg:GridControl x:Name="IDNACGrid"/>
+            <dxg:GridControl x:Name="IDNETAnalysisGrid"/>
+            <dxg:GridControl x:Name="IDNETDevicesGrid"/>
+            <dxg:GridControl x:Name="IDNETNetworkSegmentsGrid"/>
+            <dxg:GridControl x:Name="IDNETLevelGrid"/>
+            <dxg:GridControl x:Name="DetailedDeviceGrid"/>
+            
+            <!-- Navigation Controls -->
+            <TabControl x:Name="ResultsTabControl"/>
+            <!-- Panel Controls -->
+            <StackPanel x:Name="PanelRecommendationsPanel"/>
+
+            <!-- Additional missing controls -->
+            <TextBlock x:Name="LastAnalysisTimeText"/>
+            <TextBlock x:Name="AnalysisStatusText"/>
+            <TextBlock x:Name="TotalWattageText"/>
+            <TextBlock x:Name="TotalDevicesText"/>
+            <TextBlock x:Name="TotalCurrentText"/>
+            <TextBlock x:Name="StrobeCurrentText"/>
+        </Grid>
+
+    </DockPanel>
+
+</dx:ThemedWindow>

@@ -1,0 +1,202 @@
+        <!-- Main Content Area -->
+        <dxdo:DockLayoutManager DockPanel.Dock="Bottom">
+            <dxdo:LayoutGroup>
+                <dxdo:DocumentGroup x:Name="MainDocumentGroup" ShowHeader="False">
+                    
+                    <!-- Overview Tab -->
+                    <dxdo:DocumentPanel Caption="Overview" x:Name="OverviewPanel">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- KPI Cards Strip -->
+                            <Grid Grid.Row="0" Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- IDNAC KPI Card -->
+                                <Border Grid.Column="0" Background="{StaticResource DarkCardBackgroundBrush}" 
+                                        BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1" 
+                                        CornerRadius="5" Margin="0,0,5,0">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="IDNAC System" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="IDNACSystemDevicesText" Text="0" FontWeight="Bold" Foreground="#FF0078D4" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Circuits:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="IDNACSystemCircuitsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Strobe Current:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="IDNACSystemCurrentText" Text="0.0A" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Speaker Power:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="IDNACSystemWattageText" Text="0W" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- IDNET KPI Card -->
+                                <Border Grid.Column="1" Background="{StaticResource DarkCardBackgroundBrush}" 
+                                        BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1" 
+                                        CornerRadius="5" Margin="5,0">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="IDNET System" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Devices:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="IDNETSystemDevicesText" Text="0" FontWeight="Bold" Foreground="#FF32CD32" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Channels:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="IDNETSystemChannelsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Unit Loads:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="IDNETSystemUnitLoadsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Segments:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="IDNETSystemSegmentsText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Panels KPI Card -->
+                                <Border Grid.Column="2" Background="{StaticResource DarkCardBackgroundBrush}" 
+                                        BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1" 
+                                        CornerRadius="5" Margin="5,0,0,0">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="Panels &amp; Equipment" FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,10"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Nodes:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="PanelSystemNodesText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Transponders:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="PanelSystemTranspondersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Amplifiers:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,5"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="PanelSystemAmplifiersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            
+                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Repeaters:" Foreground="{StaticResource DarkSecondaryTextBrush}" Margin="0,0,10,0"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="PanelSystemRepeatersText" Text="0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <!-- By-Level Snapshot Grid -->
+                            <dxg:GridControl Grid.Row="1" x:Name="SystemOverviewGrid" 
+                                             AutoGenerateColumns="None"
+                                             SelectionMode="Row"
+                                             ShowLoadingPanel="False">
+                                <dxg:GridControl.Bands>
+                                    <!-- Level Band -->
+                                    <dxg:GridControlBand Header="Level" Fixed="Left">
+                                        <dxg:GridColumn FieldName="Level" Header="Level" Width="120"/>
+                                        <dxg:GridColumn FieldName="Elevation" Header="Elevation" Width="80"/>
+                                        <dxg:GridColumn FieldName="Zone" Header="Zone" Width="100"/>
+                                    </dxg:GridControlBand>
+                                    
+                                    <!-- IDNAC Band -->
+                                    <dxg:GridControlBand Header="IDNAC">
+                                        <dxg:GridColumn FieldName="IDNACDevices" Header="Devices" Width="70">
+                                            <dxg:GridColumn.TotalSummaryTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" FontWeight="Bold"/>
+                                                </DataTemplate>
+                                            </dxg:GridColumn.TotalSummaryTemplate>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn FieldName="IDNACCurrent" Header="Current (A)" Width="80">
+                                            <dxg:GridColumn.DisplayTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Value, StringFormat='{}{0:F1}'}"/>
+                                                </DataTemplate>
+                                            </dxg:GridColumn.DisplayTemplate>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn FieldName="IDNACWattage" Header="Wattage (W)" Width="90">
+                                            <dxg:GridColumn.DisplayTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Value, StringFormat='{}{0:F0}'}"/>
+                                                </DataTemplate>
+                                            </dxg:GridColumn.DisplayTemplate>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn FieldName="IDNACCircuits" Header="Circuits" Width="70"/>
+                                    </dxg:GridControlBand>
+                                    
+                                    <!-- IDNET Band -->
+                                    <dxg:GridControlBand Header="IDNET">
+                                        <dxg:GridColumn FieldName="IDNETDevices" Header="Devices" Width="70"/>
+                                        <dxg:GridColumn FieldName="IDNETPoints" Header="Points" Width="70"/>
+                                        <dxg:GridColumn FieldName="IDNETUnitLoads" Header="Unit Loads" Width="80"/>
+                                        <dxg:GridColumn FieldName="IDNETChannels" Header="Channels" Width="70"/>
+                                    </dxg:GridControlBand>
+                                    
+                                    <!-- Utilization Band -->
+                                    <dxg:GridControlBand Header="Utilization">
+                                        <dxg:GridColumn FieldName="UtilizationPercent" Header="Utilization %" Width="90">
+                                            <dxg:GridColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding UtilizationPercent, StringFormat='{}{0:F1}%'}"
+                                                               Foreground="{Binding UtilizationPercent, Converter={StaticResource UtilizationToColorConverter}}"/>
+                                                </DataTemplate>
+                                            </dxg:GridColumn.CellTemplate>
+                                        </dxg:GridColumn>
+                                        <dxg:GridColumn FieldName="LimitingFactor" Header="Limiting Factor" Width="120"/>
+                                    </dxg:GridControlBand>
+                                    
+                                    <!-- Notes Band -->
+                                    <dxg:GridControlBand Header="Notes">
+                                        <dxg:GridColumn FieldName="Comments" Header="Comments" Width="200"/>
+                                    </dxg:GridControlBand>
+                                </dxg:GridControl.Bands>
+                                <dxg:GridControl.View>
+                                    <dxg:TableView ShowGroupPanel="False"
+                                                   ShowAutoFilterRow="True"
+                                                   AutoWidth="True"
+                                                   AllowEditing="False"
+                                                   ShowTotalSummary="True"/>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </Grid>
+                    </dxdo:DocumentPanel>
+                    
+                    <!-- Additional tabs would be added here following the same pattern -->
+                    
+                </dxdo:DocumentGroup>
+            </dxdo:LayoutGroup>
+        </dxdo:DockLayoutManager>
