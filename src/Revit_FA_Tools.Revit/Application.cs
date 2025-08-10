@@ -35,7 +35,7 @@ namespace Revit_FA_Tools
             }
 
             // Create custom Revit tab
-            string tabName = "Autocall Tools";
+            string tabName = "Revit FA Tools";
             
             // Try to create the tab, but handle the case where it might already exist
             try
@@ -48,12 +48,12 @@ namespace Revit_FA_Tools
                 System.Diagnostics.Debug.WriteLine($"Tab '{tabName}' already exists");
             }
 
-            // Create ribbon panels within the Autocall Tools tab
+            // Create ribbon panels within the Revit FA Tools tab
             RibbonPanel analysisPanel = application.CreateRibbonPanel(tabName, "Fire Alarm Analysis");
 
-            // Create IDNAC Calculator button
+            // Create Autocall Design button
             PushButtonData idnacButtonData = new PushButtonData("Revit_FA_Tools",
-                "IDNAC\nCalculator",
+                "Autocall\nDesign",
                 System.Reflection.Assembly.GetExecutingAssembly().Location,
                 "Revit_FA_Tools.Command");
 

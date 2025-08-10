@@ -3,11 +3,11 @@
   <AddIn Type="Application">
     <Name>Revit Fire Alarm Tools</Name>
     <Text>Revit Fire Alarm Tools</Text>
-    <Description>Revit Fire Alarm Engineering Tools including IDNAC Calculator with 4100ES Analysis</Description>
+    <Description>Professional fire alarm engineering tools for Revit including IDNAC Calculator with 4100ES analysis, device addressing, and comprehensive electrical load calculations.</Description>
     <Assembly>Revit_FA_Tools.dll</Assembly>
     <FullClassName>Revit_FA_Tools.Application</FullClassName>
     <ClientId>B21C6BE3-BD7D-404E-8123-B81D6CF4C8E1</ClientId>
     <VendorId>ADSK</VendorId>
-    <VendorDescription>Revit Fire Alarm Engineering Tools</VendorDescription>
+    <VendorDescription>Fire Alarm Engineering Tools for Autodesk Revit</VendorDescription>
   </AddIn>
 </RevitAddIns>

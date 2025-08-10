@@ -191,6 +191,7 @@
   <PropertyGroup>
     <PostBuildEvent>
       copy "$(TargetPath)" "$(AppData)\Autodesk\Revit\Addins\2024\"
+      copy "$(TargetDir)Revit_FA_Tools.Core.dll" "$(AppData)\Autodesk\Revit\Addins\2024\"
       copy "$(ProjectDir)Configuration\Revit_FA_Tools.addin" "$(AppData)\Autodesk\Revit\Addins\2024\"
     </PostBuildEvent>
   </PropertyGroup>
