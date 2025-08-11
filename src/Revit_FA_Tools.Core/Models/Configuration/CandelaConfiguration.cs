@@ -254,6 +254,10 @@ namespace Revit_FA_Tools
         /// </summary>
         public static DeviceClassification ClassifyDevice(string familyName, string typeName)
         {
+            // Handle null inputs safely
+            familyName = familyName ?? "Unknown";
+            typeName = typeName ?? "Unknown";
+            
             var config = LoadConfiguration();
             var classification = new DeviceClassification
             {
@@ -268,12 +272,15 @@ namespace Revit_FA_Tools
 
             try
             {
-                // First check for exact match
-                var deviceKey = GetDeviceKey(familyName, typeName);
-                if (config.DeviceTypes.ContainsKey(deviceKey))
+                // First check for exact match - safely handle null config or DeviceTypes
+                if (config?.DeviceTypes != null)
                 {
-                    var deviceConfig = config.DeviceTypes[deviceKey];
-                    return ApplyDeviceConfig(deviceConfig, classification);
+                    var deviceKey = GetDeviceKey(familyName, typeName);
+                    if (!string.IsNullOrEmpty(deviceKey) && config.DeviceTypes.ContainsKey(deviceKey))
+                    {
+                        var deviceConfig = config.DeviceTypes[deviceKey];
+                        return ApplyDeviceConfig(deviceConfig, classification);
+                    }
                 }
 
                 // Pattern-based classification for speakers
@@ -352,12 +359,15 @@ namespace Revit_FA_Tools
         private static double? GetCurrentFromMapping(string familyName, string typeName)
         {
             var config = LoadConfiguration();
+            if (config?.DeviceTypes == null) return null;
+            
             var deviceKey = GetDeviceKey(familyName, typeName);
+            if (string.IsNullOrEmpty(deviceKey)) return null;
             
             if (config.DeviceTypes.ContainsKey(deviceKey))
             {
                 var deviceConfig = config.DeviceTypes[deviceKey];
-                return GetFirstCurrentValue(deviceConfig.CandelaCurrentMap);
+                return GetFirstCurrentValue(deviceConfig?.CandelaCurrentMap);
             }
 
             // Try fallback patterns
@@ -367,12 +377,15 @@ namespace Revit_FA_Tools
         private static int? GetUnitLoadsFromMapping(string familyName, string typeName)
         {
             var config = LoadConfiguration();
+            if (config?.DeviceTypes == null) return null;
+            
             var deviceKey = GetDeviceKey(familyName, typeName);
+            if (string.IsNullOrEmpty(deviceKey)) return null;
             
             if (config.DeviceTypes.ContainsKey(deviceKey))
             {
                 var deviceConfig = config.DeviceTypes[deviceKey];
-                return GetFirstUnitLoadValue(deviceConfig.UnitLoadMap);
+                return GetFirstUnitLoadValue(deviceConfig?.UnitLoadMap);
             }
 
             // Try fallback patterns
@@ -426,6 +439,9 @@ namespace Revit_FA_Tools
 
         private static string GetDeviceKey(string familyName, string typeName)
         {
+            // Handle null inputs safely
+            familyName = familyName ?? "Unknown";
+            typeName = typeName ?? "Unknown";
             return $"{familyName}|{typeName}";
         }
     }
