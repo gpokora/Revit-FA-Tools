@@ -83,8 +83,12 @@ namespace Revit_FA_Tools
         {
             if (elements == null) return new List<DeviceSnapshot>();
 
-            var snapshots = new List<DeviceSnapshot>(elements.Count);
-            foreach (var element in elements)
+            // First filter elements using robust electrical device detection (same logic as working analysis)
+            var electricalElements = elements.Where(IsElectricalFamilyInstance).ToList();
+            System.Diagnostics.Debug.WriteLine($"DeviceSnapshotService: Filtered {electricalElements.Count} electrical devices from {elements.Count} total elements");
+
+            var snapshots = new List<DeviceSnapshot>(electricalElements.Count);
+            foreach (var element in electricalElements)
             {
                 try
                 {
@@ -186,6 +190,101 @@ namespace Revit_FA_Tools
         {
             var combined = $"{familyName} {typeName}".ToLower();
             return combined.Contains("repeater");
+        }
+
+        /// <summary>
+        /// Robust electrical family instance detection - same logic as working analysis
+        /// </summary>
+        private bool IsElectricalFamilyInstance(FamilyInstance element)
+        {
+            if (element?.Symbol?.Family == null)
+                return false;
+
+            try
+            {
+                var familyName = element.Symbol.Family.Name;
+                var categoryName = element.Category?.Name ?? "";
+
+                // Check for specific parameters: CURRENT DRAW and Wattage ONLY
+                var targetParams = new[] { "CURRENT DRAW", "Wattage" };
+                bool hasElectricalParam = false;
+
+                // Check instance parameters
+                foreach (var paramName in targetParams)
+                {
+                    var param = element.LookupParameter(paramName);
+                    if (param != null && param.HasValue)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Found electrical parameter '{paramName}' in family '{familyName}' (instance)");
+                        hasElectricalParam = true;
+                        break;
+                    }
+                }
+
+                // Check type parameters if instance parameters not found
+                if (!hasElectricalParam && element.Symbol != null)
+                {
+                    foreach (var paramName in targetParams)
+                    {
+                        var param = element.Symbol.LookupParameter(paramName);
+                        if (param != null && param.HasValue)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Found electrical parameter '{paramName}' in family '{familyName}' (type)");
+                            hasElectricalParam = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Also check family names for common fire alarm device patterns (IDNAC devices ONLY)
+                if (!hasElectricalParam)
+                {
+                    var familyUpper = familyName.ToUpperInvariant();
+                    var categoryUpper = categoryName.ToUpperInvariant();
+
+                    // FIRST: Exclude IDNET detection devices from IDNAC electrical analysis
+                    var idnetDetectionKeywords = new[]
+                    {
+                        "DETECTORS", "DETECTOR", "MODULE", "PULL", "STATION", "MANUAL",
+                        "MONITOR", "INPUT", "OUTPUT", "SENSOR", "SENSING"
+                    };
+
+                    // If it's clearly an IDNET detection device, exclude it from IDNAC analysis
+                    if (idnetDetectionKeywords.Any(keyword => familyUpper.Contains(keyword)))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"IDNAC: Excluded IDNET detection device from electrical analysis: '{familyName}' in category '{categoryName}'");
+                        return false; // Explicitly exclude from IDNAC analysis
+                    }
+
+                    // SECOND: Only include IDNAC notification devices for electrical analysis
+                    var idnacNotificationKeywords = new[]
+                    {
+                        "SPEAKER", "HORN", "STROBE", "BELL", "CHIME", "SOUNDER",
+                        "NOTIFICATION", "NAC", "APPLIANCE"
+                    };
+
+                    if (idnacNotificationKeywords.Any(keyword => familyUpper.Contains(keyword) || categoryUpper.Contains(keyword)))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"IDNAC: Found notification device by name pattern: '{familyName}' in category '{categoryName}' (for electrical analysis)");
+                        hasElectricalParam = true;
+                    }
+
+                    // THIRD: Handle "FIRE ALARM" category more carefully - only for non-detection devices
+                    else if (categoryUpper.Contains("FIRE ALARM") &&
+                             !idnetDetectionKeywords.Any(keyword => familyUpper.Contains(keyword)))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"IDNAC: Found fire alarm device (non-detection) by category: '{familyName}' in category '{categoryName}' (for electrical analysis)");
+                        hasElectricalParam = true;
+                    }
+                }
+
+                return hasElectricalParam;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking electrical family instance: {ex.Message}");
+                return false;
+            }
         }
 
     }
