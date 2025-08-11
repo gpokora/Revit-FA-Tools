@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autodesk.Revit.DB;
 
 namespace Revit_FA_Tools
 {
@@ -621,46 +622,111 @@ namespace Revit_FA_Tools
         #region Helper Methods
 
         /// <summary>
-        /// Get all family instances from the document (placeholder for Revit API)
+        /// Get all family instances from the document using Revit API
         /// </summary>
         private IEnumerable<object> GetAllFamilyInstances()
         {
-            // Placeholder - would use FilteredElementCollector with Revit API
-            // return new FilteredElementCollector((Document)_document)
-            //     .OfClass(typeof(FamilyInstance))
-            //     .Cast<FamilyInstance>();
-            
-            return new List<object>(); // Placeholder
+            try
+            {
+                // Use FilteredElementCollector with Revit API to get all FamilyInstances
+                var collector = new Autodesk.Revit.DB.FilteredElementCollector((Autodesk.Revit.DB.Document)_document);
+                return collector.OfClass(typeof(Autodesk.Revit.DB.FamilyInstance))
+                               .Cast<Autodesk.Revit.DB.FamilyInstance>()
+                               .Cast<object>()
+                               .ToList();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting family instances: {ex.Message}");
+                return new List<object>();
+            }
         }
 
         /// <summary>
-        /// Get family name from instance (placeholder)
+        /// Get family name from instance using Revit API
         /// </summary>
         private string GetFamilyName(object instance)
         {
-            // Placeholder - would use actual Revit API
-            // Real implementation: ((FamilyInstance)instance)?.Symbol?.Family?.Name ?? ""
-            return "";
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return familyInstance?.Symbol?.Family?.Name ?? "";
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting family name: {ex.Message}");
+                return "";
+            }
         }
 
         /// <summary>
-        /// Get device level from instance (placeholder)
+        /// Get device level from instance using Revit API
         /// </summary>
         private string GetDeviceLevel(object instance)
         {
-            // Placeholder - would extract level parameter from Revit
-            // Real implementation: ((FamilyInstance)instance)?.Level?.Name ?? ""
-            return "";
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    // Get level from parameters
+                    var levelParam = familyInstance.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM) 
+                        ?? familyInstance.get_Parameter(BuiltInParameter.SCHEDULE_LEVEL_PARAM);
+                    
+                    if (levelParam?.HasValue == true)
+                    {
+                        return levelParam.AsValueString() ?? "";
+                    }
+                    
+                    // Fallback to host if available
+                    return familyInstance.Host?.Name ?? "";
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting device level: {ex.Message}");
+                return "";
+            }
         }
 
         /// <summary>
-        /// Extract parameters from family instance (placeholder)
+        /// Extract parameters from family instance using Revit API
         /// </summary>
         private Dictionary<string, object> ExtractParameters(object instance)
         {
-            // Placeholder - would implement actual Revit parameter extraction
-            // Real implementation would iterate through FamilyInstance.Parameters
-            return new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
+            
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    // Extract common electrical parameters
+                    var targetParams = new[] { "CURRENT DRAW", "Wattage", "Current", "Power", "CANDELA", "Candela" };
+                    
+                    foreach (var paramName in targetParams)
+                    {
+                        var param = familyInstance.LookupParameter(paramName);
+                        if (param?.HasValue == true)
+                        {
+                            if (param.StorageType == Autodesk.Revit.DB.StorageType.Double)
+                                parameters[paramName] = param.AsDouble();
+                            else if (param.StorageType == Autodesk.Revit.DB.StorageType.Integer)
+                                parameters[paramName] = param.AsInteger();
+                            else if (param.StorageType == Autodesk.Revit.DB.StorageType.String)
+                                parameters[paramName] = param.AsString() ?? "";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error extracting parameters: {ex.Message}");
+            }
+            
+            return parameters;
         }
 
         /// <summary>
