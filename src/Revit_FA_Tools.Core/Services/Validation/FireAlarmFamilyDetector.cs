@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Autodesk.Revit.DB;
 
 namespace Revit_FA_Tools
 {
@@ -334,57 +335,120 @@ namespace Revit_FA_Tools
         }
 
         /// <summary>
-        /// Extract parameters from family instance (placeholder - would need actual Revit API implementation)
+        /// Extract parameters from family instance using Revit API
         /// </summary>
         private Dictionary<string, object> ExtractParameters(object instance)
         {
             var parameters = new Dictionary<string, object>();
             
-            // This would be implemented with actual Revit API calls
-            // For now, returning empty dictionary as placeholder
-            // Real implementation would use FamilyInstance.Parameters and iterate through them
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    // Extract common electrical parameters
+                    var targetParams = new[] { "CURRENT DRAW", "Wattage", "Current", "Power", "CANDELA", "Candela" };
+                    
+                    foreach (var paramName in targetParams)
+                    {
+                        var param = familyInstance.LookupParameter(paramName);
+                        if (param?.HasValue == true)
+                        {
+                            if (param.StorageType == Autodesk.Revit.DB.StorageType.Double)
+                                parameters[paramName] = param.AsDouble();
+                            else if (param.StorageType == Autodesk.Revit.DB.StorageType.Integer)
+                                parameters[paramName] = param.AsInteger();
+                            else if (param.StorageType == Autodesk.Revit.DB.StorageType.String)
+                                parameters[paramName] = param.AsString() ?? "";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error extracting parameters: {ex.Message}");
+            }
             
             return parameters;
         }
 
         /// <summary>
-        /// Get family name from instance (placeholder)
+        /// Get family name from instance using Revit API
         /// </summary>
         private string GetFamilyName(object instance)
         {
-            // Placeholder - would use actual Revit API
-            // Real implementation: ((FamilyInstance)instance)?.Symbol?.Family?.Name
-            return "";
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return familyInstance?.Symbol?.Family?.Name ?? "";
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting family name: {ex.Message}");
+                return "";
+            }
         }
 
         /// <summary>
-        /// Get type name from instance (placeholder)
+        /// Get type name from instance using Revit API
         /// </summary>
         private string GetTypeName(object instance)
         {
-            // Placeholder - would use actual Revit API
-            // Real implementation: ((FamilyInstance)instance)?.Symbol?.Name
-            return "";
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return familyInstance?.Symbol?.Name ?? "";
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting type name: {ex.Message}");
+                return "";
+            }
         }
 
         /// <summary>
-        /// Get category from instance (placeholder)
+        /// Get category from instance using Revit API
         /// </summary>
         private string GetCategory(object instance)
         {
-            // Placeholder - would use actual Revit API
-            // Real implementation: ((FamilyInstance)instance)?.Category?.Name
-            return "";
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return familyInstance?.Category?.Name ?? "";
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting category: {ex.Message}");
+                return "";
+            }
         }
 
         /// <summary>
-        /// Get element ID from instance (placeholder)
+        /// Get element ID from instance using Revit API
         /// </summary>
         private int GetElementId(object instance)
         {
-            // Placeholder - would use actual Revit API
-            // Real implementation: ((FamilyInstance)instance)?.Id?.IntegerValue ?? 0
-            return 0;
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return (int)(familyInstance?.Id?.Value ?? 0);
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting element ID: {ex.Message}");
+                return 0;
+            }
         }
 
         #endregion

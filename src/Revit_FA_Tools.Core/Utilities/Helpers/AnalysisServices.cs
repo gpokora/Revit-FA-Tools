@@ -161,10 +161,33 @@ namespace Revit_FA_Tools
                 
                 if (param?.HasValue == true)
                 {
-                    return param.AsDouble();
+                    // Handle different parameter storage types
+                    switch (param.StorageType)
+                    {
+                        case Autodesk.Revit.DB.StorageType.Double:
+                            return param.AsDouble();
+                            
+                        case Autodesk.Revit.DB.StorageType.Integer:
+                            return (double)param.AsInteger();
+                            
+                        case Autodesk.Revit.DB.StorageType.String:
+                            var stringValue = param.AsString();
+                            if (!string.IsNullOrEmpty(stringValue) && double.TryParse(stringValue, out double parsedValue))
+                            {
+                                return parsedValue;
+                            }
+                            break;
+                            
+                        case Autodesk.Revit.DB.StorageType.ElementId:
+                            // Element ID parameters don't make sense as electrical values
+                            break;
+                    }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error extracting parameter {parameterName}: {ex.Message}");
+            }
             return null;
         }
 

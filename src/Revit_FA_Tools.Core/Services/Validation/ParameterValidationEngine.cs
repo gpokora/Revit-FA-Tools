@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autodesk.Revit.DB;
 
 namespace Revit_FA_Tools
 {
@@ -600,26 +601,73 @@ namespace Revit_FA_Tools
             };
         }
 
-        // Placeholder methods for Revit API integration
+        // Revit API integration methods
         private Dictionary<string, object> ExtractParameters(object instance)
         {
-            // Placeholder - would implement actual Revit parameter extraction
-            // Real implementation would use FamilyInstance.Parameters
-            return new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
+            
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    // Extract common electrical parameters
+                    var targetParams = new[] { "CURRENT DRAW", "Wattage", "Current", "Power", "CANDELA", "Candela", "UNIT_LOADS" };
+                    
+                    foreach (var paramName in targetParams)
+                    {
+                        var param = familyInstance.LookupParameter(paramName);
+                        if (param?.HasValue == true)
+                        {
+                            if (param.StorageType == Autodesk.Revit.DB.StorageType.Double)
+                                parameters[paramName] = param.AsDouble();
+                            else if (param.StorageType == Autodesk.Revit.DB.StorageType.Integer)
+                                parameters[paramName] = param.AsInteger();
+                            else if (param.StorageType == Autodesk.Revit.DB.StorageType.String)
+                                parameters[paramName] = param.AsString() ?? "";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error extracting parameters: {ex.Message}");
+            }
+            
+            return parameters;
         }
 
         private string GetFamilyName(object instance)
         {
-            // Placeholder - would use actual Revit API
-            // Real implementation: ((FamilyInstance)instance)?.Symbol?.Family?.Name ?? ""
-            return "";
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return familyInstance?.Symbol?.Family?.Name ?? "";
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting family name: {ex.Message}");
+                return "";
+            }
         }
 
         private int GetElementId(object instance)
         {
-            // Placeholder - would use actual Revit API  
-            // Real implementation: ((FamilyInstance)instance)?.Id?.IntegerValue ?? 0
-            return 0;
+            try
+            {
+                if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
+                {
+                    return (int)(familyInstance?.Id?.Value ?? 0);
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting element ID: {ex.Message}");
+                return 0;
+            }
         }
 
         #endregion

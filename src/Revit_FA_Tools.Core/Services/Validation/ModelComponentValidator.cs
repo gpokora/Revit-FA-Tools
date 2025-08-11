@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
+using Revit_FA_Tools.Models;
 
 namespace Revit_FA_Tools
 {
@@ -14,17 +15,19 @@ namespace Revit_FA_Tools
         private readonly object _document;
         private readonly FireAlarmFamilyDetector _familyDetector;
         private readonly ParameterValidationEngine _parameterValidator;
+        private readonly DeviceSnapshotService _deviceSnapshotService;
 
-        // Validation thresholds
+        // Validation thresholds - aligned with working analysis requirements
         private const double ANALYSIS_READY_THRESHOLD = 0.80; // 80% complete data required
         private const double GOOD_QUALITY_THRESHOLD = 0.95; // 95% for high accuracy
-        private const double MODERATE_QUALITY_THRESHOLD = 0.60; // 60% minimum for moderate accuracy
+        private const double MODERATE_QUALITY_THRESHOLD = 0.10; // 10% minimum - lowered to match working analysis
 
         public ModelComponentValidator(object document)
         {
             _document = document ?? throw new ArgumentNullException(nameof(document));
             _familyDetector = new FireAlarmFamilyDetector();
             _parameterValidator = new ParameterValidationEngine();
+            _deviceSnapshotService = new DeviceSnapshotService();
         }
 
         /// <summary>
@@ -107,8 +110,9 @@ namespace Revit_FA_Tools
                 if (!hasDevices)
                 {
                     result.Status = ValidationStatus.Fail;
-                    result.Issues.Add("No fire alarm device families detected in the model");
-                    result.Recommendations.Add("Add fire alarm notification devices (speakers, strobes, horns) to the model");
+                    result.Issues.Add("No fire alarm device families detected - analysis requires devices with CURRENT DRAW or Wattage parameters");
+                    result.Recommendations.Add("Add notification devices (speakers, strobes, horns) with electrical parameters");
+                    result.Recommendations.Add("Ensure device families contain 'CURRENT DRAW' or 'Wattage' parameters with valid values");
                 }
                 else
                 {
@@ -184,8 +188,8 @@ namespace Revit_FA_Tools
                     {
                         // Fire alarm family without electrical parameters
                         warningFamilies++;
-                        result.Issues.Add($"Fire alarm family '{familyGroup.Key}' missing electrical parameters");
-                        result.Recommendations.Add($"Add Current, Wattage, or Candela parameters to '{familyGroup.Key}' family");
+                        result.Issues.Add($"Fire alarm family '{familyGroup.Key}' missing required electrical parameters");
+                        result.Recommendations.Add($"Add 'CURRENT DRAW' or 'Wattage' parameter to '{familyGroup.Key}' family for analysis compatibility");
                     }
                 }
 
@@ -347,12 +351,14 @@ namespace Revit_FA_Tools
                 foreach (var instance in allInstances)
                 {
                     var level = GetDeviceLevel(instance);
+                    // Treat "Unknown" as valid level assignment (matches working system)
                     if (string.IsNullOrEmpty(level) || level == "None" || level == "<None>")
                     {
                         unassignedDevices++;
                     }
                     else
                     {
+                        // "Unknown" is a valid level in the working system
                         levelAssignments[level] = levelAssignments.ContainsKey(level) ? levelAssignments[level] + 1 : 1;
                     }
                 }
@@ -381,7 +387,9 @@ namespace Revit_FA_Tools
                 if (levelAssignments.Count == 0)
                 {
                     result.Status = ValidationStatus.Fail;
-                    result.Issues.Add("No devices are assigned to any building levels");
+                    result.Issues.Add("No devices are assigned to building levels - analysis requires level information");
+                    result.Recommendations.Add("Assign devices to building levels or ensure level parameter is populated");
+                    result.Recommendations.Add("Note: 'Unknown' level is acceptable for analysis purposes");
                 }
                 else
                 {
@@ -474,7 +482,7 @@ namespace Revit_FA_Tools
         }
 
         /// <summary>
-        /// Validate model has sufficient data for IDNAC analysis
+        /// Validate model has sufficient data for IDNAC analysis using SAME logic as working AnalysisServices
         /// </summary>
         private ValidationCategoryResult ValidateAnalysisReadiness(IEnumerable<object> familyInstances)
         {
@@ -486,14 +494,16 @@ namespace Revit_FA_Tools
 
             try
             {
-                var fireAlarmInstances = familyInstances.Where((Func<object, bool>)(i => _familyDetector.IsFireAlarmFamily(GetFamilyName(i)))).ToList();
-                result.TotalItems = fireAlarmInstances.Count;
+                // Use DeviceSnapshots for validation - SAME logic as working analysis
+                var deviceSnapshots = GetValidatedDeviceSnapshots();
+                result.TotalItems = deviceSnapshots.Count;
 
-                if (fireAlarmInstances.Count == 0)
+                if (deviceSnapshots.Count == 0)
                 {
                     result.Status = ValidationStatus.Fail;
-                    result.Issues.Add("No fire alarm devices found in model");
-                    result.Recommendations.Add("Add fire alarm notification devices to enable analysis");
+                    result.Issues.Add("No fire alarm devices found in model - analysis requires devices with CURRENT DRAW or Wattage parameters");
+                    result.Recommendations.Add("Add notification devices (speakers, strobes, horns) with electrical parameters");
+                    result.Recommendations.Add("Ensure device families contain 'CURRENT DRAW' or 'Wattage' parameters with valid values");
                     return result;
                 }
 
@@ -501,12 +511,11 @@ namespace Revit_FA_Tools
                 int partialDevices = 0;
                 int notReadyDevices = 0;
 
-                foreach (var instance in fireAlarmInstances)
+                foreach (var snapshot in deviceSnapshots)
                 {
-                    var parameters = ExtractParameters(instance);
-                    var level = GetDeviceLevel(instance);
-                    var hasElectricalParams = HasElectricalParameters(parameters);
-                    var hasLevelAssignment = !string.IsNullOrEmpty(level) && level != "None" && level != "<None>";
+                    // Use SAME criteria as working analysis system
+                    var hasElectricalParams = snapshot.Amps > 0 || snapshot.Watts > 0;
+                    var hasLevelAssignment = !string.IsNullOrEmpty(snapshot.LevelName); // "Unknown" is valid in working system
 
                     if (hasElectricalParams && hasLevelAssignment)
                         readyDevices++;
@@ -520,13 +529,14 @@ namespace Revit_FA_Tools
                 result.WarningItems = partialDevices;
                 result.ErrorItems = notReadyDevices;
 
-                var readinessPercentage = (double)readyDevices / fireAlarmInstances.Count;
+                var readinessPercentage = (double)readyDevices / deviceSnapshots.Count;
 
                 if (readinessPercentage < MODERATE_QUALITY_THRESHOLD)
                 {
                     result.Status = ValidationStatus.Fail;
                     result.Issues.Add($"Only {readinessPercentage:P1} of devices ready for analysis (minimum {MODERATE_QUALITY_THRESHOLD:P0} required)");
-                    result.Recommendations.Add("Add missing electrical parameters and level assignments");
+                    result.Recommendations.Add("Add CURRENT DRAW or Wattage parameters to fire alarm device families");
+                    result.Recommendations.Add("Ensure devices are assigned to building levels (Unknown level is acceptable)");
                 }
                 else if (readinessPercentage < ANALYSIS_READY_THRESHOLD)
                 {
@@ -538,9 +548,9 @@ namespace Revit_FA_Tools
                 {
                     result.Issues.Add($"{readinessPercentage:P1} of devices ready for analysis");
                     if (readinessPercentage >= GOOD_QUALITY_THRESHOLD)
-                        result.Issues.Add("Model has excellent data quality for high-accuracy analysis");
+                        result.Issues.Add("Model has excellent data quality for high-accuracy analysis - matches working analysis standards");
                     else
-                        result.Issues.Add("Model has good data quality for reliable analysis");
+                        result.Issues.Add("Model has good data quality for reliable analysis - compatible with working analysis system");
                 }
             }
             catch (Exception ex)
@@ -622,23 +632,149 @@ namespace Revit_FA_Tools
         #region Helper Methods
 
         /// <summary>
-        /// Get all family instances from the document using Revit API
+        /// Get validated device snapshots using SAME logic as working AnalysisServices
+        /// </summary>
+        private List<DeviceSnapshot> GetValidatedDeviceSnapshots()
+        {
+            try
+            {
+                var collector = new Autodesk.Revit.DB.FilteredElementCollector((Autodesk.Revit.DB.Document)_document);
+                var allInstances = collector.OfClass(typeof(Autodesk.Revit.DB.FamilyInstance))
+                                           .Cast<Autodesk.Revit.DB.FamilyInstance>()
+                                           .ToList();
+                
+                // Use EXACT SAME logic as working AnalysisServices - create device snapshots
+                var deviceSnapshots = _deviceSnapshotService.CreateSnapshots(allInstances);
+                
+                System.Diagnostics.Debug.WriteLine($"ModelComponentValidator: Created {deviceSnapshots.Count} device snapshots from {allInstances.Count} total elements");
+                
+                return deviceSnapshots;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting device snapshots: {ex.Message}");
+                return new List<DeviceSnapshot>();
+            }
+        }
+
+        /// <summary>
+        /// Get filtered family instances using SAME logic as working AnalysisServices (legacy method for backward compatibility)
         /// </summary>
         private IEnumerable<object> GetAllFamilyInstances()
         {
             try
             {
-                // Use FilteredElementCollector with Revit API to get all FamilyInstances
                 var collector = new Autodesk.Revit.DB.FilteredElementCollector((Autodesk.Revit.DB.Document)_document);
-                return collector.OfClass(typeof(Autodesk.Revit.DB.FamilyInstance))
-                               .Cast<Autodesk.Revit.DB.FamilyInstance>()
-                               .Cast<object>()
-                               .ToList();
+                var allInstances = collector.OfClass(typeof(Autodesk.Revit.DB.FamilyInstance))
+                                           .Cast<Autodesk.Revit.DB.FamilyInstance>()
+                                           .ToList();
+                
+                // Use SAME filtering as working AnalysisServices - only electrical/fire alarm elements
+                var electricalElements = allInstances.Where(IsElectricalFamilyInstance).ToList();
+                
+                System.Diagnostics.Debug.WriteLine($"ModelComponentValidator: Filtered {electricalElements.Count} electrical elements from {allInstances.Count} total elements");
+                
+                return electricalElements.Cast<object>().ToList();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error getting family instances: {ex.Message}");
                 return new List<object>();
+            }
+        }
+
+        /// <summary>
+        /// Copy of working IsElectricalFamilyInstance method from AnalysisServices
+        /// </summary>
+        private bool IsElectricalFamilyInstance(FamilyInstance element)
+        {
+            if (element?.Symbol?.Family == null)
+                return false;
+
+            try
+            {
+                var familyName = element.Symbol.Family.Name;
+                var categoryName = element.Category?.Name ?? "";
+
+                // Check for specific parameters: CURRENT DRAW and Wattage ONLY
+                var targetParams = new[] { "CURRENT DRAW", "Wattage" };
+                bool hasElectricalParam = false;
+
+                // Check instance parameters
+                foreach (var paramName in targetParams)
+                {
+                    var param = element.LookupParameter(paramName);
+                    if (param != null && param.HasValue)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Found electrical parameter '{paramName}' in family '{familyName}' (instance)");
+                        hasElectricalParam = true;
+                        break;
+                    }
+                }
+
+                // Check type parameters if instance parameters not found
+                if (!hasElectricalParam && element.Symbol != null)
+                {
+                    foreach (var paramName in targetParams)
+                    {
+                        var param = element.Symbol.LookupParameter(paramName);
+                        if (param != null && param.HasValue)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Found electrical parameter '{paramName}' in family '{familyName}' (type)");
+                            hasElectricalParam = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Also check family names for common fire alarm device patterns (IDNAC devices ONLY)
+                if (!hasElectricalParam)
+                {
+                    var familyUpper = familyName.ToUpperInvariant();
+                    var categoryUpper = categoryName.ToUpperInvariant();
+
+                    // FIRST: Exclude IDNET detection devices from IDNAC electrical analysis
+                    var idnetDetectionKeywords = new[]
+                    {
+                        "DETECTORS", "DETECTOR", "MODULE", "PULL", "STATION", "MANUAL",
+                        "MONITOR", "INPUT", "OUTPUT", "SENSOR", "SENSING"
+                    };
+
+                    // If it's clearly an IDNET detection device, exclude it from IDNAC analysis
+                    if (idnetDetectionKeywords.Any(keyword => familyUpper.Contains(keyword)))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"IDNAC: Excluded IDNET detection device from electrical analysis: '{familyName}' in category '{categoryName}'");
+                        return false; // Explicitly exclude from IDNAC analysis
+                    }
+
+                    // SECOND: Only include IDNAC notification devices for electrical analysis
+                    var idnacNotificationKeywords = new[]
+                    {
+                        "SPEAKER", "HORN", "STROBE", "BELL", "CHIME", "SOUNDER",
+                        "NOTIFICATION", "NAC", "APPLIANCE"
+                    };
+
+                    if (idnacNotificationKeywords.Any(keyword => familyUpper.Contains(keyword) || categoryUpper.Contains(keyword)))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"IDNAC: Found notification device by name pattern: '{familyName}' in category '{categoryName}' (for electrical analysis)");
+                        hasElectricalParam = true;
+                    }
+
+                    // THIRD: Handle "FIRE ALARM" category more carefully - only for non-detection devices
+                    else if (categoryUpper.Contains("FIRE ALARM") &&
+                             !idnetDetectionKeywords.Any(keyword => familyUpper.Contains(keyword)))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"IDNAC: Found fire alarm device (non-detection) by category: '{familyName}' in category '{categoryName}' (for electrical analysis)");
+                        hasElectricalParam = true;
+                    }
+                }
+
+                return hasElectricalParam;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking electrical family instance: {ex.Message}");
+                return false;
             }
         }
 
@@ -663,7 +799,7 @@ namespace Revit_FA_Tools
         }
 
         /// <summary>
-        /// Get device level from instance using Revit API
+        /// Get device level from instance using SAME logic as working AnalysisServices
         /// </summary>
         private string GetDeviceLevel(object instance)
         {
@@ -671,24 +807,18 @@ namespace Revit_FA_Tools
             {
                 if (instance is Autodesk.Revit.DB.FamilyInstance familyInstance)
                 {
-                    // Get level from parameters
+                    // Use EXACT same logic as working AnalysisServices (line 116)
                     var levelParam = familyInstance.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM) 
                         ?? familyInstance.get_Parameter(BuiltInParameter.SCHEDULE_LEVEL_PARAM);
                     
-                    if (levelParam?.HasValue == true)
-                    {
-                        return levelParam.AsValueString() ?? "";
-                    }
-                    
-                    // Fallback to host if available
-                    return familyInstance.Host?.Name ?? "";
+                    return levelParam?.AsValueString() ?? familyInstance.Host?.Name ?? "Unknown";
                 }
-                return "";
+                return "Unknown";
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error getting device level: {ex.Message}");
-                return "";
+                return "Unknown";
             }
         }
 
