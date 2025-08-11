@@ -190,7 +190,7 @@ namespace Revit_FA_Tools.Services
             
             foreach (var option in options)
             {
-                var costPerFoot = baseCosts.GetValueOrDefault(option.CableSpec.AWGSize, 2.0);
+                var costPerFoot = baseCosts.ContainsKey(option.CableSpec.AWGSize) ? baseCosts[option.CableSpec.AWGSize] : 2.0;
                 var totalCost = costPerFoot * length;
                 
                 var costOption = new CableCostOption

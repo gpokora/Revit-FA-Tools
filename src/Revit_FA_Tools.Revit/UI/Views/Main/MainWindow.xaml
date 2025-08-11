@@ -10,7 +10,7 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
     xmlns:local="clr-namespace:Revit_FA_Tools.Converters"
-    Title="IDNAC Calculator - Fire Alarm System Design Tool" 
+    Title="Autocall Design Tools" 
     Height="900" Width="1400"
     WindowStartupLocation="CenterScreen"
     WindowState="Normal"

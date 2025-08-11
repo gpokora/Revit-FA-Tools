@@ -511,7 +511,7 @@ namespace Revit_FA_Tools.Views
                 if (syncResult.Success)
                 {
                     DXMessageBox.Show(
-                        $"Successfully saved {syncResult.UpdatedCount} changes to Revit model.",
+                        $"Successfully saved {syncResult.ChangesApplied} changes to Revit model.",
                         "Save Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else

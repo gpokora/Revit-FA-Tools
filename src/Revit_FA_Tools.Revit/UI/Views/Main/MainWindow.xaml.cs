@@ -879,13 +879,6 @@ namespace Revit_FA_Tools
         }
 
 
-
-        private async void RunAnalysis_Click(object sender, RoutedEventArgs e)
-        {
-            // Use new async method with better progress reporting and cancellation
-            await RunAnalysisInternalAsync();
-        }
-
         private async void RunAnalysis_Click(object sender, ItemClickEventArgs e)
         {
             // Use new async method with better progress reporting and cancellation
@@ -939,6 +932,38 @@ namespace Revit_FA_Tools
                     UpdateStatus("Starting comprehensive analysis...");
                     SetUIEnabled(false);
                 });
+
+                // Step 1: Model Validation (Pre-Analysis Gate)
+                progressWindow?.UpdateAnalysisPhase(AnalysisPhase.ValidatingModel,
+                    currentOperation: "Validating model components and data quality");
+
+                var preAnalysisValidator = new PreAnalysisValidator(_document);
+                var validationResult = await Task.Run(() => preAnalysisValidator.ValidateBeforeAnalysis(), 
+                    cancellationTokenSource.Token).ConfigureAwait(false);
+
+                // Check validation gate decision
+                if (validationResult.Decision == PreAnalysisValidator.AnalysisGateDecision.Block)
+                {
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        progressWindow?.ShowError("Model validation failed - analysis cannot proceed");
+                        this.ShowValidationResults(validationResult);
+                    });
+                    return;
+                }
+                else if (validationResult.Decision == PreAnalysisValidator.AnalysisGateDecision.GuidedFix)
+                {
+                    var proceed = await Dispatcher.InvokeAsync(() => this.ShowGuidedFixDialog(validationResult));
+                    if (!proceed)
+                        return;
+                }
+                else if (validationResult.Decision == PreAnalysisValidator.AnalysisGateDecision.ProceedWithWarnings)
+                {
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        progressWindow?.UpdateCurrentItem($"Proceeding with {validationResult.AccuracyEstimate}");
+                    });
+                }
 
                 // Get elements asynchronously to prevent UI blocking
                 var elements = await Task.Run(() => GetElementsByScope(), cancellationTokenSource.Token).ConfigureAwait(false);
@@ -1007,6 +1032,95 @@ namespace Revit_FA_Tools
                     SetUIEnabled(true);
                     progressWindow?.Close();
                 });
+            }
+        }
+
+        private bool ShowGuidedFixDialog(PreAnalysisValidator.PreAnalysisValidationResult validationResult)
+        {
+            try
+            {
+                var message = $"Model validation found issues that can be automatically fixed:\n\n";
+                message += $"Current Status: {validationResult.AccuracyEstimate}\n\n";
+
+                if (validationResult.AutoFixOptions.Any())
+                {
+                    message += "AVAILABLE AUTO-FIXES:\n";
+                    foreach (var option in validationResult.AutoFixOptions.Take(3))
+                    {
+                        message += $"• {option.Name}: {option.Description}\n";
+                        message += $"  Affects {option.AffectedDevices} devices\n";
+                    }
+                    message += "\n";
+                }
+
+                message += $"RECOMMENDATION:\n{validationResult.RecommendedAction}\n\n";
+                message += "Would you like to:\n";
+                message += "• YES: Apply auto-fixes and continue with analysis\n";
+                message += "• NO: Review issues manually before proceeding";
+
+                var result = DXMessageBox.Show(message, "Model Validation - Guided Fix",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Apply auto-fixes
+                    foreach (var option in validationResult.AutoFixOptions.Where(o => o.IsRecommended))
+                    {
+                        try
+                        {
+                            option.AutoFixAction?.Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Auto-fix error for {option.Name}: {ex.Message}");
+                        }
+                    }
+
+                    DXMessageBox.Show("Auto-fixes applied successfully. Proceeding with analysis.",
+                        "Auto-Fix Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error showing guided fix dialog: {ex.Message}");
+                return false;
+            }
+        }
+
+        private void ShowValidationResults(PreAnalysisValidator.PreAnalysisValidationResult validationResult)
+        {
+            try
+            {
+                var message = "Model Validation Results:\n\n";
+
+                if (validationResult.BlockingIssues.Any())
+                {
+                    message += "BLOCKING ISSUES:\n";
+                    message += string.Join("\n", validationResult.BlockingIssues.Take(5).Select(i => $"• {i}"));
+                    if (validationResult.BlockingIssues.Count > 5)
+                        message += $"\n• ... and {validationResult.BlockingIssues.Count - 5} more issues";
+                    message += "\n\n";
+                }
+
+                if (validationResult.WarningIssues.Any())
+                {
+                    message += "WARNINGS:\n";
+                    message += string.Join("\n", validationResult.WarningIssues.Take(3).Select(i => $"• {i}"));
+                    if (validationResult.WarningIssues.Count > 3)
+                        message += $"\n• ... and {validationResult.WarningIssues.Count - 3} more warnings";
+                    message += "\n\n";
+                }
+
+                message += $"RECOMMENDATION:\n{validationResult.RecommendedAction}";
+
+                DXMessageBox.Show(message, "Model Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error showing validation results: {ex.Message}");
             }
         }
 
@@ -8004,6 +8118,15 @@ namespace Revit_FA_Tools
                 System.Diagnostics.Debug.WriteLine($"Failed to show status message '{message}': {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Show validation results to the user
+        /// </summary>
+
+
+        /// <summary>
+        /// Show guided fix dialog and return whether to proceed
+        /// </summary>
 
         #endregion
 

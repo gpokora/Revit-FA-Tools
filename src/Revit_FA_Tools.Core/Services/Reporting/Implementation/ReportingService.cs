@@ -84,7 +84,7 @@ namespace Revit_FA_Tools.Services
                     Message = "Preparing report data..."
                 });
                 
-                var template = _templates.GetValueOrDefault(request.TemplateId, _templates["COMPREHENSIVE"]);
+                var template = _templates.ContainsKey(request.TemplateId) ? _templates[request.TemplateId] : _templates["COMPREHENSIVE"];
                 var reportData = PrepareReportData(request);
                 
                 progress?.Report(new AnalysisProgress

@@ -619,7 +619,7 @@ namespace Revit_FA_Tools.Services.ParameterMapping
             var sku = mapping.DeviceSpecification?.SKU;
             if (!string.IsNullOrEmpty(sku))
             {
-                pattern.SuccessfulMappings[sku] = pattern.SuccessfulMappings.GetValueOrDefault(sku, 0) + 1;
+                pattern.SuccessfulMappings[sku] = pattern.SuccessfulMappings.ContainsKey(sku) ? pattern.SuccessfulMappings[sku] + 1 : 1;
             }
             
             // Update common parameters

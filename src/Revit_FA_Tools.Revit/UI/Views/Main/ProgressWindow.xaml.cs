@@ -499,6 +499,12 @@ namespace Revit_FA_Tools
                     details = "Preparing analysis environment...";
                     break;
 
+                case AnalysisPhase.ValidatingModel:
+                    operation = "Validating Model";
+                    percentage = 10;
+                    details = "Checking model components and data quality...";
+                    break;
+
                 case AnalysisPhase.CollectingElements:
                     operation = "Collecting Elements";
                     percentage = 15;
@@ -566,6 +572,7 @@ namespace Revit_FA_Tools
     public enum AnalysisPhase
     {
         Initializing,
+        ValidatingModel,
         CollectingElements,
         FilteringElements,
         AnalyzingElectrical,
