@@ -21,6 +21,11 @@ namespace Revit_FA_Tools
         public RepeaterPolicy Repeater { get; set; } = new RepeaterPolicy();
         public BalancingExclusions Balancing { get; set; } = new BalancingExclusions();
         public DeviceOverrides Overrides { get; set; } = new DeviceOverrides();
+        
+        // New configuration sections for unified services
+        public CircuitConfiguration CircuitConfiguration { get; set; } = new CircuitConfiguration();
+        public ElectricalConfiguration ElectricalConfiguration { get; set; } = new ElectricalConfiguration();
+        public ParameterMappingConfiguration ParameterMappingConfiguration { get; set; } = new ParameterMappingConfiguration();
 
         /// <summary>
         /// IDNAC notification system limits and parameters
@@ -302,5 +307,35 @@ namespace Revit_FA_Tools
                 _current?.Save();
             }
         }
+    }
+    
+    /// <summary>
+    /// Circuit configuration parameters
+    /// </summary>
+    public class CircuitConfiguration
+    {
+        public int MaxDevicesPerCircuit { get; set; } = 25;
+        public int MaxAddressPerCircuit { get; set; } = 250;
+    }
+    
+    /// <summary>
+    /// Electrical configuration parameters
+    /// </summary>
+    public class ElectricalConfiguration
+    {
+        public double MinVoltage { get; set; } = 20.0;
+        public double MaxVoltage { get; set; } = 28.0;
+        public double MaxCircuitCurrent { get; set; } = 7.0;
+    }
+    
+    /// <summary>
+    /// Parameter mapping configuration
+    /// </summary>
+    public class ParameterMappingConfiguration
+    {
+        public bool EnableAutoMapping { get; set; } = true;
+        public int CacheExpirationMinutes { get; set; } = 60;
+        public Dictionary<string, string> ParameterMappings { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, object> DefaultValues { get; set; } = new Dictionary<string, object>();
     }
 }

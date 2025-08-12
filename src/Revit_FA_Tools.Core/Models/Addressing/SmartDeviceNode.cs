@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Revit_FA_Tools.Models;
 
-namespace Revit_FA_Tools.Models.Addressing
+namespace Revit_FA_Tools.Core.Models.Addressing
 {
     /// <summary>
     /// Enhanced device model that combines existing DeviceSnapshot with addressing capabilities
@@ -35,7 +35,13 @@ namespace Revit_FA_Tools.Models.Addressing
             set => SetProperty(ref _deviceName, value); 
         }
         public string DeviceType { get; set; }
-        public string ElementId => SourceDevice?.ElementId.ToString() ?? "";
+        public NodeType NodeType { get; set; } = NodeType.Device;
+        private string _elementId;
+        public string ElementId 
+        {
+            get => _elementId ?? SourceDevice?.ElementId.ToString() ?? "";
+            set => _elementId = value;
+        }
         
         // CRITICAL: Physical properties (wire connections and installation order)
         public int PhysicalPosition 
@@ -72,7 +78,12 @@ namespace Revit_FA_Tools.Models.Addressing
         }
         
         // Electrical properties (integrated with parameter mapping)
-        public decimal CurrentDraw => (decimal)(SourceDevice?.Amps ?? GetEnhancedCurrentDraw());
+        private decimal? _currentDraw;
+        public decimal CurrentDraw 
+        { 
+            get => _currentDraw ?? (decimal)(SourceDevice?.Amps ?? GetEnhancedCurrentDraw());
+            set => _currentDraw = value;
+        }
         public decimal PowerConsumption => (decimal)(SourceDevice?.Watts ?? 0);
         public int UnitLoads => SourceDevice?.UnitLoads ?? 1;
         
@@ -89,9 +100,73 @@ namespace Revit_FA_Tools.Models.Addressing
         }
         
         // Location properties (from existing models)  
-        public string Level => SourceDevice?.LevelName ?? "";
+        private string _level;
+        public string Level 
+        { 
+            get => _level ?? SourceDevice?.LevelName ?? "";
+            set => _level = value;
+        }
         public string Zone => SourceDevice?.Zone ?? "";
         public double Elevation => SourceDevice?.Z ?? 0;
+        
+        // Additional properties expected by services
+        public string Address 
+        { 
+            get => AssignedAddress?.ToString() ?? "";
+            set 
+            {
+                if (int.TryParse(value, out int addr))
+                    AssignedAddress = addr;
+                else
+                    AssignedAddress = null;
+            }
+        }
+        
+        public AddressLockState LockState
+        {
+            get => IsAddressLocked ? AddressLockState.Locked : AddressLockState.Unlocked;
+            set => IsAddressLocked = (value == AddressLockState.Locked || value == AddressLockState.Manual);
+        }
+        
+        public AddressingCircuit Circuit
+        {
+            get => ParentCircuit;
+            set => ParentCircuit = value;
+        }
+        
+        public string Room { get; set; } = ""; // DeviceSnapshot doesn't have Room
+        public double X { get; set; } = 0; // Can be set for device positioning
+        public double Y { get; set; } = 0; // Can be set for device positioning  
+        public double Z { get; set; } = 0; // Can be set for device positioning
+        public double Candela { get; set; } = 0; // DeviceSnapshot doesn't have Candela
+        public string CircuitNumber { get; set; } = ""; // Can be overridden
+        public string Function => DeviceType;
+        public string Area => Zone;
+        public string NetworkSegment => "";
+        public int AddressSlots { get; set; } = 1;
+        public double CandelaRating => Candela;
+        
+        // Additional settable properties for service compatibility
+        public string FamilyName { get; set; } = "";
+        public string DeviceFunction { get; set; } = "";
+        public bool IsNotificationDevice { get; set; } = false;
+        
+        // Initialize from SourceDevice when available
+        private void InitializeFromSourceDevice()
+        {
+            if (SourceDevice != null)
+            {
+                if (string.IsNullOrEmpty(FamilyName))
+                    FamilyName = SourceDevice.FamilyName;
+                if (string.IsNullOrEmpty(DeviceFunction))
+                    DeviceFunction = DeviceType;
+                if (!IsNotificationDevice)
+                    IsNotificationDevice = SourceDevice.HasStrobe || SourceDevice.HasSpeaker;
+                if (X == 0) X = SourceDevice.X;
+                if (Y == 0) Y = SourceDevice.Y;
+                if (Z == 0) Z = SourceDevice.Z;
+            }
+        }
         
         // CRITICAL OPERATION: Physical move that preserves address
         public void MovePhysically(int newPosition)
@@ -173,5 +248,16 @@ namespace Revit_FA_Tools.Models.Addressing
         Warning, 
         Error,
         Critical
+    }
+
+    /// <summary>
+    /// Node type for tree structure categorization
+    /// </summary>
+    public enum NodeType
+    {
+        Device,
+        CircuitBranch,
+        Panel,
+        Container
     }
 }

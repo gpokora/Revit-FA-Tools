@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DevExpress.Mvvm;
 using Revit_FA_Tools.Models;
-using Revit_FA_Tools.Models.Addressing;
+using Revit_FA_Tools.Core.Models.Addressing;
 using Revit_FA_Tools.Services.Addressing;
 using Revit_FA_Tools.Services.Integration;
 

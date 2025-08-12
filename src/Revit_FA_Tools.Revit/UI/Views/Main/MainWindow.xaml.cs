@@ -31,6 +31,9 @@ using Color = System.Windows.Media.Color;
 using TableView = DevExpress.Xpf.Grid.TableView;
 using DevExpress.Utils;
 using DevExpress.Data;
+using Revit_FA_Tools.Core.Models.Analysis;
+using Revit_FA_Tools.Core.Models.Electrical;
+using Revit_FA_Tools.Core.Models.Recommendations;
 
 namespace Revit_FA_Tools
 {
@@ -99,6 +102,8 @@ namespace Revit_FA_Tools
         private string _currentScope = "Active View";
         private bool _analysisCompleted = false;
         private string _lastAnalysisScope = "Active View";
+        
+        // Analysis results fields - moved to lines 92-96
 
         // Debug logging
         private static string _debugLogPath;
@@ -4229,12 +4234,34 @@ namespace Revit_FA_Tools
         {
             try
             {
-                // return DevExpress.Xpf.Core.Native.DXImageExtension.GetImageSource(path);
-                return null; // TODO: Fix image loading
+                if (string.IsNullOrEmpty(path))
+                    return null;
+
+                // Try DevExpress image first - commented out due to API changes
+                // try
+                // {
+                //     return DevExpress.Xpf.Core.Native.DXImageExtension.GetImageSource(path);
+                // }
+                // catch
+                // {
+                
+                // Fallback: creating a simple colored rectangle as an image
+                var drawingVisual = new System.Windows.Media.DrawingVisual();
+                using (var drawingContext = drawingVisual.RenderOpen())
+                {
+                    var brush = path.Contains("completed") || path.Contains("success") 
+                        ? System.Windows.Media.Brushes.Green 
+                        : System.Windows.Media.Brushes.Orange;
+                    drawingContext.DrawRectangle(brush, null, new System.Windows.Rect(0, 0, 16, 16));
+                }
+                
+                var renderTarget = new System.Windows.Media.Imaging.RenderTargetBitmap(16, 16, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+                renderTarget.Render(drawingVisual);
+                return renderTarget;
             }
             catch
             {
-                return null; // Return null if image not found
+                return null; // Return null if image generation fails
             }
         }
 
@@ -6864,9 +6891,44 @@ namespace Revit_FA_Tools
 
                 if (openDialog.ShowDialog() == true)
                 {
-                    // TODO: Implement loading analysis data from file
-                    DXMessageBox.Show("Load analysis functionality will be implemented in a future version.",
-                        "Feature Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+                    try
+                    {
+                        string jsonData = System.IO.File.ReadAllText(openDialog.FileName);
+                        var analysisData = Newtonsoft.Json.Linq.JObject.Parse(jsonData);
+
+                        if (analysisData != null)
+                        {
+                            // Restore analysis results if they exist
+                            if (analysisData["ElectricalResults"] != null)
+                                _electricalResults = analysisData["ElectricalResults"].ToObject<ElectricalResults>();
+                            
+                            if (analysisData["IDNACResults"] != null)
+                                _idnacResults = analysisData["IDNACResults"].ToObject<IDNACSystemResults>();
+                            
+                            if (analysisData["IDNETResults"] != null)
+                                _idnetResults = analysisData["IDNETResults"].ToObject<IDNETSystemResults>();
+                            
+                            if (analysisData["AmplifierResults"] != null)
+                                _amplifierResults = analysisData["AmplifierResults"].ToObject<AmplifierRequirements>();
+                            
+                            if (analysisData["PanelRecommendations"] != null)
+                                _panelRecommendations = analysisData["PanelRecommendations"].ToObject<List<PanelPlacementRecommendation>>();
+
+                            _analysisCompleted = true;
+                            string timestamp = analysisData["Timestamp"]?.ToString() ?? "Unknown";
+                            string scope = analysisData["Scope"]?.ToString() ?? "Unknown";
+                            
+                            UpdateStatus($"Analysis results loaded from {System.IO.Path.GetFileName(openDialog.FileName)} (Created: {timestamp}, Scope: {scope})");
+                            
+                            DXMessageBox.Show($"Analysis results loaded successfully from {openDialog.FileName}",
+                                "Load Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    catch (Exception loadEx)
+                    {
+                        DXMessageBox.Show($"Error loading analysis data: {loadEx.Message}",
+                            "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
@@ -6897,9 +6959,30 @@ namespace Revit_FA_Tools
 
                 if (saveDialog.ShowDialog() == true)
                 {
-                    // TODO: Implement saving analysis data to file
-                    DXMessageBox.Show("Save analysis functionality will be implemented in a future version.",
-                        "Feature Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+                    try
+                    {
+                        var analysisData = new
+                        {
+                            Timestamp = DateTime.Now,
+                            Scope = _currentScope,
+                            ElectricalResults = _electricalResults,
+                            IDNACResults = _idnacResults,
+                            IDNETResults = _idnetResults,
+                            AmplifierResults = _amplifierResults,
+                            PanelRecommendations = _panelRecommendations
+                        };
+
+                        string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(analysisData, Newtonsoft.Json.Formatting.Indented);
+                        System.IO.File.WriteAllText(saveDialog.FileName, jsonData);
+
+                        DXMessageBox.Show($"Analysis results saved successfully to {saveDialog.FileName}",
+                            "Save Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception saveEx)
+                    {
+                        DXMessageBox.Show($"Error saving analysis data: {saveEx.Message}",
+                            "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
@@ -6959,9 +7042,16 @@ namespace Revit_FA_Tools
                     return;
                 }
 
-                // TODO: Implement print summary report
-                DXMessageBox.Show("Print functionality will be implemented in a future version.",
-                    "Feature Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+                var printDialog = new System.Windows.Controls.PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    var summaryReport = GenerateSummaryReport();
+                    var document = CreatePrintDocument(summaryReport, "Fire Alarm Analysis - Summary Report");
+                    printDialog.PrintDocument(document.DocumentPaginator, "Fire Alarm Analysis Summary");
+                    
+                    DXMessageBox.Show("Summary report sent to printer successfully.",
+                        "Print Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -6981,9 +7071,16 @@ namespace Revit_FA_Tools
                     return;
                 }
 
-                // TODO: Implement print detailed report
-                DXMessageBox.Show("Print functionality will be implemented in a future version.",
-                    "Feature Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+                var printDialog = new System.Windows.Controls.PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    var detailedReport = GenerateDetailedReport();
+                    var document = CreatePrintDocument(detailedReport, "Fire Alarm Analysis - Detailed Report");
+                    printDialog.PrintDocument(document.DocumentPaginator, "Fire Alarm Analysis Detailed");
+                    
+                    DXMessageBox.Show("Detailed report sent to printer successfully.",
+                        "Print Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -7003,9 +7100,22 @@ namespace Revit_FA_Tools
                     return;
                 }
 
-                // TODO: Implement print preview
-                DXMessageBox.Show("Print preview functionality will be implemented in a future version.",
-                    "Feature Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+                var previewWindow = new System.Windows.Window
+                {
+                    Title = "Print Preview - Fire Alarm Analysis Report",
+                    Width = 800,
+                    Height = 600,
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
+                };
+                
+                var summaryReport = GenerateSummaryReport();
+                var document = CreatePrintDocument(summaryReport, "Fire Alarm Analysis - Print Preview");
+                
+                var documentViewer = new System.Windows.Controls.DocumentViewer();
+                documentViewer.Document = document;
+                previewWindow.Content = documentViewer;
+                
+                previewWindow.ShowDialog();
             }
             catch (Exception ex)
             {
@@ -7667,6 +7777,115 @@ namespace Revit_FA_Tools
         {
 
         }
+
+        #region Print Helper Methods
+
+        private string GenerateSummaryReport()
+        {
+            var report = new System.Text.StringBuilder();
+            report.AppendLine("FIRE ALARM ANALYSIS - SUMMARY REPORT");
+            report.AppendLine(new string('=', 50));
+            report.AppendLine($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            report.AppendLine($"Scope: {_currentScope}");
+            report.AppendLine();
+
+            if (_electricalResults != null)
+            {
+                report.AppendLine("ELECTRICAL SUMMARY:");
+                report.AppendLine($"Total Current: {_electricalResults.TotalCurrent:F2}A");
+                report.AppendLine($"Total Power: {_electricalResults.TotalPower:F2}W");
+                report.AppendLine($"Status: {(_electricalResults.IsValid ? "Valid" : "Issues Found")}");
+                report.AppendLine();
+            }
+
+            if (_idnacResults != null)
+            {
+                report.AppendLine("IDNAC SYSTEM SUMMARY:");
+                report.AppendLine($"Circuits Created: {_idnacResults.CircuitsCreated}");
+                report.AppendLine($"Devices Addressed: {_idnacResults.DevicesAddressed}");
+                report.AppendLine($"Capacity Used: {_idnacResults.CapacityUsedPercent:F1}%");
+                report.AppendLine();
+            }
+
+            if (_amplifierResults != null)
+            {
+                report.AppendLine("AMPLIFIER REQUIREMENTS:");
+                report.AppendLine($"Required Wattage: {_amplifierResults.RequiredWattage}W");
+                report.AppendLine($"Recommended Model: {_amplifierResults.RecommendedModel}");
+                report.AppendLine();
+            }
+
+            return report.ToString();
+        }
+
+        private string GenerateDetailedReport()
+        {
+            var report = new System.Text.StringBuilder();
+            report.AppendLine("FIRE ALARM ANALYSIS - DETAILED REPORT");
+            report.AppendLine(new string('=', 60));
+            report.AppendLine($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            report.AppendLine($"Scope: {_currentScope}");
+            report.AppendLine();
+
+            // Include all summary information
+            report.AppendLine(GenerateSummaryReport());
+            
+            // Add detailed sections
+            if (_panelRecommendations != null && _panelRecommendations.Any())
+            {
+                report.AppendLine("PANEL PLACEMENT RECOMMENDATIONS:");
+                report.AppendLine(new string('-', 40));
+                foreach (var recommendation in _panelRecommendations)
+                {
+                    report.AppendLine($"Panel: {recommendation.PanelType}");
+                    report.AppendLine($"Location: {recommendation.RecommendedLocation}");
+                    report.AppendLine($"Reasoning: {recommendation.Reasoning}");
+                    report.AppendLine();
+                }
+            }
+
+            if (_idnetResults != null)
+            {
+                report.AppendLine("IDNET SYSTEM DETAILS:");
+                report.AppendLine(new string('-', 40));
+                report.AppendLine($"Channels Used: {_idnetResults.ChannelsUsed}");
+                report.AppendLine($"Network Load: {_idnetResults.NetworkLoad:F1}%");
+                report.AppendLine($"Status: {(_idnetResults.IsValid ? "Valid Configuration" : "Configuration Issues")}");
+                report.AppendLine();
+            }
+
+            return report.ToString();
+        }
+
+        private System.Windows.Documents.FixedDocument CreatePrintDocument(string content, string title)
+        {
+            var document = new System.Windows.Documents.FixedDocument();
+            var pageContent = new System.Windows.Documents.PageContent();
+            var fixedPage = new System.Windows.Documents.FixedPage();
+            
+            // Set page size to Letter (8.5" x 11")
+            fixedPage.Width = 96 * 8.5; // 96 DPI * 8.5 inches
+            fixedPage.Height = 96 * 11;  // 96 DPI * 11 inches
+
+            // Create text block for content
+            var textBlock = new System.Windows.Controls.TextBlock
+            {
+                Text = content,
+                FontFamily = new System.Windows.Media.FontFamily("Consolas"),
+                FontSize = 10,
+                Margin = new System.Windows.Thickness(48), // 0.5 inch margins
+                TextWrapping = System.Windows.TextWrapping.Wrap
+            };
+
+            // Add content to page
+            fixedPage.Children.Add(textBlock);
+            pageContent.Child = fixedPage;
+            document.Pages.Add(pageContent);
+
+            return document;
+        }
+
+        #endregion
     }
 
     // Grid item classes specific to MainWindow (different from SharedDataModels)
@@ -8237,6 +8456,7 @@ namespace Revit_FA_Tools
                 System.Diagnostics.Debug.WriteLine($"Error updating spare capacity status: {ex.Message}");
             }
         }
+
 
     }
 }

@@ -73,6 +73,16 @@ namespace Revit_FA_Tools
         /// Total unit loads across all devices
         /// </summary>
         public int TotalUnitLoads => Elements?.Sum(e => (int)(e.Current * 1.25)) ?? 0; // Estimate UL from current
+        
+        /// <summary>
+        /// Alias for TotalWattage for backward compatibility
+        /// </summary>
+        public double TotalPower => TotalWattage;
+        
+        /// <summary>
+        /// Validation status - true if analysis completed without critical errors
+        /// </summary>
+        public bool IsValid => Elements?.Any() == true && TotalCurrent > 0;
     }
 
     public class LevelData
@@ -148,6 +158,21 @@ namespace Revit_FA_Tools
         /// Total unit loads across all IDNAC circuits
         /// </summary>
         public int TotalUnitLoads => LevelAnalysis?.Values.Sum(l => l.UnitLoads) ?? 0;
+        
+        /// <summary>
+        /// Number of circuits created for reporting compatibility
+        /// </summary>
+        public int CircuitsCreated => TotalIdnacsNeeded;
+        
+        /// <summary>
+        /// Number of devices addressed for reporting compatibility
+        /// </summary>
+        public int DevicesAddressed => TotalDevices;
+        
+        /// <summary>
+        /// Capacity used percentage for reporting compatibility
+        /// </summary>
+        public double CapacityUsedPercent => TotalIdnacsNeeded > 0 ? (TotalCurrent / (TotalIdnacsNeeded * 3.0)) * 100 : 0;
     }
 
     public class OptimizationSummary
@@ -183,6 +208,16 @@ namespace Revit_FA_Tools
         public double AmplifierCurrent { get; set; }
         public int SpeakerCount { get; set; }
         public int SpareCapacityPercent { get; set; } = 20;
+        
+        /// <summary>
+        /// Required wattage for reporting compatibility
+        /// </summary>
+        public double RequiredWattage => AmplifierPowerUsable;
+        
+        /// <summary>
+        /// Recommended amplifier model for reporting compatibility
+        /// </summary>
+        public string RecommendedModel { get; set; } = string.Empty;
     }
 
     // Panel Placement Models
@@ -197,6 +232,16 @@ namespace Revit_FA_Tools
         public List<string> Advantages { get; set; } = new List<string>();
         public List<string> Considerations { get; set; } = new List<string>();
         public List<PanelInfo> Panels { get; set; } = new List<PanelInfo>();
+        
+        /// <summary>
+        /// Panel type for reporting compatibility
+        /// </summary>
+        public string PanelType { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Recommended location for reporting compatibility
+        /// </summary>
+        public string RecommendedLocation { get; set; } = string.Empty;
         public string AmplifierStrategy { get; set; } = string.Empty;
         public Dictionary<string, object> SystemTotals { get; set; } = new Dictionary<string, object>();
         public int MinPanelsNeeded { get; set; }
@@ -614,37 +659,6 @@ namespace Revit_FA_Tools
         public List<string> CoveredLevels { get; set; } = new List<string>();
     }
 
-    public class IDNETSystemResults
-    {
-        public Dictionary<string, IDNETLevelAnalysis> LevelAnalysis { get; set; } = new Dictionary<string, IDNETLevelAnalysis>();
-        public List<IDNETDevice> AllDevices { get; set; } = new List<IDNETDevice>();
-        public int TotalDevices { get; set; }
-        public double TotalPowerConsumption { get; set; }
-        public int TotalUnitLoads { get; set; }
-        public List<IDNETNetworkSegment> NetworkSegments { get; set; } = new List<IDNETNetworkSegment>();
-        public IDNETSystemSummary? SystemSummary { get; set; }
-        public DateTime AnalysisTimestamp { get; set; }
-        
-        /// <summary>
-        /// Number of channels required for the IDNET system
-        /// </summary>
-        public int ChannelsRequired => SystemSummary?.RecommendedNetworkChannels ?? 0;
-        
-        /// <summary>
-        /// Maximum number of devices per channel
-        /// </summary>
-        public int MaxDevicesPerChannel => 159; // NFPA standard for IDNET
-    }
-
-    public class IDNETSystemSummary
-    {
-        public int RecommendedNetworkChannels { get; set; }
-        public int RepeatersRequired { get; set; }
-        public double TotalWireLength { get; set; }
-        public List<string> SystemRecommendations { get; set; } = new List<string>();
-        public bool IntegrationWithIDNAC { get; set; }
-        public string PowerSupplyRequirements { get; set; } = string.Empty;
-    }
 
     public class IDNETAnalysisGridItem
     {

@@ -284,6 +284,7 @@ namespace Revit_FA_Tools.Models
             );
         }
         
+        /// <summary>
         /// Validate device specifications for consistency
         /// </summary>
         public static ValidationResult ValidateSpecifications(this DeviceSnapshot device)
@@ -314,6 +315,62 @@ namespace Revit_FA_Tools.Models
             }
 
             return result;
+        }
+        
+        /// <summary>
+        /// Get address property (placeholder for DeviceSnapshot compatibility)
+        /// </summary>
+        public static string GetAddress(this DeviceSnapshot device)
+        {
+            return device.CustomProperties?.TryGetValue("Address", out var addr) == true ? addr?.ToString() : "";
+        }
+        
+        /// <summary>
+        /// Get circuit number property (placeholder for DeviceSnapshot compatibility)
+        /// </summary>
+        public static string GetCircuitNumber(this DeviceSnapshot device)
+        {
+            return device.CustomProperties?.TryGetValue("CircuitNumber", out var circuit) == true ? circuit?.ToString() : "";
+        }
+        
+        /// <summary>
+        /// Get current draw property (uses Amps)
+        /// </summary>
+        public static double GetCurrentDraw(this DeviceSnapshot device)
+        {
+            return device.Amps;
+        }
+        
+        /// <summary>
+        /// Get device function (uses DeviceType)
+        /// </summary>
+        public static string GetDeviceFunction(this DeviceSnapshot device)
+        {
+            return device.DeviceType;
+        }
+        
+        /// <summary>
+        /// Get room property (placeholder)
+        /// </summary>
+        public static string GetRoom(this DeviceSnapshot device)
+        {
+            return device.CustomProperties?.TryGetValue("Room", out var room) == true ? room?.ToString() : "";
+        }
+        
+        /// <summary>
+        /// Check if device is notification device
+        /// </summary>
+        public static bool GetIsNotificationDevice(this DeviceSnapshot device)
+        {
+            return device.HasStrobe || device.HasSpeaker;
+        }
+        
+        /// <summary>
+        /// Get candela rating
+        /// </summary>
+        public static double GetCandela(this DeviceSnapshot device)
+        {
+            return device.GetCandelaRating();
         }
     }
 }

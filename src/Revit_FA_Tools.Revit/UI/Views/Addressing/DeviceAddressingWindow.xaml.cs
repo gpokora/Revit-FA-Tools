@@ -1,11 +1,12 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.TreeList;
 using Revit_FA_Tools.ViewModels.Addressing;
-using Revit_FA_Tools.Models.Addressing;
+using Revit_FA_Tools.Core.Models.Addressing;
 
 namespace Revit_FA_Tools.Views.Addressing
 {
@@ -118,7 +119,7 @@ namespace Revit_FA_Tools.Views.Addressing
                     // SCENARIO 2: CRITICAL - Physical reordering within circuit
                     HandlePhysicalReordering(draggedDevice, targetDevice, dropPosition);
                 }
-                else if (IsDropOutsideCircuit(hitInfo))
+                else if (IsDropOutsideCircuit(hitInfo, treeList))
                 {
                     // SCENARIO 3: Remove device from circuit
                     HandleRemoveFromCircuit(draggedDevice);
@@ -235,10 +236,30 @@ namespace Revit_FA_Tools.Views.Addressing
             return 1;
         }
 
-        private bool IsDropOutsideCircuit(TreeListViewHitInfo hitInfo)
+        private bool IsDropOutsideCircuit(TreeListViewHitInfo hitInfo, TreeListControl treeList)
         {
-            // TODO: Implement logic to detect drop outside circuit bounds
-            return false;
+            try
+            {
+                // Check if hit is on a valid circuit or panel node
+                if (hitInfo?.InRowCell == true && hitInfo.RowHandle >= 0)
+                {
+                    var targetNode = treeList.GetRow(hitInfo.RowHandle) as SmartDeviceNode;
+                    if (targetNode != null)
+                    {
+                        // Allow drops on circuit branches and panels
+                        return targetNode.NodeType != NodeType.CircuitBranch && 
+                               targetNode.NodeType != NodeType.Panel;
+                    }
+                }
+                
+                // If hit is outside any node, consider it outside circuit bounds
+                return hitInfo?.InRowCell != true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error detecting drop bounds: {ex.Message}");
+                return true; // Default to safe behavior
+            }
         }
 
         // Address editing event handler
@@ -253,9 +274,57 @@ namespace Revit_FA_Tools.Views.Addressing
                     {
                         // Revert if assignment failed
                         e.Handled = true;
-                        // TODO: Show validation error
+                        
+                        // Show validation error to user
+                        var errorMessage = GetAddressValidationError(device, newAddress.Value);
+                        System.Windows.MessageBox.Show(
+                            errorMessage,
+                            "Address Assignment Error",
+                            System.Windows.MessageBoxButton.OK,
+                            System.Windows.MessageBoxImage.Warning);
+                            
+                        // Revert the UI change
+                        if (sender is TreeListControl treeListControl)
+                        {
+                            treeListControl.RefreshData();
+                        }
                     }
                 }
+            }
+        }
+
+        private string GetAddressValidationError(SmartDeviceNode device, int attemptedAddress)
+        {
+            try
+            {
+                if (device.ParentCircuit == null)
+                    return $"Cannot assign address {attemptedAddress}: Device is not assigned to a circuit.";
+
+                // Check if address is already in use
+                var existingDevice = device.ParentCircuit.Devices.FirstOrDefault(d => d.AssignedAddress == attemptedAddress && d != device);
+                if (existingDevice != null)
+                    return $"Address {attemptedAddress} is already assigned to device '{existingDevice.DeviceName}' in this circuit.";
+
+                // Check if address is within valid range
+                if (attemptedAddress < 1 || attemptedAddress > 159)
+                    return $"Address {attemptedAddress} is outside the valid range (1-159).";
+
+                // Check if device requires multiple address slots
+                if (device.AddressSlots > 1)
+                {
+                    for (int i = 1; i < device.AddressSlots; i++)
+                    {
+                        var conflictDevice = device.ParentCircuit.Devices.FirstOrDefault(d => d.AssignedAddress == attemptedAddress + i && d != device);
+                        if (conflictDevice != null)
+                            return $"Address range {attemptedAddress}-{attemptedAddress + device.AddressSlots - 1} conflicts with device '{conflictDevice.DeviceName}' at address {attemptedAddress + i}.";
+                    }
+                }
+
+                return $"Address {attemptedAddress} assignment failed for unknown reason.";
+            }
+            catch (Exception ex)
+            {
+                return $"Error validating address {attemptedAddress}: {ex.Message}";
             }
         }
 

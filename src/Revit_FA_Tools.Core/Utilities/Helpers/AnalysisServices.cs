@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Revit_FA_Tools.Models;
+using Revit_FA_Tools.Core.Models.Analysis;
 
 namespace Revit_FA_Tools
 {

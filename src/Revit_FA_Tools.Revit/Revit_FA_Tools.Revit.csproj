@@ -16,6 +16,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <DisableOutOfProcTaskHost>true</DisableOutOfProcTaskHost>
     <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -91,12 +92,10 @@
       <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RevitAPI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
     </Reference>
     <Reference Include="RevitAPIUI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -191,9 +190,10 @@
   <!-- Post-build event to copy DLL to Revit Addins folder -->
   <PropertyGroup>
     <PostBuildEvent>
-      copy "$(TargetPath)" "$(AppData)\Autodesk\Revit\Addins\2024\"
-      copy "$(TargetDir)Revit_FA_Tools.Core.dll" "$(AppData)\Autodesk\Revit\Addins\2024\"
-      copy "$(ProjectDir)Configuration\Revit_FA_Tools.addin" "$(AppData)\Autodesk\Revit\Addins\2024\"
+      if not exist "$(AppData)\Autodesk\Revit\Addins\2024\" mkdir "$(AppData)\Autodesk\Revit\Addins\2024\"
+      copy "$(TargetPath)" "$(AppData)\Autodesk\Revit\Addins\2024\" /Y
+      copy "$(TargetDir)Revit_FA_Tools.Core.dll" "$(AppData)\Autodesk\Revit\Addins\2024\" /Y
+      copy "$(ProjectDir)Configuration\Revit_FA_Tools.addin" "$(AppData)\Autodesk\Revit\Addins\2024\" /Y
     </PostBuildEvent>
   </PropertyGroup>
 </Project>

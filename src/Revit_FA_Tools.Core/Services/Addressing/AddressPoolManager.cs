@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit_FA_Tools.Models.Addressing;
+using Revit_FA_Tools.Core.Models.Addressing;
 
 namespace Revit_FA_Tools.Services.Addressing
 {
@@ -111,16 +111,16 @@ namespace Revit_FA_Tools.Services.Addressing
         }
         
         // Validation and utility methods
-        public Models.Addressing.ValidationResult ValidateAddress(int address, SmartDeviceNode device)
+        public ValidationResult ValidateAddress(int address, SmartDeviceNode device)
         {
-            var result = new Models.Addressing.ValidationResult { IsValid = true };
+            var result = new ValidationResult { IsValid = true };
             
             // Range check
             if (address < 1 || address > _maxAddress)
             {
                 result.IsValid = false;
                 result.ErrorMessage = $"Address {address} is outside valid range (1-{_maxAddress})";
-                result.Severity = Models.Addressing.ValidationSeverity.Error;
+                result.Severity = ValidationSeverity.Error;
                 return result;
             }
             
@@ -132,7 +132,7 @@ namespace Revit_FA_Tools.Services.Addressing
                 {
                     result.IsValid = false;
                     result.ErrorMessage = $"Address {address} is already assigned to {conflictDevice.DeviceName}";
-                    result.Severity = Models.Addressing.ValidationSeverity.Error;
+                    result.Severity = ValidationSeverity.Error;
                     result.SuggestedAlternatives = GetNearbyAvailableAddresses(address, 5);
                     return result;
                 }
@@ -146,7 +146,7 @@ namespace Revit_FA_Tools.Services.Addressing
                 {
                     result.IsValid = false;
                     result.ErrorMessage = $"Address {address} is locked (device installed in field)";
-                    result.Severity = Models.Addressing.ValidationSeverity.Error;
+                    result.Severity = ValidationSeverity.Error;
                     return result;
                 }
             }

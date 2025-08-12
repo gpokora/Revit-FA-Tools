@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Autodesk.Revit.DB;
+using Revit_FA_Tools.Core.Models.Analysis;
 
 namespace Revit_FA_Tools
 {

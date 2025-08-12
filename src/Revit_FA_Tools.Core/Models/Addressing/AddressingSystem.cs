@@ -6,8 +6,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Revit_FA_Tools.Models;
 using Revit_FA_Tools;
+using Revit_FA_Tools.Services.Addressing;
 
-namespace Revit_FA_Tools.Models.Addressing
+namespace Revit_FA_Tools.Core.Models.Addressing
 {
     /// <summary>
     /// Circuit model for addressing that integrates with existing IDNAC analysis
@@ -21,7 +22,7 @@ namespace Revit_FA_Tools.Models.Addressing
         {
             Id = Guid.NewGuid().ToString();
             Devices = new ObservableCollection<SmartDeviceNode>();
-            AddressPool = new Services.Addressing.AddressPoolManager(159); // Standard IDNAC capacity
+            AddressPool = new AddressPoolManager(159); // Standard IDNAC capacity
         }
         
         // Circuit identity
@@ -36,7 +37,7 @@ namespace Revit_FA_Tools.Models.Addressing
         // Integration with existing IDNAC models - DO NOT MODIFY EXISTING MODELS
         public string PanelId { get; set; }
         public string IDNACCardId { get; set; }
-        public int CircuitNumber { get; set; }
+        public string CircuitNumber { get; set; } = "";
         
         // Capacity and limits
         public int MaxAddresses { get; set; } = 159;
@@ -48,7 +49,7 @@ namespace Revit_FA_Tools.Models.Addressing
         
         // Device collection
         public ObservableCollection<SmartDeviceNode> Devices { get; set; }
-        public Services.Addressing.AddressPoolManager AddressPool { get; set; }
+        public AddressPoolManager AddressPool { get; set; }
         
         // Calculated properties
         public int UsedCapacity => Devices.Count(d => d.IsAddressed);
@@ -56,10 +57,33 @@ namespace Revit_FA_Tools.Models.Addressing
         public double UtilizationPercentage => (double)UsedCapacity / MaxAddresses;
         public bool IsNearCapacity => UtilizationPercentage > SafeCapacityThreshold;
         
+        // Additional properties expected by services
+        public int DeviceCount => PhysicalDeviceCount;
+        public double DeviceUtilization => UtilizationPercentage;
+        public decimal MaxCurrent { get; set; } = 3.0m; // NFPA limit
+        public int MaxDevices 
+        { 
+            get => MaxAddresses; 
+            set => MaxAddresses = value; 
+        }
+        
         // Electrical calculations (integration with existing services)
         public decimal TotalCurrent => Devices.Sum(d => d.CurrentDraw);
         public decimal TotalPower => Devices.Sum(d => d.PowerConsumption);
         public int TotalUnitLoads => Devices.Sum(d => d.UnitLoads);
+        
+        /// <summary>
+        /// Update utilization calculations - called by services
+        /// </summary>
+        public void UpdateUtilization()
+        {
+            OnPropertyChanged(nameof(DeviceCount));
+            OnPropertyChanged(nameof(DeviceUtilization));
+            OnPropertyChanged(nameof(UtilizationPercentage));
+            OnPropertyChanged(nameof(UsedCapacity));
+            OnPropertyChanged(nameof(TotalCurrent));
+            OnPropertyChanged(nameof(TotalPower));
+        }
         
         // CRITICAL OPERATION: Add device to circuit
         public void AddDevice(SmartDeviceNode device, int? position = null)
@@ -169,6 +193,13 @@ namespace Revit_FA_Tools.Models.Addressing
         public string Name { get; set; }
         public string PanelType { get; set; } // FACP, IDNAC, etc.
         public string Location { get; set; }
+        
+        // Alias for Id to match service expectations
+        public string PanelId 
+        { 
+            get => Id; 
+            set => Id = value; 
+        }
         
         // Integration with existing models - DO NOT MODIFY EXISTING MODELS
         public string RevitElementId { get; set; }

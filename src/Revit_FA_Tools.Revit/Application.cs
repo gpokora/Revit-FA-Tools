@@ -1,5 +1,9 @@
+using System;
 using Autodesk.Revit.UI;
 using DevExpress.Xpf.Core;
+using Revit_FA_Tools.Core.Infrastructure.ServiceRegistration;
+using Revit_FA_Tools.Core.Infrastructure.DependencyInjection;
+using IServiceProvider = Revit_FA_Tools.Core.Infrastructure.DependencyInjection.IServiceProvider;
 
 namespace Revit_FA_Tools
 {
@@ -8,8 +12,26 @@ namespace Revit_FA_Tools
     /// </summary>
     public class Application : IExternalApplication
     {
+        private static IServiceProvider _serviceProvider;
+
+        /// <summary>
+        /// Gets the global service provider for the application
+        /// </summary>
+        public static IServiceProvider ServiceProvider => _serviceProvider;
+
         public Result OnStartup(UIControlledApplication application)
         {
+            // Initialize dependency injection container
+            try
+            {
+                InitializeServices();
+                System.Diagnostics.Debug.WriteLine("Dependency injection container initialized successfully");
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to initialize dependency injection: {ex.Message}");
+                // Continue startup even if DI fails to maintain backward compatibility
+            }
             // Initialize DevExpress theme at application level
             try
             {
@@ -86,7 +108,41 @@ namespace Revit_FA_Tools
 
         public Result OnShutdown(UIControlledApplication application)
         {
+            // Dispose of the service provider
+            try
+            {
+                if (_serviceProvider is IDisposable disposableProvider)
+                {
+                    disposableProvider.Dispose();
+                }
+                System.Diagnostics.Debug.WriteLine("Service provider disposed successfully");
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error disposing service provider: {ex.Message}");
+            }
+
             return Result.Succeeded;
+        }
+
+        /// <summary>
+        /// Initializes the dependency injection container
+        /// </summary>
+        private void InitializeServices()
+        {
+            var services = new ServiceCollection();
+            
+            // Register Core services
+            services.RegisterCoreServices();
+            
+            // Register Revit-specific services
+            services.RegisterRevitServices();
+            
+            // Build the service provider
+            _serviceProvider = services.BuildServiceProvider();
+            
+            // Validate that all required services can be resolved
+            ServiceRegistration.ValidateServices((System.IServiceProvider)_serviceProvider);
         }
     }
 }

@@ -17,6 +17,11 @@ namespace Revit_FA_Tools.Models
         Auto,
         
         /// <summary>
+        /// Address is unlocked and can be changed
+        /// </summary>
+        Unlocked,
+        
+        /// <summary>
         /// Address is locked and should not be changed
         /// </summary>
         Locked,
@@ -371,6 +376,11 @@ namespace Revit_FA_Tools.Models
                 } 
             } 
         }
+        
+        // Additional properties for service compatibility
+        public string CircuitNumber { get; set; } = string.Empty;
+        public string DeviceType { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
         
         public string FullAddress => $"{PanelId}.{BranchId}.{Address:D3}";
         

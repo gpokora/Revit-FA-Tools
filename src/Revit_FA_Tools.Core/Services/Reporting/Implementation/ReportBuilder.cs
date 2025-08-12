@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Revit_FA_Tools.Models;
+using Revit_FA_Tools.Core.Models.Analysis;
 
 namespace Revit_FA_Tools.Services
 {

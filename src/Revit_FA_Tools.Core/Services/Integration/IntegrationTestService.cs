@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Revit_FA_Tools.Models;
-using Revit_FA_Tools.Models.Addressing;
+using Revit_FA_Tools.Core.Models.Addressing;
 using Revit_FA_Tools.Services.ParameterMapping;
 
 namespace Revit_FA_Tools.Services.Integration
