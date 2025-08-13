@@ -112,15 +112,66 @@ namespace Revit_FA_Tools
             {
                 // Extract all Revit API data on UI thread
                 var elementId = element.Id.Value;
-                var levelParam = element.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM) 
-                    ?? element.get_Parameter(BuiltInParameter.SCHEDULE_LEVEL_PARAM);
-                var levelName = levelParam?.AsValueString() ?? element.Host?.Name ?? "Unknown";
+                
+                // Get level name - try multiple approaches
+                string levelName = "Unknown";
+                
+                // First try: Get the level directly from the element
+                if (element.LevelId != null)
+                {
+                    levelName = element.LevelId.ToString();
+                }
+                // Second try: Get from schedule level parameter
+                else
+                {
+                    var levelParam = element.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM) 
+                        ?? element.get_Parameter(BuiltInParameter.SCHEDULE_LEVEL_PARAM)
+                        ?? element.get_Parameter(BuiltInParameter.FAMILY_LEVEL_PARAM);
+                    
+                    if (levelParam != null && levelParam.HasValue)
+                    {
+                        // If it's an element ID, get the level element
+                        if (levelParam.StorageType == Autodesk.Revit.DB.StorageType.ElementId)
+                        {
+                            var levelId = levelParam.AsElementId();
+                            if (levelId != null && levelId != Autodesk.Revit.DB.ElementId.InvalidElementId)
+                            {
+                                var levelElement = element.Document.GetElement(levelId) as Autodesk.Revit.DB.Level;
+                                if (levelElement != null)
+                                {
+                                    levelName = levelElement.Name;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            levelName = levelParam.AsValueString() ?? "Unknown";
+                        }
+                    }
+                }
+                
+                // Third try: Get from host
+                if (levelName == "Unknown" && element.Host != null)
+                {
+                    if (element.Host is Autodesk.Revit.DB.Level hostLevel)
+                    {
+                        levelName = hostLevel.Name;
+                    }
+                    else
+                    {
+                        levelName = element.Host.Name ?? "Unknown";
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"Element {elementId}: Level = {levelName}");
                 var familyName = element.Symbol?.FamilyName ?? "Unknown";
                 var typeName = element.Symbol?.Name ?? "Unknown";
 
                 // Extract electrical parameters
                 var watts = ExtractParameterValue(element, "Wattage") ?? 
                            ExtractParameterValue(element, "WATTAGE") ?? 0.0;
+                
+                System.Diagnostics.Debug.WriteLine($"Element {elementId} ({familyName}): Watts = {watts}");
 
                 // Use device classification service for proper current/UL calculation
                 var classification = CandelaConfigurationService.ClassifyDevice(familyName, typeName);
@@ -144,7 +195,8 @@ namespace Revit_FA_Tools
                 return new DeviceSnapshot(
                     (int)elementId, levelName, familyName, typeName,
                     watts, amps, unitLoads,
-                    hasStrobe, hasSpeaker, isIsolator, isRepeater);
+                    hasStrobe, hasSpeaker, isIsolator, isRepeater,
+                    levelName); // Pass levelName as Zone
             }
             catch (Exception ex)
             {
@@ -157,19 +209,42 @@ namespace Revit_FA_Tools
         {
             try
             {
-                var param = element.LookupParameter(parameterName) ?? 
-                           element.Symbol?.LookupParameter(parameterName);
-                
-                if (param?.HasValue == true)
+                // Try instance parameter first
+                var param = element.LookupParameter(parameterName);
+                if (param == null)
                 {
+                    // Try type parameter
+                    param = element.Symbol?.LookupParameter(parameterName);
+                    if (param != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Found '{parameterName}' as TYPE parameter");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Found '{parameterName}' as INSTANCE parameter");
+                }
+                
+                if (param != null)
+                {
+                    if (!param.HasValue)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Parameter '{parameterName}' exists but has NO VALUE");
+                        return null;
+                    }
+                    
                     // Handle different parameter storage types
                     switch (param.StorageType)
                     {
                         case Autodesk.Revit.DB.StorageType.Double:
-                            return param.AsDouble();
+                            var doubleValue = param.AsDouble();
+                            System.Diagnostics.Debug.WriteLine($"Parameter '{parameterName}' value (double): {doubleValue}");
+                            return doubleValue;
                             
                         case Autodesk.Revit.DB.StorageType.Integer:
-                            return (double)param.AsInteger();
+                            var intValue = param.AsInteger();
+                            System.Diagnostics.Debug.WriteLine($"Parameter '{parameterName}' value (int): {intValue}");
+                            return (double)intValue;
                             
                         case Autodesk.Revit.DB.StorageType.String:
                             var stringValue = param.AsString();
@@ -183,6 +258,10 @@ namespace Revit_FA_Tools
                             // Element ID parameters don't make sense as electrical values
                             break;
                     }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Parameter '{parameterName}' NOT FOUND in element or type");
                 }
             }
             catch (Exception ex)

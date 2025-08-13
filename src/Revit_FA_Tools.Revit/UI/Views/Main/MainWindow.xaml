@@ -474,6 +474,10 @@
                                            RibbonStyle="Large"
                                            ItemClick="ThemeSettings_Click"
                                            Hint="Change application theme"/>
+                        <dxb:BarButtonItem Content="Reset Layout" 
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Reset.svg}"
+                                           ItemClick="ResetLayout_Click"
+                                           Hint="Reset window layout to default and show all panels"/>
                     </dxr:RibbonPageGroup>
 
                     <!-- Help Group -->

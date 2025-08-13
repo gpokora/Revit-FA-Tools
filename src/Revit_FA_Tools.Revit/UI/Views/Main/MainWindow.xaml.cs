@@ -112,7 +112,7 @@ namespace Revit_FA_Tools
 
         // Helper method for safe name lookup
         private T Find<T>(string name) where T : class
-            => this.FindName(name) as T;
+            => ((System.Windows.FrameworkElement)this).FindName(name) as T;
 
         // Missing UI elements (to prevent compilation errors) - these remain null intentionally
         private DevExpress.Xpf.Editors.SpinEdit SpareCapacitySpinner = null;
@@ -376,6 +376,62 @@ namespace Revit_FA_Tools
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error saving layout on window closing: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Reset layout to default state and ensure all panels are visible
+        /// </summary>
+        private void ResetLayoutToDefault()
+        {
+            try
+            {
+                // Delete the saved layout file
+                if (File.Exists(_layoutConfigPath))
+                {
+                    File.Delete(_layoutConfigPath);
+                    System.Diagnostics.Debug.WriteLine($"Deleted saved layout file: {_layoutConfigPath}");
+                }
+
+                // Clear any saved layout from the DockLayoutManager
+                if (MainDockLayoutManager != null)
+                {
+                    // Get all layout panels and make them visible
+                    var layoutPanels = MainDockLayoutManager.GetItems().OfType<DevExpress.Xpf.Docking.LayoutPanel>().ToList();
+                    foreach (var panel in layoutPanels)
+                    {
+                        panel.Visibility = WpfVisibility.Visible;
+                        panel.Closed = false;
+                        if (panel.Parent is DevExpress.Xpf.Docking.LayoutGroup group)
+                        {
+                            group.SelectedTabIndex = 0;
+                        }
+                    }
+                    
+                    // Activate the first panel
+                    if (layoutPanels.Any())
+                    {
+                        MainDockLayoutManager.Activate(layoutPanels.First());
+                    }
+                }
+                
+                // Ensure all grids are visible
+                var detailedGrid = ((System.Windows.FrameworkElement)this).FindName("DetailedDeviceGrid") as DevExpress.Xpf.Grid.GridControl;
+                if (detailedGrid != null)
+                {
+                    detailedGrid.Visibility = WpfVisibility.Visible;
+                }
+                
+                // Force a layout update
+                MainDockLayoutManager?.UpdateLayout();
+                
+                UpdateStatus("Layout reset to default - please restart the application for best results");
+                System.Diagnostics.Debug.WriteLine("Layout reset to default");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error resetting layout: {ex.Message}");
+                ShowErrorMessage($"Error resetting layout: {ex.Message}");
             }
         }
 
@@ -1814,7 +1870,7 @@ namespace Revit_FA_Tools
         {
             try
             {
-                var detailedGrid = System.Windows.Application.Current.MainWindow.FindName("DetailedDeviceGrid") as DevExpress.Xpf.Grid.GridControl;
+                var detailedGrid = ((System.Windows.FrameworkElement)this).FindName("DetailedDeviceGrid") as DevExpress.Xpf.Grid.GridControl;
                 if (detailedGrid == null || _electricalResults?.Elements == null)
                 {
                     System.Diagnostics.Debug.WriteLine("LoadDetailedDeviceGrid: DetailedDeviceGrid or _electricalResults.Elements is null");
@@ -2686,12 +2742,12 @@ namespace Revit_FA_Tools
         {
             try
             {
-                var detailedGrid = System.Windows.Application.Current.MainWindow.FindName("DetailedDeviceGrid") as DevExpress.Xpf.Grid.GridControl;
+                var detailedGrid = ((System.Windows.FrameworkElement)this).FindName("DetailedDeviceGrid") as DevExpress.Xpf.Grid.GridControl;
                 if (detailedGrid?.ItemsSource is ObservableCollection<DeviceDetailItem> items)
                 {
                     int pendingCount = items.Count(item => item.IsDirty);
 
-                    var pendingBadge = System.Windows.Application.Current.MainWindow.FindName("PendingChangesBadge") as System.Windows.Controls.TextBlock;
+                    var pendingBadge = ((System.Windows.FrameworkElement)this).FindName("PendingChangesBadge") as System.Windows.Controls.TextBlock;
                     if (pendingBadge != null)
                     {
                         pendingBadge.Text = pendingCount.ToString();
@@ -2716,7 +2772,7 @@ namespace Revit_FA_Tools
             try
             {
                 var pendingChanges = PendingChangesService.Instance;
-                var applyButton = System.Windows.Application.Current.MainWindow.FindName("ApplyChangesButton") as DevExpress.Xpf.Bars.BarButtonItem;
+                var applyButton = ((System.Windows.FrameworkElement)this).FindName("ApplyChangesButton") as DevExpress.Xpf.Bars.BarButtonItem;
 
                 if (applyButton != null)
                 {
@@ -2744,8 +2800,8 @@ namespace Revit_FA_Tools
             try
             {
                 var pendingChanges = PendingChangesService.Instance;
-                var statusItem = System.Windows.Application.Current.MainWindow.FindName("UnsyncedChangesStatusItem") as System.Windows.Controls.Primitives.StatusBarItem;
-                var statusText = System.Windows.Application.Current.MainWindow.FindName("UnsyncedChangesText") as System.Windows.Controls.TextBlock;
+                var statusItem = ((System.Windows.FrameworkElement)this).FindName("UnsyncedChangesStatusItem") as System.Windows.Controls.Primitives.StatusBarItem;
+                var statusText = ((System.Windows.FrameworkElement)this).FindName("UnsyncedChangesText") as System.Windows.Controls.TextBlock;
 
                 if (statusItem != null && statusText != null)
                 {
@@ -2771,7 +2827,7 @@ namespace Revit_FA_Tools
             try
             {
                 // Update mapping count
-                var mappingCountText = System.Windows.Application.Current.MainWindow.FindName("MappingCountText") as System.Windows.Controls.TextBlock;
+                var mappingCountText = ((System.Windows.FrameworkElement)this).FindName("MappingCountText") as System.Windows.Controls.TextBlock;
                 if (mappingCountText != null)
                 {
                     try
@@ -2787,7 +2843,7 @@ namespace Revit_FA_Tools
                 }
 
                 // Update last modified time
-                var lastUpdatedText = System.Windows.Application.Current.MainWindow.FindName("ConfigLastUpdatedText") as System.Windows.Controls.TextBlock;
+                var lastUpdatedText = ((System.Windows.FrameworkElement)this).FindName("ConfigLastUpdatedText") as System.Windows.Controls.TextBlock;
                 if (lastUpdatedText != null)
                 {
                     try
@@ -2810,8 +2866,8 @@ namespace Revit_FA_Tools
                 }
 
                 // Update validation status
-                var validationIcon = System.Windows.Application.Current.MainWindow.FindName("ValidationStatusIcon") as DevExpress.Xpf.Core.DXImage;
-                var validationText = System.Windows.Application.Current.MainWindow.FindName("ValidationStatusText") as System.Windows.Controls.TextBlock;
+                var validationIcon = ((System.Windows.FrameworkElement)this).FindName("ValidationStatusIcon") as DevExpress.Xpf.Core.DXImage;
+                var validationText = ((System.Windows.FrameworkElement)this).FindName("ValidationStatusText") as System.Windows.Controls.TextBlock;
 
                 if (validationIcon != null && validationText != null)
                 {
@@ -2876,7 +2932,7 @@ namespace Revit_FA_Tools
         {
             try
             {
-                var detailedGrid = System.Windows.Application.Current.MainWindow.FindName("DetailedDeviceGrid") as GridControl;
+                var detailedGrid = ((System.Windows.FrameworkElement)this).FindName("DetailedDeviceGrid") as GridControl;
                 if (detailedGrid?.ItemsSource is ObservableCollection<DeviceDetailItem> items)
                 {
                     var circuitDevices = items.Where(d => d.Circuit == circuitName).ToList();
@@ -2964,7 +3020,7 @@ namespace Revit_FA_Tools
         {
             try
             {
-                var quickFiltersPanel = System.Windows.Application.Current.MainWindow.FindName("QuickFiltersPanel") as System.Windows.Controls.StackPanel;
+                var quickFiltersPanel = ((System.Windows.FrameworkElement)this).FindName("QuickFiltersPanel") as System.Windows.Controls.StackPanel;
                 if (quickFiltersPanel != null)
                 {
                     foreach (var child in quickFiltersPanel.Children)
@@ -3570,6 +3626,29 @@ namespace Revit_FA_Tools
             }
         }
 
+        private void ResetLayout_Click(object sender, ItemClickEventArgs e)
+        {
+            try
+            {
+                var result = DXMessageBox.Show(
+                    "Reset Layout\n\n" +
+                    "This will reset the window layout to default and show all hidden panels.\n\n" +
+                    "Do you want to continue?",
+                    "Reset Layout",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    ResetLayoutToDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"Error resetting layout: {ex.Message}");
+            }
+        }
+
         private void ThemeSettings_Click(object sender, ItemClickEventArgs e)
         {
             try
@@ -3677,14 +3756,14 @@ namespace Revit_FA_Tools
                 }
 
                 // Update any status text elements if they exist
-                var statusText = System.Windows.Application.Current.MainWindow.FindName("SpareCapacityStatusText") as System.Windows.Controls.TextBlock;
+                var statusText = ((System.Windows.FrameworkElement)this).FindName("SpareCapacityStatusText") as System.Windows.Controls.TextBlock;
                 if (statusText != null)
                 {
                     statusText.Text = $"Current spare capacity setting: {spareCapacityPercent:F1}%";
                 }
 
                 // Update any other spare capacity related UI elements
-                var capacityDisplay = System.Windows.Application.Current.MainWindow.FindName("CurrentSpareCapacityText") as System.Windows.Controls.TextBlock;
+                var capacityDisplay = ((System.Windows.FrameworkElement)this).FindName("CurrentSpareCapacityText") as System.Windows.Controls.TextBlock;
                 if (capacityDisplay != null)
                 {
                     capacityDisplay.Text = $"{spareCapacityPercent:F0}%";
@@ -7214,7 +7293,7 @@ namespace Revit_FA_Tools
                 var checkBox = sender as System.Windows.Controls.CheckBox;
                 bool isEnabled = checkBox?.IsChecked ?? false;
 
-                var detailedGrid = System.Windows.Application.Current.MainWindow.FindName("DetailedDeviceGrid") as GridControl;
+                var detailedGrid = ((System.Windows.FrameworkElement)this).FindName("DetailedDeviceGrid") as GridControl;
                 if (detailedGrid?.View is TableView tableView)
                 {
                     if (isEnabled)
@@ -7581,7 +7660,7 @@ namespace Revit_FA_Tools
 
             try
             {
-                var detailedGrid = System.Windows.Application.Current.MainWindow.FindName("DetailedDeviceGrid") as GridControl;
+                var detailedGrid = ((System.Windows.FrameworkElement)this).FindName("DetailedDeviceGrid") as GridControl;
                 if (detailedGrid?.View is TableView tableView)
                 {
                     // Clear existing filter
@@ -8315,14 +8394,14 @@ namespace Revit_FA_Tools
             try
             {
                 // Update the status message TextBlock if it exists
-                var statusMessage = this.FindName("StatusMessage") as TextBlock;
+                var statusMessage = ((System.Windows.FrameworkElement)this).FindName("StatusMessage") as TextBlock;
                 if (statusMessage != null)
                 {
                     statusMessage.Text = message;
                 }
                 
                 // Also update system status text if available  
-                var systemStatusText = this.FindName("SystemStatusText") as TextBlock;
+                var systemStatusText = ((System.Windows.FrameworkElement)this).FindName("SystemStatusText") as TextBlock;
                 if (systemStatusText != null)
                 {
                     systemStatusText.Text = message;
@@ -8346,6 +8425,26 @@ namespace Revit_FA_Tools
         /// <summary>
         /// Show guided fix dialog and return whether to proceed
         /// </summary>
+
+        private void UpdateSpareCapacityStatusDisplay(double capacityPercent)
+        {
+            try
+            {
+                var statusText = ((System.Windows.FrameworkElement)this).FindName("SpareCapacityStatusText") as System.Windows.Controls.TextBlock;
+                if (statusText != null)
+                {
+                    string complianceText = capacityPercent >= 20 ? "NFPA compliant" : "Below NFPA minimum";
+                    string statusColor = capacityPercent >= 20 ? "Green" : "Orange";
+
+                    statusText.Text = $"Current: {capacityPercent:F0}% ({complianceText})";
+                    statusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(statusColor));
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating spare capacity display: {ex.Message}");
+            }
+        }
 
         #endregion
 
@@ -8433,28 +8532,6 @@ namespace Revit_FA_Tools
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-
-        private void UpdateSpareCapacityStatusDisplay(double capacityPercent)
-        {
-            try
-            {
-                var statusText = System.Windows.Application.Current.MainWindow.FindName("SpareCapacityStatusText") as System.Windows.Controls.TextBlock;
-                if (statusText != null)
-                {
-                    string complianceText = capacityPercent >= 20 ? "NFPA compliant" : "Below NFPA minimum";
-                    string statusColor = capacityPercent >= 20 ? "Green" : "Orange";
-
-                    statusText.Text = $"Current: {capacityPercent:F0}% ({complianceText})";
-                    statusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(statusColor));
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error updating spare capacity status: {ex.Message}");
-            }
         }
 
 
