@@ -12,6 +12,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit_FA_Tools.Models;
 using Revit_FA_Tools.Services;
+using Revit_FA_Tools.ViewModels.Addressing;
 
 namespace Revit_FA_Tools.Views
 {
@@ -28,6 +29,7 @@ namespace Revit_FA_Tools.Views
         private readonly AssignmentStore _assignmentStore;
         private ObservableCollection<AddressingGridItem> _devices;
         private string _selectedBranchId;
+        private readonly Revit_FA_Tools.ViewModels.Addressing.AddressingPanelViewModel _viewModel;
 
         #endregion
 
@@ -43,6 +45,10 @@ namespace Revit_FA_Tools.Views
             _assignmentStore = AssignmentStore.Instance;
             _devices = new ObservableCollection<AddressingGridItem>();
             
+            // Create and set view model as DataContext
+            _viewModel = new Revit_FA_Tools.ViewModels.Addressing.AddressingPanelViewModel(_document, _uiDocument, _addressingService, _assignmentStore);
+            this.DataContext = _viewModel;
+            
             InitializeWindow();
             LoadData();
         }
@@ -53,8 +59,9 @@ namespace Revit_FA_Tools.Views
 
         private void InitializeWindow()
         {
-            // Set up grid data context
-            DeviceGrid.ItemsSource = _devices;
+            // Grid ItemsSource should be bound in XAML to ViewModel.Devices
+            // Remove direct manipulation - use MVVM binding instead
+            // DeviceGrid.ItemsSource = _devices;
             
             // Subscribe to TableView.CellValueChanged instead of GridControl.CellValueChanged
             var view = DeviceGrid.View as DevExpress.Xpf.Grid.TableView;
@@ -63,48 +70,17 @@ namespace Revit_FA_Tools.Views
                 view.CellValueChanged += OnCellValueChanged;
             }
 
-            // Set initial options
-            StartAddressSpinner.Value = 1;
-            PreserveManualChk.IsChecked = true;
-            RespectLocksChk.IsChecked = true;
-            GapFillChk.IsChecked = true;
+            // Set initial options through ViewModel
+            _viewModel.StartAddress = 1;
+            _viewModel.PreserveManual = true;
+            _viewModel.RespectLocks = true;
+            _viewModel.GapFill = true;
         }
 
         private void LoadData()
         {
-            try
-            {
-                var branches = _assignmentStore.DeviceAssignments
-                     .Where(a => a.IsAssigned && !string.IsNullOrEmpty(a.BranchId))
-                     .Select(a => a.BranchId)
-                     .Distinct()
-                     .OrderBy(b => b)
-                     .ToList();
-
-                BranchSelector.Items.Clear();
-                BranchSelector.Items.Add("All Branches");
-                foreach (var branch in branches)
-                {
-                    BranchSelector.Items.Add(branch);
-                }
-
-                if (BranchSelector.Items.Count > 1)
-                {
-                    BranchSelector.SelectedIndex = 1; // Select first actual branch
-                }
-                else
-                {
-                    BranchSelector.SelectedIndex = 0; // Select "All Branches"
-                }
-
-                RefreshDeviceGrid();
-                UpdateSummary();
-            }
-            catch (Exception ex)
-            {
-                DXMessageBox.Show($"Error loading data: {ex.Message}", "Data Load Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // Data loading is now handled by the ViewModel
+            // This method can be removed or used for other initialization
         }
 
         #endregion
@@ -113,78 +89,14 @@ namespace Revit_FA_Tools.Views
 
         private void RefreshDeviceGrid()
         {
-            try
-            {
-                _devices.Clear();
-                
-                var assignments = _assignmentStore.DeviceAssignments
-                    .Where(a => a.IsAssigned)
-                    .Where(a => string.IsNullOrEmpty(_selectedBranchId) || 
-                               _selectedBranchId == "All Branches" || 
-                               a.BranchId == _selectedBranchId)
-                    .OrderBy(a => a.BranchId)
-                    .ThenBy(a => a.Address)
-                    .ToList();
-
-                foreach (var assignment in assignments)
-                {
-                    var gridItem = new AddressingGridItem
-                    {
-                        Assignment = assignment,
-                        ElementId = assignment.ElementId,
-                        Level = GetDeviceLevel(assignment.ElementId),
-                        Family = GetDeviceFamily(assignment.ElementId),
-                        Type = GetDeviceType(assignment.ElementId),
-                        BranchId = assignment.BranchId,
-                        Address = assignment.Address,
-                        AddressSlots = assignment.AddressSlots,
-                        LockState = assignment.LockState.ToString(),
-                        StatusDescription = assignment.StatusDescription,
-                        ValidationMessage = ValidateDevice(assignment)
-                    };
-
-                    _devices.Add(gridItem);
-                }
-            }
-            catch (Exception ex)
-            {
-                DXMessageBox.Show($"Error refreshing grid: {ex.Message}", "Grid Refresh Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // Grid refresh is now handled by the ViewModel
+            _viewModel?.RefreshCommand?.Execute(null);
         }
 
         private void UpdateSummary()
         {
-            try
-            {
-                var currentBranchDevices = GetCurrentBranchDevices();
-                
-                if (currentBranchDevices.Any())
-                {
-                    var validation = _addressingService.ValidateAddressing(currentBranchDevices);
-                    var summary = _addressingService.GetAddressRangeSummary(currentBranchDevices);
-
-                    AddressRangeText.Text = $"{validation.AddressRangeStart}-{validation.AddressRangeEnd}";
-                    TotalDevicesText.Text = validation.TotalDeviceCount.ToString();
-                    LockedDevicesText.Text = validation.LockedDeviceCount.ToString();
-                    ConflictsText.Text = validation.Conflicts.Count.ToString();
-                    
-                    ConflictsText.Foreground = validation.IsValid ? 
-                        System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
-                }
-                else
-                {
-                    AddressRangeText.Text = "No devices";
-                    TotalDevicesText.Text = "0";
-                    LockedDevicesText.Text = "0";
-                    ConflictsText.Text = "0";
-                    ConflictsText.Foreground = System.Windows.Media.Brushes.Green;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error updating summary: {ex.Message}");
-            }
+            // Summary update is now handled by the ViewModel
+            // This method can be removed
         }
 
         #endregion
@@ -193,15 +105,8 @@ namespace Revit_FA_Tools.Views
 
         private void BranchSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (BranchSelector.SelectedItem != null)
-            {
-                _selectedBranchId = BranchSelector.SelectedItem.ToString();
-                if (_selectedBranchId == "All Branches")
-                    _selectedBranchId = null;
-                    
-                RefreshDeviceGrid();
-                UpdateSummary();
-            }
+            // Branch selection is now handled through ViewModel binding
+            // This event handler can be removed
         }
 
         private void OnCellValueChanged(object sender, CellValueChangedEventArgs e)
@@ -260,32 +165,8 @@ namespace Revit_FA_Tools.Views
 
         private void AutoAssign_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var options = GetAddressingOptions();
-                var branchDevices = GetCurrentBranchDevices();
-                
-                if (!branchDevices.Any())
-                {
-                    DXMessageBox.Show("No devices found in selected branch.", "Auto Assign", 
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
-
-                _addressingService.AutoAssign(branchDevices, options);
-                
-                RefreshDeviceGrid();
-                UpdateSummary();
-                
-                DXMessageBox.Show($"Auto-assigned addresses for {branchDevices.Count()} devices.\n\n" +
-                    "Locked addresses were preserved.\nManual addresses were respected.",
-                    "Auto Assign Complete", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                DXMessageBox.Show($"Error during auto-assignment: {ex.Message}", "Auto Assign Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // Auto assign is now handled through ViewModel command binding
+            // This event handler can be removed
         }
 
         private void Resequence_Click(object sender, RoutedEventArgs e)
@@ -539,13 +420,12 @@ namespace Revit_FA_Tools.Views
 
         private AddressingOptions GetAddressingOptions()
         {
-            int startAddress = (int)StartAddressSpinner.Value;
             return new AddressingOptions
             {
-                StartAddress = startAddress,
-                PreserveManual = PreserveManualChk.IsChecked == true,
-                RespectLocks = RespectLocksChk.IsChecked == true,
-                GapFill = GapFillChk.IsChecked == true
+                StartAddress = _viewModel.StartAddress,
+                PreserveManual = _viewModel.PreserveManual,
+                RespectLocks = _viewModel.RespectLocks,
+                GapFill = _viewModel.GapFill
             };
         }
 
@@ -603,96 +483,5 @@ namespace Revit_FA_Tools.Views
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Grid item for addressing panel
-    /// </summary>
-    public class AddressingGridItem : INotifyPropertyChanged
-    {
-        private int _address;
-        private int _addressSlots;
-        private string _lockState;
-        private string _statusDescription;
-        private string _validationMessage;
-
-        public DeviceAssignment Assignment { get; set; }
-        public int ElementId { get; set; }
-        public string Level { get; set; }
-        public string Family { get; set; }
-        public string Type { get; set; }
-        public string BranchId { get; set; }
-
-        public int Address
-        {
-            get => _address;
-            set
-            {
-                if (_address != value)
-                {
-                    _address = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public int AddressSlots
-        {
-            get => _addressSlots;
-            set
-            {
-                if (_addressSlots != value)
-                {
-                    _addressSlots = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string LockState
-        {
-            get => _lockState;
-            set
-            {
-                if (_lockState != value)
-                {
-                    _lockState = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string StatusDescription
-        {
-            get => _statusDescription;
-            set
-            {
-                if (_statusDescription != value)
-                {
-                    _statusDescription = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string ValidationMessage
-        {
-            get => _validationMessage;
-            set
-            {
-                if (_validationMessage != value)
-                {
-                    _validationMessage = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

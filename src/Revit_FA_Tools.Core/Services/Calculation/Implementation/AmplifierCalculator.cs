@@ -400,7 +400,13 @@ namespace Revit_FA_Tools
                         HasSpeaker: e.TypeName.ToUpper().Contains("SPEAKER"),
                         IsIsolator: false,
                         IsRepeater: false,
-                        Zone: null
+                        Zone: null,
+                        X: 0.0,
+                        Y: 0.0,
+                        Z: 0.0,
+                        StandbyCurrent: e.Current,
+                        HasOverride: false,
+                        CustomProperties: new Dictionary<string, object>()
                     )).ToList() ?? new List<DeviceSnapshot>();
 
                 // Perform balancing

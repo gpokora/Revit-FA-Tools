@@ -452,30 +452,44 @@ namespace Revit_FA_Tools.Core.Services.ParameterMapping.Implementation
             return null;
         }
         
+        /// <summary>
+        /// ENHANCED: Hierarchical keyword matching with contradiction prevention
+        /// </summary>
         private IDNACDeviceSpec FindIDNACByPatterns(string familyName, string typeName, string candela)
         {
-            var combined = $"{familyName} {typeName}".ToLowerInvariant();
+            var combined = $"{familyName} {typeName}".ToUpperInvariant();
+            System.Diagnostics.Debug.WriteLine($"\n=== HIERARCHICAL KEYWORD MATCHING ===");
+            System.Diagnostics.Debug.WriteLine($"Input: '{combined}' with candela '{candela}'");
             
-            // Pattern matching for common IDNAC device types
-            var patterns = new Dictionary<string, Func<IDNACDeviceSpec>>
-            {
-                { "horn strobe", () => FindBestIDNACMatch("hornstrobe", "wall", candela) },
-                { "horn", () => FindBestIDNACMatch("horn", "wall", candela) },
-                { "strobe", () => FindBestIDNACMatch("strobe", "wall", candela) },
-                { "speaker", () => FindBestIDNACMatch("speaker", "wall", candela) },
-                { "speaker strobe", () => FindBestIDNACMatch("speakerstrobe", "wall", candela) }
-            };
+            // STEP 1: PRIMARY DEVICE CLASSIFICATION (establishes core device identity)
+            var deviceIdentity = DeterminePrimaryDeviceIdentity(combined);
+            System.Diagnostics.Debug.WriteLine($"Primary Identity: {deviceIdentity}");
             
-            foreach (var pattern in patterns)
+            if (deviceIdentity == "UNKNOWN")
             {
-                if (combined.Contains(pattern.Key))
-                {
-                    var result = pattern.Value();
-                    if (result != null) return result;
-                }
+                System.Diagnostics.Debug.WriteLine($"✗ Cannot classify device type from keywords");
+                return null;
             }
             
-            return null;
+            // STEP 2: SECONDARY CHARACTERISTICS (refines the primary classification)
+            var characteristics = ExtractSecondaryCharacteristics(combined);
+            System.Diagnostics.Debug.WriteLine($"Characteristics: Mounting={characteristics.Mounting}, Environmental={characteristics.Environmental}");
+            
+            // STEP 3: VALIDATE CLASSIFICATION (ensure logical consistency)
+            if (!ValidateClassification(deviceIdentity, characteristics, combined))
+            {
+                System.Diagnostics.Debug.WriteLine($"✗ Classification failed validation");
+                return null;
+            }
+            
+            // STEP 4: FIND PRECISE SPECIFICATION
+            var spec = FindSpecificationByClassification(deviceIdentity, characteristics, candela);
+            if (spec != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"✓ MATCHED: {spec.Description} → {spec.CombinedCurrent}A");
+            }
+            
+            return spec;
         }
         
         private IDNACDeviceSpec FindBestIDNACMatch(string familyType, string mounting, string candela)
@@ -539,6 +553,362 @@ namespace Revit_FA_Tools.Core.Services.ParameterMapping.Implementation
             return devices.FirstOrDefault(d => d.Candela == "75") ?? devices.First();
         }
         
+        /// <summary>
+        /// STEP 1: Determine primary device identity using keyword hierarchy
+        /// </summary>
+        private string DeterminePrimaryDeviceIdentity(string combined)
+        {
+            // Keyword sets for each device type (order matters - most specific first)
+            var deviceKeywords = new Dictionary<string, string[]>
+            {
+                // Primary Keywords (establish core device function)
+                ["HORN"] = new[] { "HORN", "AUDIBLE" },
+                ["SPEAKER"] = new[] { "SPEAKER", "VOICE", "AUDIO", "MASS NOTIFICATION" },
+                ["STROBE"] = new[] { "STROBE", "VISUAL", "FLASH", "LIGHT", "BEACON" },
+                
+                // Combination Keywords (checked after primary to detect combinations)
+                ["MULTITONE"] = new[] { "MULTITONE", "MULTI TONE", "MT", "520HZ", "520 HZ" },
+                ["CHIME"] = new[] { "CHIME", "TONE", "BELL" }
+            };
+            
+            // Detection results
+            bool hasHorn = ContainsKeywords(combined, deviceKeywords["HORN"]);
+            bool hasSpeaker = ContainsKeywords(combined, deviceKeywords["SPEAKER"]);
+            bool hasStrobe = ContainsKeywords(combined, deviceKeywords["STROBE"]);
+            bool hasMultitone = ContainsKeywords(combined, deviceKeywords["MULTITONE"]);
+            bool hasChime = ContainsKeywords(combined, deviceKeywords["CHIME"]);
+            
+            System.Diagnostics.Debug.WriteLine($"Keyword Detection: Horn={hasHorn}, Speaker={hasSpeaker}, Strobe={hasStrobe}, MT={hasMultitone}, Chime={hasChime}");
+            
+            // HIERARCHICAL CLASSIFICATION with contradiction prevention
+            
+            // 1. Combination devices (most specific)
+            if (hasSpeaker && hasStrobe)
+            {
+                // RULE: Speaker + Strobe = Speaker Strobe (Horn keywords ignored in speaker context)
+                return "SPEAKER_STROBE";
+            }
+            
+            if (hasHorn && hasStrobe)
+            {
+                // RULE: Horn + Strobe = Horn Strobe (Speaker keywords ignored in horn context)
+                if (hasMultitone)
+                {
+                    return "MULTITONE_HORN_STROBE";
+                }
+                return "HORN_STROBE";
+            }
+            
+            // 2. Single function devices
+            if (hasSpeaker && !hasStrobe && !hasHorn)
+            {
+                // RULE: Pure speaker device (no horn or strobe)
+                return "SPEAKER";
+            }
+            
+            if (hasHorn && !hasStrobe && !hasSpeaker)
+            {
+                // RULE: Pure horn device (no speaker or strobe)
+                if (hasMultitone)
+                {
+                    return "MULTITONE_HORN";
+                }
+                return "HORN";
+            }
+            
+            if (hasStrobe && !hasHorn && !hasSpeaker)
+            {
+                // RULE: Pure strobe device (no horn or speaker)
+                return "STROBE";
+            }
+            
+            if (hasChime)
+            {
+                // RULE: Chime device (special notification type)
+                return "CHIME";
+            }
+            
+            // 3. Fallback analysis for unclear cases
+            return AnalyzeFallbackKeywords(combined);
+        }
+
+        /// <summary>
+        /// Check if text contains any of the specified keywords
+        /// </summary>
+        private bool ContainsKeywords(string text, string[] keywords)
+        {
+            return keywords.Any(keyword => text.Contains(keyword));
+        }
+
+        /// <summary>
+        /// Fallback analysis for devices that don't match primary keywords
+        /// </summary>
+        private string AnalyzeFallbackKeywords(string combined)
+        {
+            // Generic notification device keywords
+            var notificationKeywords = new[] { "NOTIFICATION", "APPLIANCE", "NAC", "DEVICE", "UNIT" };
+            
+            if (ContainsKeywords(combined, notificationKeywords))
+            {
+                // Guess based on common patterns
+                if (combined.Contains("CEILING") || combined.Contains("CLNG"))
+                {
+                    return "STROBE"; // Ceiling devices are often strobes
+                }
+                return "HORN_STROBE"; // Default assumption for notification devices
+            }
+            
+            return "UNKNOWN";
+        }
+
+        /// <summary>
+        /// STEP 2: Extract secondary characteristics
+        /// </summary>
+        private DeviceCharacteristics ExtractSecondaryCharacteristics(string combined)
+        {
+            var characteristics = new DeviceCharacteristics();
+            
+            // Mounting Type Analysis
+            var ceilingKeywords = new[] { "CEILING", "CLNG", "OVERHEAD", "RECESSED", "PENDANT", "FLUSH" };
+            var wallKeywords = new[] { "WALL", "VERTICAL", "SURFACE", "MOUNT" };
+            
+            if (ContainsKeywords(combined, ceilingKeywords))
+            {
+                characteristics.Mounting = "ceiling";
+            }
+            else if (ContainsKeywords(combined, wallKeywords))
+            {
+                characteristics.Mounting = "wall";
+            }
+            else
+            {
+                characteristics.Mounting = "wall"; // Default assumption
+            }
+            
+            // Environmental Type Analysis (CRITICAL for current accuracy)
+            var weatherproofKeywords = new[] { "WEATHERPROOF", "WP", "WPHC", "OUTDOOR", "NEMA", "IP65", "IP66", "IP67", "MARINE", "SEALED" };
+            var highCancelKeywords = new[] { "HIGH CANCEL", "HC", "HIGH-CANCEL" };
+            
+            if (ContainsKeywords(combined, weatherproofKeywords))
+            {
+                characteristics.Environmental = "weatherproof";
+            }
+            else if (ContainsKeywords(combined, highCancelKeywords))
+            {
+                characteristics.Environmental = "highcancel";
+            }
+            else
+            {
+                characteristics.Environmental = "standard";
+            }
+            
+            return characteristics;
+        }
+
+        /// <summary>
+        /// STEP 3: Validate classification for logical consistency
+        /// </summary>
+        private bool ValidateClassification(string deviceIdentity, DeviceCharacteristics characteristics, string combined)
+        {
+            // Validation Rules to prevent contradictions
+            
+            // Rule 1: Horn devices cannot be speakers
+            if (deviceIdentity.Contains("HORN") && combined.Contains("SPEAKER") && 
+                !deviceIdentity.Contains("HORN_STROBE")) // Horn strobe with speaker mention is invalid
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ VALIDATION FAILED: Horn device cannot contain speaker keywords");
+                return false;
+            }
+            
+            // Rule 2: Speaker devices cannot be horns
+            if (deviceIdentity.Contains("SPEAKER") && combined.Contains("HORN") && 
+                !deviceIdentity.Contains("SPEAKER_STROBE")) // Speaker strobe with horn mention is invalid
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ VALIDATION FAILED: Speaker device cannot contain horn keywords");
+                return false;
+            }
+            
+            // Rule 3: Validate environmental consistency
+            if (characteristics.Environmental == "weatherproof" && 
+                !ContainsKeywords(combined, new[] { "WP", "WEATHERPROOF", "OUTDOOR", "NEMA" }))
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ VALIDATION WARNING: Weatherproof classification without clear indicators");
+                // Allow but warn
+            }
+            
+            // Rule 4: Combination devices must have both components mentioned
+            if (deviceIdentity == "HORN_STROBE" && 
+                (!combined.Contains("HORN") && !combined.Contains("STROBE")))
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ VALIDATION FAILED: Horn strobe must mention both horn and strobe");
+                return false;
+            }
+            
+            return true; // Validation passed
+        }
+
+        /// <summary>
+        /// STEP 4: Find specification based on validated classification
+        /// </summary>
+        private IDNACDeviceSpec FindSpecificationByClassification(string deviceIdentity, DeviceCharacteristics characteristics, string candela)
+        {
+            var targetCandela = !string.IsNullOrEmpty(candela) ? candela : "75";
+            
+            // Map device identity to specification key
+            var specKey = $"{MapDeviceIdentityToKey(deviceIdentity)}_{characteristics.Mounting}_{characteristics.Environmental}_{targetCandela}";
+            
+            System.Diagnostics.Debug.WriteLine($"Specification lookup key: {specKey}");
+            
+            // Get specifications from comprehensive database
+            var specs = GetPrecisionDeviceSpecifications();
+            
+            if (specs.TryGetValue(specKey, out var spec))
+            {
+                return CreateIDNACDeviceSpec(spec.description, spec.current, spec.wattage, spec.unitLoads);
+            }
+            
+            // Try fallbacks
+            return TrySpecificationFallbacks(deviceIdentity, characteristics, targetCandela, specs);
+        }
+
+        /// <summary>
+        /// Map device identity to specification key format
+        /// </summary>
+        private string MapDeviceIdentityToKey(string deviceIdentity)
+        {
+            return deviceIdentity switch
+            {
+                "SPEAKER_STROBE" => "speakerstrobe",
+                "HORN_STROBE" => "hornstrobe",
+                "MULTITONE_HORN_STROBE" => "hornstrobe", // Use horn strobe specs with adjustment
+                "SPEAKER" => "speaker",
+                "HORN" => "horn",
+                "MULTITONE_HORN" => "horn", // Use horn specs with adjustment
+                "STROBE" => "strobe",
+                "CHIME" => "chime",
+                _ => "hornstrobe" // Default fallback
+            };
+        }
+
+        /// <summary>
+        /// Try specification fallbacks when exact match not found
+        /// </summary>
+        private IDNACDeviceSpec TrySpecificationFallbacks(string deviceIdentity, DeviceCharacteristics characteristics, string targetCandela, Dictionary<string, (double current, double wattage, int unitLoads, string description)> specs)
+        {
+            var deviceKey = MapDeviceIdentityToKey(deviceIdentity);
+            
+            // Fallback 1: Try standard environmental if weatherproof not found
+            if (characteristics.Environmental == "weatherproof")
+            {
+                var standardKey = $"{deviceKey}_{characteristics.Mounting}_standard_{targetCandela}";
+                if (specs.TryGetValue(standardKey, out var standardSpec))
+                {
+                    // Apply weatherproof multiplier
+                    var wpCurrent = standardSpec.current * 1.15; // 15% higher for weatherproof
+                    System.Diagnostics.Debug.WriteLine($"✓ FALLBACK: Weatherproof adjustment applied → {wpCurrent:F3}A");
+                    return CreateIDNACDeviceSpec($"WP {standardSpec.description}", wpCurrent, standardSpec.wattage, standardSpec.unitLoads);
+                }
+            }
+            
+            // Fallback 2: Try 75cd if specific candela not found
+            if (targetCandela != "75")
+            {
+                var candela75Key = $"{deviceKey}_{characteristics.Mounting}_{characteristics.Environmental}_75";
+                if (specs.TryGetValue(candela75Key, out var candela75Spec))
+                {
+                    System.Diagnostics.Debug.WriteLine($"✓ FALLBACK: Using 75cd specification → {candela75Spec.current}A");
+                    return CreateIDNACDeviceSpec(candela75Spec.description, candela75Spec.current, candela75Spec.wattage, candela75Spec.unitLoads);
+                }
+            }
+            
+            // Fallback 3: Try wall mounting if ceiling not found
+            if (characteristics.Mounting == "ceiling")
+            {
+                var wallKey = $"{deviceKey}_wall_{characteristics.Environmental}_{targetCandela}";
+                if (specs.TryGetValue(wallKey, out var wallSpec))
+                {
+                    System.Diagnostics.Debug.WriteLine($"✓ FALLBACK: Using wall mounting specification → {wallSpec.current}A");
+                    return CreateIDNACDeviceSpec($"Ceiling {wallSpec.description}", wallSpec.current, wallSpec.wattage, wallSpec.unitLoads);
+                }
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"✗ No fallback specification found");
+            return null;
+        }
+
+        /// <summary>
+        /// Comprehensive device specifications
+        /// </summary>
+        private Dictionary<string, (double current, double wattage, int unitLoads, string description)> GetPrecisionDeviceSpecifications()
+        {
+            return new Dictionary<string, (double current, double wattage, int unitLoads, string description)>
+            {
+                // Horn Strobe - Wall - Standard
+                ["hornstrobe_wall_standard_15"] = (0.075, 1.8, 1, "Wall Horn Strobe 15cd"),
+                ["hornstrobe_wall_standard_30"] = (0.116, 2.8, 1, "Wall Horn Strobe 30cd"),
+                ["hornstrobe_wall_standard_75"] = (0.221, 5.3, 1, "Wall Horn Strobe 75cd"),
+                ["hornstrobe_wall_standard_110"] = (0.285, 6.8, 1, "Wall Horn Strobe 110cd"),
+                ["hornstrobe_wall_standard_135"] = (0.333, 8.0, 1, "Wall Horn Strobe 135cd"),
+                ["hornstrobe_wall_standard_177"] = (0.418, 10.0, 1, "Wall Horn Strobe 177cd"),
+                ["hornstrobe_wall_standard_185"] = (0.433, 10.4, 1, "Wall Horn Strobe 185cd"),
+                
+                // Horn Strobe - Wall - Weatherproof
+                ["hornstrobe_wall_weatherproof_15"] = (0.135, 3.2, 1, "WP Wall Horn Strobe 15cd"),
+                ["hornstrobe_wall_weatherproof_30"] = (0.155, 3.7, 1, "WP Wall Horn Strobe 30cd"),
+                ["hornstrobe_wall_weatherproof_75"] = (0.205, 4.9, 1, "WP Wall Horn Strobe 75cd"),
+                ["hornstrobe_wall_weatherproof_185"] = (0.255, 6.1, 1, "WP Wall Horn Strobe 185cd"),
+                
+                // Speaker Strobe - Wall - Standard  
+                ["speakerstrobe_wall_standard_15"] = (0.080, 3.0, 1, "Wall Speaker Strobe 15cd"),
+                ["speakerstrobe_wall_standard_30"] = (0.105, 3.5, 1, "Wall Speaker Strobe 30cd"),
+                ["speakerstrobe_wall_standard_75"] = (0.206, 6.0, 1, "Wall Speaker Strobe 75cd"),
+                ["speakerstrobe_wall_standard_110"] = (0.272, 7.5, 1, "Wall Speaker Strobe 110cd"),
+                ["speakerstrobe_wall_standard_135"] = (0.334, 9.0, 1, "Wall Speaker Strobe 135cd"),
+                ["speakerstrobe_wall_standard_177"] = (0.410, 11.5, 1, "Wall Speaker Strobe 177cd"),
+                ["speakerstrobe_wall_standard_185"] = (0.429, 12.3, 1, "Wall Speaker Strobe 185cd"),
+                
+                // Strobe Only - Wall - Standard
+                ["strobe_wall_standard_15"] = (0.060, 1.4, 1, "Wall Strobe 15cd"),
+                ["strobe_wall_standard_30"] = (0.094, 2.3, 1, "Wall Strobe 30cd"),
+                ["strobe_wall_standard_75"] = (0.186, 4.5, 1, "Wall Strobe 75cd"),
+                ["strobe_wall_standard_110"] = (0.252, 6.0, 1, "Wall Strobe 110cd"),
+                ["strobe_wall_standard_135"] = (0.314, 7.5, 1, "Wall Strobe 135cd"),
+                ["strobe_wall_standard_177"] = (0.390, 9.4, 1, "Wall Strobe 177cd"),
+                ["strobe_wall_standard_185"] = (0.409, 9.8, 1, "Wall Strobe 185cd"),
+                
+                // Horn Only - Wall
+                ["horn_wall_standard_75"] = (0.020, 0.48, 1, "Wall Horn"),
+                ["horn_wall_weatherproof_75"] = (0.052, 1.2, 1, "WP Wall Horn"),
+                
+                // Speaker Only - Wall
+                ["speaker_wall_standard_75"] = (0.020, 2.0, 1, "Wall Speaker"),
+                
+                // Ceiling variants
+                ["hornstrobe_ceiling_standard_75"] = (0.250, 6.0, 1, "Ceiling Horn Strobe 75cd"),
+                ["hornstrobe_ceiling_standard_185"] = (0.463, 11.1, 1, "Ceiling Horn Strobe 185cd"),
+                ["strobe_ceiling_standard_75"] = (0.233, 5.6, 1, "Ceiling Strobe 75cd"),
+                ["strobe_ceiling_standard_185"] = (0.443, 10.6, 1, "Ceiling Strobe 185cd"),
+            };
+        }
+
+        /// <summary>
+        /// Create IDNACDeviceSpec from specification
+        /// </summary>
+        private IDNACDeviceSpec CreateIDNACDeviceSpec(string description, double current, double wattage, int unitLoads)
+        {
+            return new IDNACDeviceSpec
+            {
+                FamilyName = description,
+                TypeName = description,
+                Description = description,
+                CombinedCurrent = current,
+                UnitLoads = unitLoads,
+                TTapCompatible = true,
+                Mounting = "wall",
+                EnvironmentalRating = "standard"
+            };
+        }
+
         private IDNACDeviceCatalog CreateFallbackIDNACCatalog()
         {
             return new IDNACDeviceCatalog
@@ -562,6 +932,15 @@ namespace Revit_FA_Tools.Core.Services.ParameterMapping.Implementation
                 }
             };
         }
+    }
+
+    /// <summary>
+    /// Supporting class for device characteristics
+    /// </summary>
+    public class DeviceCharacteristics
+    {
+        public string Mounting { get; set; } = "wall";
+        public string Environmental { get; set; } = "standard";
     }
     
     /// <summary>

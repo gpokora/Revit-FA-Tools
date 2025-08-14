@@ -282,6 +282,12 @@ namespace Revit_FA_Tools
                 HasSpeaker: DetermineHasSpeaker(familyName, typeName),
                 IsIsolator: DetermineIsIsolator(familyName, typeName),
                 IsRepeater: DetermineIsRepeater(familyName, typeName),
+                Zone: null,
+                X: 0.0,
+                Y: 0.0,
+                Z: 0.0,
+                StandbyCurrent: currentValue ?? 0,
+                HasOverride: false,
                 CustomProperties: customProps
             );
         }

@@ -143,6 +143,9 @@
     </Compile>
     <Compile Include="UI\ViewModels\Addressing\AssignmentTreeViewModel.cs" />
     <Compile Include="UI\ViewModels\Addressing\AddressingViewModel.cs" />
+    <Compile Include="UI\ViewModels\Addressing\AddressingPanelViewModel.cs" />
+    <Compile Include="UI\ViewModels\Addressing\CleanAddressingViewModel.cs" />
+    <Compile Include="Models\AddressingGridItem.cs" />
     <Compile Include="UI\Converters\TreeNodeConverters.cs" />
     <Compile Include="UI\Converters\UIConverters.cs" />
     <Compile Include="Services\Export\FQQImportExportService.cs" />

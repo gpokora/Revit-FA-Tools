@@ -2980,7 +2980,13 @@ namespace Revit_FA_Tools
                             HasSpeaker: (deviceData.TypeName ?? "").ToUpper().Contains("SPEAKER"),
                             IsIsolator: (deviceData.TypeName ?? "").ToUpper().Contains("ISOLATOR"),
                             IsRepeater: (deviceData.TypeName ?? "").ToUpper().Contains("REPEATER"),
-                            Zone: deviceData.LevelName // Use level as zone for now
+                            Zone: deviceData.LevelName ?? "Unknown", // Use level as zone for now
+                            X: 0.0,
+                            Y: 0.0,
+                            Z: 0.0,
+                            StandbyCurrent: deviceData.Current,
+                            HasOverride: false,
+                            CustomProperties: new Dictionary<string, object>()
                         );
                         devices.Add(snapshot);
                     }

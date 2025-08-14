@@ -36,6 +36,12 @@ namespace Revit_FA_Tools.Models
                 HasSpeaker: false,
                 IsIsolator: false,
                 IsRepeater: false,
+                Zone: null,
+                X: 0.0,
+                Y: 0.0,
+                Z: 0.0,
+                StandbyCurrent: 0.0,
+                HasOverride: false,
                 CustomProperties: parameters ?? new Dictionary<string, object>()
             );
             

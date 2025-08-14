@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Revit_FA_Tools.Core.Models.Addressing;
-using Revit_FA_Tools.Models;
+using Revit_FA_Tools.Core.Models.Devices;
 
 namespace Revit_FA_Tools.Core.Services.Interfaces
 {

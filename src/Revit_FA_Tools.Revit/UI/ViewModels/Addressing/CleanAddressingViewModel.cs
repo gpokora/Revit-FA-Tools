@@ -171,7 +171,7 @@ namespace Revit_FA_Tools.Revit.UI.ViewModels.Addressing
         /// <summary>
         /// Total addressed devices
         /// </summary>
-        public int AddressedDevices => Panels?.Sum(p => p.AddressedDevices) ?? 0;
+        public int AddressedDevices => Panels?.Sum(p => p.TotalAddressedDevices) ?? 0;
 
         /// <summary>
         /// Addressing completion percentage
@@ -566,11 +566,11 @@ namespace Revit_FA_Tools.Revit.UI.ViewModels.Addressing
             }
         }
 
-        private async Task<System.Collections.Generic.List<DeviceSnapshot>> GetDevicesFromRevit()
+        private async Task<System.Collections.Generic.List<Revit_FA_Tools.Core.Models.Devices.DeviceSnapshot>> GetDevicesFromRevit()
         {
             // This would be implemented by a Revit data service
             // For now, return empty list
-            return new System.Collections.Generic.List<DeviceSnapshot>();
+            return new System.Collections.Generic.List<Revit_FA_Tools.Core.Models.Devices.DeviceSnapshot>();
         }
 
         private string GetTargetCircuitFromParameter(object parameter)

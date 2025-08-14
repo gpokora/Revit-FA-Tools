@@ -493,33 +493,362 @@ namespace Revit_FA_Tools.Core.Services.ParameterMapping.Implementation
             return null;
         }
         
-        private IDNETDeviceSpec FindIDNETByPatterns(string familyName, string typeName, string candela)
+        /// <summary>
+        /// ENHANCED: Hierarchical keyword matching for IDNET devices
+        /// </summary>
+        private IDNETDeviceSpec FindIDNETByPatterns(string familyName, string typeName, string sensitivity)
         {
-            var combined = $"{familyName} {typeName}".ToLowerInvariant();
+            var combined = $"{familyName} {typeName}".ToUpperInvariant();
+            System.Diagnostics.Debug.WriteLine($"\n=== IDNET HIERARCHICAL KEYWORD MATCHING ===");
+            System.Diagnostics.Debug.WriteLine($"Input: '{combined}' with sensitivity '{sensitivity}'");
             
-            // Pattern matching for common IDNET device types
-            var patterns = new Dictionary<string, Func<IDNETDeviceSpec>>
+            // STEP 1: PRIMARY DEVICE CLASSIFICATION
+            var deviceIdentity = DetermineIDNETPrimaryDeviceIdentity(combined);
+            System.Diagnostics.Debug.WriteLine($"Primary Identity: {deviceIdentity}");
+            
+            if (deviceIdentity == "UNKNOWN")
             {
-                { "smoke detector", () => FindBestIDNETMatch("smoke", "detector", candela) },
-                { "smoke", () => FindBestIDNETMatch("smoke", "detector", candela) },
-                { "heat detector", () => FindBestIDNETMatch("heat", "detector", candela) },
-                { "heat", () => FindBestIDNETMatch("heat", "detector", candela) },
-                { "pull station", () => FindBestIDNETMatch("manual", "pull", candela) },
-                { "manual", () => FindBestIDNETMatch("manual", "pull", candela) },
-                { "beam detector", () => FindBestIDNETMatch("beam", "detector", candela) },
-                { "beam", () => FindBestIDNETMatch("beam", "detector", candela) }
+                System.Diagnostics.Debug.WriteLine($"✗ Cannot classify IDNET device type from keywords");
+                return null;
+            }
+            
+            // STEP 2: SECONDARY CHARACTERISTICS
+            var characteristics = ExtractIDNETSecondaryCharacteristics(combined);
+            System.Diagnostics.Debug.WriteLine($"Characteristics: Mounting={characteristics.Mounting}, Environmental={characteristics.Environmental}");
+            
+            // STEP 3: VALIDATE CLASSIFICATION
+            if (!ValidateIDNETClassification(deviceIdentity, characteristics, combined))
+            {
+                System.Diagnostics.Debug.WriteLine($"✗ IDNET classification failed validation");
+                return null;
+            }
+            
+            // STEP 4: FIND PRECISE SPECIFICATION
+            var spec = FindIDNETSpecificationByClassification(deviceIdentity, characteristics, sensitivity);
+            if (spec != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"✓ IDNET MATCHED: {spec.Description} → {spec.StandbyCurrent}A");
+            }
+            
+            return spec;
+        }
+
+        /// <summary>
+        /// Determine primary IDNET device identity using keyword hierarchy
+        /// </summary>
+        private string DetermineIDNETPrimaryDeviceIdentity(string combined)
+        {
+            // Keyword sets for IDNET device types (initiating devices)
+            var deviceKeywords = new Dictionary<string, string[]>
+            {
+                ["SMOKE"] = new[] { "SMOKE", "PHOTOELECTRIC", "PHOTO", "IONIZATION", "ION" },
+                ["HEAT"] = new[] { "HEAT", "THERMAL", "TEMPERATURE", "FIXED", "RATE", "ROR" },
+                ["BEAM"] = new[] { "BEAM", "REFLECTIVE", "PROJECTED" },
+                ["MULTISENSOR"] = new[] { "MULTI", "COMBO", "COMBINATION", "DUAL" },
+                ["PULL"] = new[] { "PULL", "MANUAL", "STATION", "BREAK", "GLASS", "EMERGENCY" },
+                ["DUCT"] = new[] { "DUCT", "HVAC", "AIR" }
             };
             
-            foreach (var pattern in patterns)
+            // Detection results
+            bool hasSmoke = ContainsIDNETKeywords(combined, deviceKeywords["SMOKE"]);
+            bool hasHeat = ContainsIDNETKeywords(combined, deviceKeywords["HEAT"]);
+            bool hasBeam = ContainsIDNETKeywords(combined, deviceKeywords["BEAM"]);
+            bool hasMulti = ContainsIDNETKeywords(combined, deviceKeywords["MULTISENSOR"]);
+            bool hasPull = ContainsIDNETKeywords(combined, deviceKeywords["PULL"]);
+            bool hasDuct = ContainsIDNETKeywords(combined, deviceKeywords["DUCT"]);
+            
+            System.Diagnostics.Debug.WriteLine($"IDNET Keyword Detection: Smoke={hasSmoke}, Heat={hasHeat}, Beam={hasBeam}, Multi={hasMulti}, Pull={hasPull}, Duct={hasDuct}");
+            
+            // HIERARCHICAL CLASSIFICATION for IDNET devices
+            
+            // 1. Specialized detectors (highest priority)
+            if (hasBeam)
             {
-                if (combined.Contains(pattern.Key))
+                return "BEAM_DETECTOR";
+            }
+            
+            if (hasDuct && hasSmoke)
+            {
+                return "DUCT_SMOKE_DETECTOR";
+            }
+            
+            // 2. Multi-sensor detectors
+            if (hasMulti && hasSmoke && hasHeat)
+            {
+                return "MULTI_SMOKE_HEAT_DETECTOR";
+            }
+            
+            if (hasMulti && hasSmoke)
+            {
+                return "MULTI_SMOKE_DETECTOR";
+            }
+            
+            // 3. Single-sensor detectors
+            if (hasSmoke && !hasHeat && !hasMulti)
+            {
+                if (combined.Contains("PHOTOELECTRIC") || combined.Contains("PHOTO"))
                 {
-                    var result = pattern.Value();
-                    if (result != null) return result;
+                    return "PHOTOELECTRIC_SMOKE_DETECTOR";
+                }
+                if (combined.Contains("IONIZATION") || combined.Contains("ION"))
+                {
+                    return "IONIZATION_SMOKE_DETECTOR";
+                }
+                return "SMOKE_DETECTOR"; // Generic smoke
+            }
+            
+            if (hasHeat && !hasSmoke && !hasMulti)
+            {
+                if (combined.Contains("FIXED") || combined.Contains("TEMPERATURE"))
+                {
+                    return "FIXED_HEAT_DETECTOR";
+                }
+                if (combined.Contains("RATE") || combined.Contains("ROR"))
+                {
+                    return "RATE_HEAT_DETECTOR";
+                }
+                return "HEAT_DETECTOR"; // Generic heat
+            }
+            
+            // 4. Manual devices
+            if (hasPull)
+            {
+                if (combined.Contains("BREAK") || combined.Contains("GLASS"))
+                {
+                    return "BREAKGLASS_PULL_STATION";
+                }
+                return "MANUAL_PULL_STATION";
+            }
+            
+            // 5. Fallback for generic detector keywords
+            if (combined.Contains("DETECTOR") || combined.Contains("SENSOR"))
+            {
+                return "GENERIC_DETECTOR";
+            }
+            
+            return "UNKNOWN";
+        }
+
+        /// <summary>
+        /// Check if text contains any IDNET keywords
+        /// </summary>
+        private bool ContainsIDNETKeywords(string text, string[] keywords)
+        {
+            return keywords.Any(keyword => text.Contains(keyword));
+        }
+
+        /// <summary>
+        /// Extract secondary characteristics for IDNET devices
+        /// </summary>
+        private DeviceCharacteristics ExtractIDNETSecondaryCharacteristics(string combined)
+        {
+            var characteristics = new DeviceCharacteristics();
+            
+            // Mounting Type Analysis (IDNET devices are typically ceiling mounted)
+            var ceilingKeywords = new[] { "CEILING", "CLNG", "OVERHEAD", "RECESSED" };
+            var wallKeywords = new[] { "WALL", "VERTICAL", "SURFACE" };
+            var ductKeywords = new[] { "DUCT", "HVAC", "AIR" };
+            
+            if (ContainsIDNETKeywords(combined, ductKeywords))
+            {
+                characteristics.Mounting = "duct";
+            }
+            else if (ContainsIDNETKeywords(combined, ceilingKeywords))
+            {
+                characteristics.Mounting = "ceiling";
+            }
+            else if (ContainsIDNETKeywords(combined, wallKeywords))
+            {
+                characteristics.Mounting = "wall";
+            }
+            else
+            {
+                characteristics.Mounting = "ceiling"; // Default for detectors
+            }
+            
+            // Environmental Type Analysis
+            var weatherproofKeywords = new[] { "WEATHERPROOF", "WP", "OUTDOOR", "MARINE" };
+            var highTempKeywords = new[] { "HIGH TEMP", "HT", "HIGH TEMPERATURE" };
+            
+            if (ContainsIDNETKeywords(combined, weatherproofKeywords))
+            {
+                characteristics.Environmental = "weatherproof";
+            }
+            else if (ContainsIDNETKeywords(combined, highTempKeywords))
+            {
+                characteristics.Environmental = "hightemp";
+            }
+            else
+            {
+                characteristics.Environmental = "standard";
+            }
+            
+            return characteristics;
+        }
+
+        /// <summary>
+        /// Validate IDNET classification for logical consistency
+        /// </summary>
+        private bool ValidateIDNETClassification(string deviceIdentity, DeviceCharacteristics characteristics, string combined)
+        {
+            // Validation Rules for IDNET devices
+            
+            // Rule 1: Smoke and heat detectors cannot be the same device (unless multi-sensor)
+            if (deviceIdentity.Contains("SMOKE") && combined.Contains("HEAT") && !deviceIdentity.Contains("MULTI"))
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ IDNET VALIDATION WARNING: Smoke and heat keywords in non-multi device");
+                // Allow but warn - might be valid description
+            }
+            
+            // Rule 2: Pull stations cannot be detectors
+            if (deviceIdentity.Contains("PULL") && (combined.Contains("DETECTOR") || combined.Contains("SENSOR")))
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ IDNET VALIDATION FAILED: Pull station cannot be detector");
+                return false;
+            }
+            
+            // Rule 3: Beam detectors must mention beam
+            if (deviceIdentity == "BEAM_DETECTOR" && !combined.Contains("BEAM"))
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠ IDNET VALIDATION FAILED: Beam detector must mention beam");
+                return false;
+            }
+            
+            return true; // Validation passed
+        }
+
+        /// <summary>
+        /// Find IDNET specification based on validated classification
+        /// </summary>
+        private IDNETDeviceSpec FindIDNETSpecificationByClassification(string deviceIdentity, DeviceCharacteristics characteristics, string sensitivity)
+        {
+            // For IDNET devices, use unit loads to calculate current (0.8mA per unit load)
+            var specs = GetIDNETDeviceSpecifications();
+            var specKey = $"{MapIDNETDeviceIdentityToKey(deviceIdentity)}_{characteristics.Mounting}_{characteristics.Environmental}";
+            
+            System.Diagnostics.Debug.WriteLine($"IDNET Specification lookup key: {specKey}");
+            
+            if (specs.TryGetValue(specKey, out var spec))
+            {
+                return CreateIDNETDeviceSpec(spec.description, spec.unitLoads, spec.pointType);
+            }
+            
+            // Try fallbacks for IDNET
+            return TryIDNETSpecificationFallbacks(deviceIdentity, characteristics, specs);
+        }
+
+        /// <summary>
+        /// Map IDNET device identity to specification key
+        /// </summary>
+        private string MapIDNETDeviceIdentityToKey(string deviceIdentity)
+        {
+            return deviceIdentity switch
+            {
+                "PHOTOELECTRIC_SMOKE_DETECTOR" => "smoke_photo",
+                "IONIZATION_SMOKE_DETECTOR" => "smoke_ion",
+                "SMOKE_DETECTOR" => "smoke_photo", // Default to photoelectric
+                "FIXED_HEAT_DETECTOR" => "heat_fixed",
+                "RATE_HEAT_DETECTOR" => "heat_rate",
+                "HEAT_DETECTOR" => "heat_fixed", // Default to fixed
+                "MULTI_SMOKE_HEAT_DETECTOR" => "multi_combo",
+                "BEAM_DETECTOR" => "beam",
+                "DUCT_SMOKE_DETECTOR" => "duct_smoke",
+                "MANUAL_PULL_STATION" => "pull_manual",
+                "BREAKGLASS_PULL_STATION" => "pull_break",
+                "GENERIC_DETECTOR" => "smoke_photo", // Default fallback
+                _ => "smoke_photo"
+            };
+        }
+
+        /// <summary>
+        /// Get IDNET device specifications (unit loads based)
+        /// </summary>
+        private Dictionary<string, (int unitLoads, string pointType, string description)> GetIDNETDeviceSpecifications()
+        {
+            return new Dictionary<string, (int unitLoads, string pointType, string description)>
+            {
+                // Smoke Detectors
+                ["smoke_photo_ceiling_standard"] = (1, "PHOTO", "Photoelectric Smoke Detector"),
+                ["smoke_ion_ceiling_standard"] = (1, "ION", "Ionization Smoke Detector"),
+                
+                // Heat Detectors
+                ["heat_fixed_ceiling_standard"] = (1, "HEAT", "Fixed Temperature Heat Detector"),
+                ["heat_rate_ceiling_standard"] = (1, "ROR", "Rate of Rise Heat Detector"),
+                
+                // Multi-Sensor
+                ["multi_combo_ceiling_standard"] = (1, "COMBO", "Multi-Sensor Smoke/Heat Detector"),
+                
+                // Beam Detectors
+                ["beam_ceiling_standard"] = (1, "BEAM", "Beam Smoke Detector"),
+                
+                // Duct Detectors
+                ["duct_smoke_duct_standard"] = (2, "DUCT", "Duct Smoke Detector"), // 2 UL for duct detectors
+                
+                // Pull Stations
+                ["pull_manual_wall_standard"] = (1, "PULL", "Manual Pull Station"),
+                ["pull_break_wall_standard"] = (1, "PULL", "Break Glass Pull Station"),
+                
+                // Weatherproof variants
+                ["smoke_photo_ceiling_weatherproof"] = (1, "PHOTO", "WP Photoelectric Smoke Detector"),
+                ["pull_manual_wall_weatherproof"] = (1, "PULL", "WP Manual Pull Station"),
+            };
+        }
+
+        /// <summary>
+        /// Try IDNET specification fallbacks
+        /// </summary>
+        private IDNETDeviceSpec TryIDNETSpecificationFallbacks(string deviceIdentity, DeviceCharacteristics characteristics, Dictionary<string, (int unitLoads, string pointType, string description)> specs)
+        {
+            var deviceKey = MapIDNETDeviceIdentityToKey(deviceIdentity);
+            
+            // Fallback 1: Try standard environmental if weatherproof not found
+            if (characteristics.Environmental == "weatherproof")
+            {
+                var standardKey = $"{deviceKey}_{characteristics.Mounting}_standard";
+                if (specs.TryGetValue(standardKey, out var standardSpec))
+                {
+                    System.Diagnostics.Debug.WriteLine($"✓ IDNET FALLBACK: Using standard environmental specification");
+                    return CreateIDNETDeviceSpec($"WP {standardSpec.description}", standardSpec.unitLoads, standardSpec.pointType);
                 }
             }
             
-            return null;
+            // Fallback 2: Try ceiling mounting if wall not found
+            if (characteristics.Mounting == "wall")
+            {
+                var ceilingKey = $"{deviceKey}_ceiling_{characteristics.Environmental}";
+                if (specs.TryGetValue(ceilingKey, out var ceilingSpec))
+                {
+                    System.Diagnostics.Debug.WriteLine($"✓ IDNET FALLBACK: Using ceiling mounting specification");
+                    return CreateIDNETDeviceSpec($"Wall {ceilingSpec.description}", ceilingSpec.unitLoads, ceilingSpec.pointType);
+                }
+            }
+            
+            // Fallback 3: Generic photoelectric smoke detector
+            System.Diagnostics.Debug.WriteLine($"✓ IDNET FALLBACK: Using generic smoke detector");
+            return CreateIDNETDeviceSpec("Generic Smoke Detector", 1, "PHOTO");
+        }
+
+        /// <summary>
+        /// Create IDNETDeviceSpec from specification
+        /// </summary>
+        private IDNETDeviceSpec CreateIDNETDeviceSpec(string description, int unitLoads, string pointType)
+        {
+            var standbyCurrent = unitLoads * 0.0008; // 0.8mA per unit load
+            
+            return new IDNETDeviceSpec
+            {
+                FamilyName = "detectors",
+                TypeName = description,
+                Description = description,
+                StandbyCurrent = standbyCurrent,
+                AlarmCurrent = standbyCurrent,
+                UnitLoads = unitLoads,
+                PointType = pointType,
+                Addresses = 1,
+                DeviceType = pointType,
+                OperatingVoltage = "24VDC",
+                EnvironmentalRating = "indoor"
+            };
         }
         
         private IDNETDeviceSpec FindBestIDNETMatch(string familyType, string deviceType, string sensitivity)

@@ -4,13 +4,28 @@
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
         xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
         xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         dx:ThemeManager.ThemeName="Win11Dark"
         Title="Device Addressing Management"
         Height="700" 
         Width="1200" 
         >
 
-
+    <dx:ThemedWindow.Resources>
+        <!-- Converters can be added here if needed -->
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        
+        <!-- Styles -->
+        <Style x:Key="ConflictTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="Green"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasConflicts}" Value="True">
+                    <Setter Property="Foreground" Value="Red"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </dx:ThemedWindow.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -22,43 +37,53 @@
 
         <!-- Toolbar -->
         <ToolBar Grid.Row="0" Height="35">
-            <Button Name="AutoAssignBtn" Content="Auto Assign (Branch)" Padding="10,3" Margin="5,2" 
-                    ToolTip="Sequential assignment respecting locks and manual values" Click="AutoAssign_Click"/>
-            <Button Name="ResequenceBtn" Content="Re-sequence (Branch)" Padding="10,3" Margin="5,2" 
-                    ToolTip="Compact addresses for Auto devices only" Click="Resequence_Click"/>
-            <Button Name="GapFillBtn" Content="Gap Fill (Branch)" Padding="10,3" Margin="5,2" 
-                    ToolTip="Fill gaps left by removals" Click="GapFill_Click"/>
-            <Button Name="FirstAvailableBtn" Content="First Available (Device)" Padding="10,3" Margin="5,2" 
-                    ToolTip="Assign first free slot for selected device" Click="FirstAvailable_Click"/>
+            <Button Content="Auto Assign (Branch)" Padding="10,3" Margin="5,2" 
+                    ToolTip="Sequential assignment respecting locks and manual values" 
+                    Command="{Binding AutoAssignCommand}"/>
+            <Button Content="Re-sequence (Branch)" Padding="10,3" Margin="5,2" 
+                    ToolTip="Compact addresses for Auto devices only" 
+                    Command="{Binding ResequenceCommand}"/>
+            <Button Content="Gap Fill (Branch)" Padding="10,3" Margin="5,2" 
+                    ToolTip="Fill gaps left by removals" 
+                    Command="{Binding GapFillCommand}"/>
+            <Button Content="First Available (Device)" Padding="10,3" Margin="5,2" 
+                    ToolTip="Assign first free slot for selected device" 
+                    Command="{Binding FirstAvailableCommand}"
+                    CommandParameter="{Binding ElementName=DeviceGrid, Path=SelectedItem}"/>
             <Separator/>
-            <Button Name="ValidateBtn" Content="Validate" Padding="10,3" Margin="5,2" 
-                    ToolTip="Check for address conflicts" Click="Validate_Click"/>
-            <Button Name="ResolveConflictsBtn" Content="Resolve Conflicts" Padding="10,3" Margin="5,2" 
-                    ToolTip="Auto-resolve conflicts by gap-filling Auto devices" Click="ResolveConflicts_Click"/>
+            <Button Content="Validate" Padding="10,3" Margin="5,2" 
+                    ToolTip="Check for address conflicts" 
+                    Command="{Binding ValidateCommand}"/>
+            <Button Content="Resolve Conflicts" Padding="10,3" Margin="5,2" 
+                    ToolTip="Auto-resolve conflicts by gap-filling Auto devices" 
+                    Command="{Binding ResolveConflictsCommand}"/>
             <Separator/>
-            <Button Name="SaveToRevitBtn" Content="Save to Revit" Padding="10,3" Margin="5,2" 
+            <Button Content="Save to Revit" Padding="10,3" Margin="5,2" 
                     Background="Orange" FontWeight="Bold"
-                    ToolTip="Push addresses back to Revit parameters" Click="SaveToRevit_Click"/>
+                    ToolTip="Push addresses back to Revit parameters" 
+                    Command="{Binding SaveToRevitCommand}"/>
         </ToolBar>
 
         <!-- Options Panel -->
         <GroupBox Grid.Row="1" Header="Addressing Options" Margin="10,5" Height="80" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Margin="10">
                 <Label Content="Start Address:" VerticalAlignment="Center"/>
-                <dxe:SpinEdit Name="StartAddressSpinner" Value="1" MinValue="1" MaxValue="999" Width="60" Margin="5,0"/>
-                <CheckBox Name="PreserveManualChk" Content="Preserve Manual" IsChecked="True" Margin="15,0,0,0" 
+                <dxe:SpinEdit Value="{Binding StartAddress, Mode=TwoWay}" MinValue="1" MaxValue="999" Width="60" Margin="5,0"/>
+                <CheckBox Content="Preserve Manual" IsChecked="{Binding PreserveManual, Mode=TwoWay}" Margin="15,0,0,0" 
                           ToolTip="Do not overwrite user-entered values"/>
-                <CheckBox Name="RespectLocksChk" Content="Respect Locks" IsChecked="True" Margin="15,0,0,0" 
+                <CheckBox Content="Respect Locks" IsChecked="{Binding RespectLocks, Mode=TwoWay}" Margin="15,0,0,0" 
                           ToolTip="Do not move devices marked Locked"/>
-                <CheckBox Name="GapFillChk" Content="Gap Fill" IsChecked="True" Margin="15,0,0,0" 
+                <CheckBox Content="Gap Fill" IsChecked="{Binding GapFill, Mode=TwoWay}" Margin="15,0,0,0" 
                           ToolTip="Fill gaps left by removals"/>
                 <Label Content="Branch:" Margin="30,0,5,0" VerticalAlignment="Center"/>
-                <ComboBox Name="BranchSelector" Width="150" Margin="5,0" SelectionChanged="BranchSelector_SelectionChanged"/>
+                <ComboBox ItemsSource="{Binding Branches}" SelectedItem="{Binding SelectedBranch, Mode=TwoWay}" 
+                          Width="150" Margin="5,0"/>
             </StackPanel>
         </GroupBox>
 
         <!-- Device Grid -->
-        <dxg:GridControl Name="DeviceGrid" Grid.Row="1" Margin="10,90,10,10" SelectionMode="Row">
+        <dxg:GridControl Name="DeviceGrid" Grid.Row="1" Margin="10,90,10,10" SelectionMode="Row" 
+                        ItemsSource="{Binding Devices}">
             <dxg:GridControl.View>
                 <dxg:TableView ShowGroupPanel="False" 
                               AllowEditing="True"
@@ -66,7 +91,9 @@
                               ShowIndicator="True"
                               AutoWidth="True"
                               AllowColumnFiltering="True"
-                              AllowSorting="True" AllowDragDrop="True"/>
+                              AllowSorting="True" 
+                              AllowDragDrop="True"
+                              ImmediateUpdateRowPosition="True"/>
             </dxg:GridControl.View>
 
             <dxg:GridControl.Columns>
@@ -89,8 +116,8 @@
                     <dxg:GridColumn.EditSettings>
                         <dxe:ComboBoxEditSettings>
                             <dxe:ComboBoxEditSettings.Items>
-                                <sys:String xmlns:sys="clr-namespace:System;assembly=mscorlib">Auto</sys:String>
-                                <sys:String xmlns:sys="clr-namespace:System;assembly=mscorlib">Locked</sys:String>
+                                <sys:String>Auto</sys:String>
+                                <sys:String>Locked</sys:String>
                             </dxe:ComboBoxEditSettings.Items>
                         </dxe:ComboBoxEditSettings>
                     </dxg:GridColumn.EditSettings>
@@ -112,22 +139,22 @@
 
                 <StackPanel Grid.Column="0" Margin="10">
                     <Label Content="Address Range:" FontWeight="Bold"/>
-                    <TextBlock Name="AddressRangeText" Text="1-50" FontSize="14"/>
+                    <TextBlock Text="{Binding AddressRange}" FontSize="14"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Margin="10">
                     <Label Content="Total Devices:" FontWeight="Bold"/>
-                    <TextBlock Name="TotalDevicesText" Text="25" FontSize="14"/>
+                    <TextBlock Text="{Binding TotalDevices}" FontSize="14"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Margin="10">
                     <Label Content="Locked Devices:" FontWeight="Bold"/>
-                    <TextBlock Name="LockedDevicesText" Text="5" FontSize="14"/>
+                    <TextBlock Text="{Binding LockedDevices}" FontSize="14"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="3" Margin="10">
                     <Label Content="Conflicts:" FontWeight="Bold"/>
-                    <TextBlock Name="ConflictsText" Text="0" FontSize="14" Foreground="Green"/>
+                    <TextBlock Text="{Binding Conflicts}" Style="{StaticResource ConflictTextStyle}"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
