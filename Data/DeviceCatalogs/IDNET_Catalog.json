@@ -1,0 +1,947 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2025-08-13T00:00:00Z",
+  "description": "Complete AutoCall 4100ES IDNet Addressable Initiating Device Repository",
+  "manufacturer": "Johnson Controls - AutoCall",
+  "systemCompatibility": ["AutoCall 4100ES", "4010ES", "4007ES", "IDNet"],
+  
+  "deviceFamilies": {
+    "detectors": {
+      "description": "Addressable Fire Detection Sensors",
+      "deviceTypes": {
+        "smoke": {
+          "photoelectric": {
+            "standard": {
+              "A4098-9714": {
+                "sku": "A4098-9714",
+                "description": "Photoelectric Smoke Sensor",
+                "sensorType": "photoelectric",
+                "pointType": "PHOTO",
+                "unitLoads": 1,
+                "addresses": 1,
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              },
+              "A4098-9774": {
+                "sku": "A4098-9774",
+                "description": "Photoelectric Smoke Sensor (Enhanced)",
+                "sensorType": "photoelectric",
+                "pointType": "PHOTO",
+                "unitLoads": 1,
+                "addresses": 1,
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              }
+            }
+          }
+        },
+        "heat": {
+          "fixed": {
+            "standard": {
+              "A4098-9733": {
+                "sku": "A4098-9733",
+                "description": "Heat Sensor (Fixed Temperature)",
+                "sensorType": "heat_fixed",
+                "pointType": "HEAT",
+                "unitLoads": 1,
+                "addresses": 1,
+                "activationTemp": "135°F (57°C)",
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              },
+              "A4098-9778": {
+                "sku": "A4098-9778",
+                "description": "Heat Sensor (Fixed Temperature) Enhanced",
+                "sensorType": "heat_fixed",
+                "pointType": "HEAT",
+                "unitLoads": 1,
+                "addresses": 1,
+                "activationTemp": "135°F (57°C)",
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              }
+            },
+            "highTemp": {
+              "A4098-9734": {
+                "sku": "A4098-9734",
+                "description": "High Temperature Heat Sensor",
+                "sensorType": "heat_high_temp",
+                "pointType": "HEAT",
+                "unitLoads": 1,
+                "addresses": 1,
+                "activationTemp": "194°F (90°C)",
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "high_temperature",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              }
+            }
+          }
+        },
+        "multiSensor": {
+          "photoHeat": {
+            "trueSense": {
+              "A4098-9754": {
+                "sku": "A4098-9754",
+                "description": "Photo/Heat Multi-Sensor with TrueSense",
+                "sensorType": "multi_photo_heat",
+                "pointType": "COMBO",
+                "unitLoads": 1,
+                "addresses": 1,
+                "capabilities": ["photoelectric", "heat", "trueSense"],
+                "publicPoints": 4,
+                "pointTypes": ["MPHOTO", "MHEAT", "MACOFALSE", "MACOFAST"],
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              },
+              "A4098-9779": {
+                "sku": "A4098-9779",
+                "description": "Photo/Heat Multi-Sensor Enhanced with TrueSense",
+                "sensorType": "multi_photo_heat",
+                "pointType": "COMBO",
+                "unitLoads": 1,
+                "addresses": 1,
+                "capabilities": ["photoelectric", "heat", "trueSense"],
+                "publicPoints": 4,
+                "pointTypes": ["MPHOTO", "MHEAT", "MACOFALSE", "MACOFAST"],
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "baseCompatible": ["A4098-9792", "A4098-9776", "A4098-9793", "A4098-9777", "A4098-9794", "A4098-9789", "A4098-9775", "A4098-9780", "A4098-9791"],
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              }
+            }
+          }
+        },
+        "beam": {
+          "photoelectric": {
+            "addressable": {
+              "A4098-9019": {
+                "sku": "A4098-9019",
+                "description": "Addressable Beam Detector (Transmitter)",
+                "sensorType": "beam_detector",
+                "pointType": "BEAM",
+                "unitLoads": 1,
+                "addresses": 1,
+                "range": "10-100 meters",
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "pairWith": "A4098-9020",
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              },
+              "A4098-9020": {
+                "sku": "A4098-9020",
+                "description": "Addressable Beam Detector (Receiver)",
+                "sensorType": "beam_detector",
+                "pointType": "BEAM",
+                "unitLoads": 1,
+                "addresses": 1,
+                "range": "10-100 meters",
+                "compatibility": ["4007ES", "4010ES", "4100ES"],
+                "pairWith": "A4098-9019",
+                "environmentalRating": "indoor",
+                "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "sensorBases": {
+      "description": "Addressable Sensor Mounting Bases",
+      "deviceTypes": {
+        "standard": {
+          "basic": {
+            "A4098-9792": {
+              "sku": "A4098-9792",
+              "description": "Standard Sensor Base",
+              "baseType": "standard",
+              "pointType": "BASE",
+              "unitLoads": 0,
+              "outputs": "none",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9776": {
+              "sku": "A4098-9776",
+              "description": "Standard Sensor Base (Enhanced)",
+              "baseType": "standard",
+              "pointType": "BASE",
+              "unitLoads": 0,
+              "outputs": "none",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "withOutputs": {
+            "A4098-9789": {
+              "sku": "A4098-9789",
+              "description": "Sensor Base with Remote LED or Relay Output",
+              "baseType": "relay_led",
+              "pointType": "RBASE",
+              "unitLoads": 1,
+              "outputs": "LED/relay",
+              "publicPoints": 1,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9775": {
+              "sku": "A4098-9775",
+              "description": "Sensor Base with Remote LED or Relay Output (Enhanced)",
+              "baseType": "relay_led",
+              "pointType": "RBASE",
+              "unitLoads": 1,
+              "outputs": "LED/relay",
+              "publicPoints": 1,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "relay": {
+            "A4098-9780": {
+              "sku": "A4098-9780",
+              "description": "Two-wire Sensor Base with Supervised Relay",
+              "baseType": "supervised_relay",
+              "pointType": "SRBASE",
+              "unitLoads": 1,
+              "outputs": "supervised_relay",
+              "wireType": "2-wire",
+              "publicPoints": 2,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9791": {
+              "sku": "A4098-9791",
+              "description": "Four-wire Sensor Base with Supervised Relay",
+              "baseType": "supervised_relay",
+              "pointType": "FRBASE",
+              "unitLoads": 1,
+              "outputs": "supervised_relay_LED",
+              "wireType": "4-wire",
+              "publicPoints": 2,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "isolator": {
+          "standard": {
+            "A4098-9793": {
+              "sku": "A4098-9793",
+              "description": "Isolator Base",
+              "baseType": "isolator",
+              "pointType": "IBASE",
+              "unitLoads": 1,
+              "outputs": "isolator",
+              "publicPoints": 1,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "incompatibleWith": ["A100-3103"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9777": {
+              "sku": "A4098-9777",
+              "description": "Isolator Base (Enhanced)",
+              "baseType": "isolator",
+              "pointType": "IBASE",
+              "unitLoads": 1,
+              "outputs": "isolator",
+              "publicPoints": 1,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "incompatibleWith": ["A100-3103"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "sounder": {
+          "standard": {
+            "A4098-9794": {
+              "sku": "A4098-9794",
+              "description": "Sounder Base",
+              "baseType": "sounder",
+              "pointType": "SBASE",
+              "unitLoads": 1,
+              "outputs": "sounder",
+              "publicPoints": 1,
+              "frequency": "multi-tone",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9772": {
+              "sku": "A4098-9772",
+              "description": "520 Hz Sounder Base",
+              "baseType": "sounder",
+              "pointType": "S520BASE",
+              "unitLoads": 2,
+              "outputs": "sounder",
+              "publicPoints": 1,
+              "frequency": "520Hz",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9734", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "coSensor": {
+          "standard": {
+            "A4098-9770": {
+              "sku": "A4098-9770",
+              "description": "CO Sensor Standard Base",
+              "baseType": "co_sensor",
+              "pointType": "COBASE",
+              "unitLoads": 1,
+              "outputs": "CO_detection",
+              "publicPoints": 6,
+              "pointTypes": ["MCOGAS", "MACOFIRE", "MACOFALSE", "MACOFAST", "MAOFF"],
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9771": {
+              "sku": "A4098-9771",
+              "description": "CO Sensor Sounder Base",
+              "baseType": "co_sensor_sounder",
+              "pointType": "COSBASE",
+              "unitLoads": 1,
+              "outputs": "CO_detection_sounder",
+              "publicPoints": 7,
+              "pointTypes": ["MCOGAS", "MACOFIRE", "MACOFALSE", "MACOFAST", "MAOFF", "MSOUND"],
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4098-9773": {
+              "sku": "A4098-9773",
+              "description": "CO Sensor Base with 520 Hz Sounder",
+              "baseType": "co_sensor_sounder",
+              "pointType": "COS520BASE",
+              "unitLoads": 2,
+              "outputs": "CO_detection_520Hz_sounder",
+              "publicPoints": 7,
+              "pointTypes": ["MCOGAS", "MACOFIRE", "MACOFALSE", "MACOFAST", "MAOFF", "MSOUND"],
+              "frequency": "520Hz",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "sensorCompatible": ["A4098-9714", "A4098-9774", "A4098-9733", "A4098-9778", "A4098-9754", "A4098-9779"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        }
+      }
+    },
+    "pullStations": {
+      "description": "Addressable Manual Fire Alarm Stations",
+      "deviceTypes": {
+        "standard": {
+          "pullAction": {
+            "A4099-9004": {
+              "sku": "A4099-9004",
+              "description": "Addressable Station, Standard Pull",
+              "stationType": "standard_pull",
+              "pointType": "PULL",
+              "unitLoads": 1,
+              "addresses": 1,
+              "action": "pull_down",
+              "resetType": "key_reset",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "mountingType": "wall",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4099-9005": {
+              "sku": "A4099-9005",
+              "description": "Addressable Station, Breakglass",
+              "stationType": "breakglass",
+              "pointType": "PULL",
+              "unitLoads": 1,
+              "addresses": 1,
+              "action": "break_glass",
+              "resetType": "glass_replacement",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "mountingType": "wall",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4099-9006": {
+              "sku": "A4099-9006",
+              "description": "Addressable Station, Push Button",
+              "stationType": "push_button",
+              "pointType": "PULL",
+              "unitLoads": 1,
+              "addresses": 1,
+              "action": "push_button",
+              "resetType": "key_reset",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "mountingType": "wall",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "singleAction": {
+            "A4099-9021": {
+              "sku": "A4099-9021",
+              "description": "NO-GRIP Single Action Addressable Station",
+              "stationType": "single_action",
+              "pointType": "PULL",
+              "unitLoads": 1,
+              "addresses": 1,
+              "action": "single_action",
+              "resetType": "key_reset",
+              "accessibility": "ADA_compliant",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "mountingType": "wall",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "releasing": {
+          "pushButton": {
+            "A4099-9015": {
+              "sku": "A4099-9015",
+              "description": "Addressable Releasing Station, Push Button",
+              "stationType": "releasing_push",
+              "pointType": "RELEASE",
+              "unitLoads": 1,
+              "addresses": 1,
+              "action": "push_button",
+              "resetType": "key_reset",
+              "application": "suppression_release",
+              "compatibility": ["4010ES", "4100ES"],
+              "incompatibleWith": ["4007ES"],
+              "environmentalRating": "indoor",
+              "mountingType": "wall",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        }
+      }
+    },
+    "inputOutputModules": {
+      "description": "Addressable Input/Output Interface Modules",
+      "deviceTypes": {
+        "relayModules": {
+          "standard": {
+            "A4090-9002": {
+              "sku": "A4090-9002",
+              "description": "Relay IAM",
+              "moduleType": "relay_only",
+              "pointType": "RELAY",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "relaySpecs": {
+                "contacts": "SPDT",
+                "rating": "2A@30VDC, 0.5A@125VAC",
+                "type": "form_C"
+              },
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4090-9010": {
+              "sku": "A4090-9010",
+              "description": "8 Amp Relay IAM",
+              "moduleType": "relay_high_current",
+              "pointType": "RELAY",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "relaySpecs": {
+                "contacts": "SPDT",
+                "rating": "8A@30VDC, 5A@125VAC",
+                "type": "form_C"
+              },
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "withInput": {
+            "A4090-9118": {
+              "sku": "A4090-9118",
+              "description": "Relay IAM with T-Sense Input",
+              "moduleType": "relay_with_input",
+              "pointType": "TRIAM",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 2,
+              "publicPoints": 3,
+              "inputs": 1,
+              "relays": 1,
+              "inputType": "T_sense_supervised",
+              "relaySpecs": {
+                "contacts": "SPDT",
+                "rating": "2A@30VDC, 0.5A@125VAC",
+                "type": "form_C"
+              },
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4090-9119": {
+              "sku": "A4090-9119",
+              "description": "Relay IAM with Unsupervised Input",
+              "moduleType": "relay_with_input",
+              "pointType": "FRIAM",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 3,
+              "inputs": 1,
+              "relays": 1,
+              "inputType": "unsupervised",
+              "relaySpecs": {
+                "contacts": "SPDT",
+                "rating": "2A@30VDC, 0.5A@125VAC",
+                "type": "form_C"
+              },
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4090-9008": {
+              "sku": "A4090-9008",
+              "description": "Dual Contact Relay IAM",
+              "moduleType": "dual_relay",
+              "pointType": "DRELAY",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 2,
+              "publicPoints": 2,
+              "relays": 2,
+              "relaySpecs": {
+                "contacts": "SPDT_each",
+                "rating": "2A@30VDC, 0.5A@125VAC",
+                "type": "form_C"
+              },
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "inputModules": {
+          "supervised": {
+            "A4090-9001": {
+              "sku": "A4090-9001",
+              "description": "Supervised IAM with LED with T-sense",
+              "moduleType": "input_supervised",
+              "pointType": "IAM",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "inputs": 1,
+              "inputType": "T_sense_supervised",
+              "ledIndicator": true,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4090-9051": {
+              "sku": "A4090-9051",
+              "description": "Supervised IAM, Encapsulated without LED with T-sense",
+              "moduleType": "input_supervised",
+              "pointType": "IAM",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "inputs": 1,
+              "inputType": "T_sense_supervised",
+              "ledIndicator": false,
+              "encapsulated": true,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "multiPointModules": {
+          "sixPoint": {
+            "A4090-9120": {
+              "sku": "A4090-9120",
+              "description": "Six Point Module, Four T-Sense Inputs, Two Relays",
+              "moduleType": "multi_point",
+              "pointType": "MLPTIO",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 6,
+              "publicPoints": 7,
+              "inputs": 4,
+              "relays": 2,
+              "inputType": "T_sense_supervised",
+              "relaySpecs": {
+                "contacts": "SPDT_each",
+                "rating": "2A@30VDC, 0.5A@125VAC",
+                "type": "form_C"
+              },
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "specialModules": {
+          "signal": {
+            "A4090-9007": {
+              "sku": "A4090-9007",
+              "description": "IDNet Signal IAM",
+              "moduleType": "signal_iam",
+              "pointType": "SIAM",
+              "unitLoads": 2,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "note": "Requires one address but consumes two unit loads",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "security": {
+            "A4090-9121": {
+              "sku": "A4090-9121",
+              "description": "Security Monitor IAM",
+              "moduleType": "security_monitor",
+              "pointType": "SECIAM",
+              "unitLoads": 2,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "application": "security_monitoring",
+              "compatibility": ["4010ES", "4100ES"],
+              "incompatibleWith": ["4007ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "analog": {
+            "A190-9050": {
+              "sku": "A190-9050",
+              "description": "4-20mA Analog Monitor Zone (Surface Mount)",
+              "moduleType": "analog_monitor",
+              "pointType": "AMZ",
+              "unitLoads": 2,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "inputRange": "4-20mA",
+              "mountingType": "surface",
+              "firmwareRevision": "2.01+",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A190-9051": {
+              "sku": "A190-9051",
+              "description": "4-20mA Analog Monitor Zone (Flush Mount)",
+              "moduleType": "analog_monitor",
+              "pointType": "AMZ",
+              "unitLoads": 2,
+              "addresses": 1,
+              "ioPoints": 1,
+              "publicPoints": 1,
+              "inputRange": "4-20mA",
+              "mountingType": "flush",
+              "firmwareRevision": "2.01+",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        }
+      }
+    },
+    "isolatorsAndPower": {
+      "description": "IDNet Circuit Protection and Power Modules",
+      "deviceTypes": {
+        "communicationIsolators": {
+          "standard": {
+            "A4090-9116": {
+              "sku": "A4090-9116",
+              "description": "IDNet Communications Isolator",
+              "moduleType": "communication_isolator",
+              "pointType": "COMISO",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "circuit_isolation",
+              "maxDevicesProtected": 32,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "incompatibleWith": ["A100-3103"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "powerIsolators": {
+          "addressable": {
+            "A4090-9117": {
+              "sku": "A4090-9117",
+              "description": "Addressable Power Isolator",
+              "moduleType": "power_isolator",
+              "pointType": "PWRISO",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "power_isolation",
+              "powerRating": "24VDC_3A",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        }
+      }
+    },
+    "nacExtenders": {
+      "description": "IDNet Notification Appliance Circuit Extenders",
+      "deviceTypes": {
+        "standardExtenders": {
+          "120V": {
+            "A009-9201": {
+              "sku": "A009-9201",
+              "description": "4009 IDNet NAC Extender (4009A), 120 VAC input",
+              "extenderType": "nac_extender",
+              "pointType": "4009A4",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 4,
+              "publicPoints": 5,
+              "nacCircuits": 4,
+              "inputVoltage": "120VAC",
+              "outputVoltage": "24VDC",
+              "maxCurrentPerNAC": "3.0A",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          },
+          "240V": {
+            "A009-9301": {
+              "sku": "A009-9301",
+              "description": "4009 IDNet NAC Extender (4009A), 240 VAC input",
+              "extenderType": "nac_extender",
+              "pointType": "4009A4",
+              "unitLoads": 1,
+              "addresses": 1,
+              "ioPoints": 4,
+              "publicPoints": 5,
+              "nacCircuits": 4,
+              "inputVoltage": "240VAC",
+              "outputVoltage": "24VDC",
+              "maxCurrentPerNAC": "3.0A",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "expansionModules": {
+          "additionalNACs": {
+            "A009-9807": {
+              "sku": "A009-9807",
+              "description": "Additional Four Circuit NAC (for A009-9201/A009-9301)",
+              "extenderType": "nac_expansion",
+              "pointType": "4009A8",
+              "unitLoads": 0,
+              "addresses": 0,
+              "ioPoints": 8,
+              "publicPoints": 9,
+              "nacCircuits": 8,
+              "requiresBaseCabinet": true,
+              "compatibleWith": ["A009-9201", "A009-9301"],
+              "totalNACsWithExpansion": 8,
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "repeaters": {
+          "idnetRepeater": {
+            "A009-9809": {
+              "sku": "A009-9809",
+              "description": "IDNet Repeater (mounts in 4009A or 4009T only)",
+              "extenderType": "idnet_repeater",
+              "pointType": "REPEATER",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "signal_repeating",
+              "mountingRequirement": "4009A_or_4009T_cabinet",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        }
+      }
+    },
+    "specialDevices": {
+      "description": "Specialized IDNet Devices",
+      "deviceTypes": {
+        "audio": {
+          "microphone": {
+            "A100-1274": {
+              "sku": "A100-1274",
+              "description": "Microphone Multiplex Module (Internal IAM)",
+              "deviceType": "microphone_module",
+              "pointType": "MICMUX",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "microphone_multiplexing",
+              "internalIAM": true,
+              "compatibility": ["4100ES"],
+              "incompatibleWith": ["4007ES", "4010ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "display": {
+          "messageBoard": {
+            "4907-9001": {
+              "sku": "4907-9001",
+              "description": "LED Message Board",
+              "deviceType": "led_display",
+              "pointType": "MSGBOARD",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "message_display",
+              "displayType": "LED_text",
+              "compatibility": ["4007ES", "4010ES", "4100ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        },
+        "suppression": {
+          "releasingModules": {
+            "A4090-9005": {
+              "sku": "A4090-9005",
+              "description": "Suppression Release Peripheral (SRP) no enclosure",
+              "deviceType": "suppression_release",
+              "pointType": "SRP",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "suppression_system_release",
+              "enclosure": false,
+              "requiresEnclosure": "A2975-9227",
+              "compatibility": ["4010ES", "4100ES"],
+              "incompatibleWith": ["4007ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            },
+            "A4090-9006": {
+              "sku": "A4090-9006",
+              "description": "Suppression Release Peripheral (SRP) with Enclosure",
+              "deviceType": "suppression_release",
+              "pointType": "SRP",
+              "unitLoads": 1,
+              "addresses": 1,
+              "function": "suppression_system_release",
+              "enclosure": true,
+              "compatibility": ["4010ES", "4100ES"],
+              "incompatibleWith": ["4007ES"],
+              "environmentalRating": "indoor",
+              "listingAgencies": ["UL", "ULC", "CSFM", "FM"]
+            }
+          }
+        }
+      }
+    }
+  },
+  
+  "electricalLimits": {
+    "idnetLoop": {
+      "maxCurrent": 3.0,
+      "maxVoltage": 30.0,
+      "minVoltage": 16.0,
+      "maxDevices": 250,
+      "maxWireDistance": 10000,
+      "maxUnitLoads": 250
+    },
+    "unitLoadDefinition": {
+      "perUnitLoad": 0.0008,
+      "description": "Each unit load equals 0.8 mA (0.0008 amps)",
+      "exceptions": {
+        "signalIAM": 2,
+        "securityMonitor": 2,
+        "analogMonitor": 2,
+        "sounder520Hz": 2
+      }
+    }
+  },
+
+  "pointAllocationRules": {
+    "4100ES": {
+      "maxIOPoints": 2500,
+      "maxPublicPoints": 2500,
+      "description": "Maximum I/O and Public points for 4100ES"
+    },
+    "4010ES": {
+      "maxIOPoints": 1000,
+      "maxPublicPoints": "unlimited",
+      "description": "Maximum I/O points for 4010ES, unlimited public points"
+    },
+    "4007ES": {
+      "maxIOPoints": "100/175/250",
+      "maxPublicPoints": "unlimited",
+      "description": "I/O points depend on configuration, unlimited public points"
+    }
+  },
+
+  "compatibilityMatrix": {
+    "AutoCall4100ES": {
+      "supports": ["detectors", "sensorBases", "pullStations", "inputOutputModules", "isolatorsAndPower", "nacExtenders", "specialDevices"],
+      "addressRange": [1, 250],
+      "maxLoops": 8,
+      "isolatorSupport": true
+    },
+    "AutoCall4010ES": {
+      "supports": ["detectors", "sensorBases", "pullStations", "inputOutputModules", "isolatorsAndPower", "nacExtenders"],
+      "addressRange": [1, 250],
+      "maxLoops": 4,
+      "isolatorSupport": true,
+      "restrictions": ["no_microphone_module", "no_security_monitor"]
+    },
+    "AutoCall4007ES": {
+      "supports": ["detectors", "sensorBases", "pullStations", "inputOutputModules", "isolatorsAndPower", "nacExtenders"],
+      "addressRange": [1, 250],
+      "maxLoops": 2,
+      "isolatorSupport": true,
+      "restrictions": ["no_microphone_module", "no_security_monitor", "no_suppression_modules"]
+    }
+  }
+}

@@ -6,6 +6,8 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Revit_FA_Tools.Models;
 using Revit_FA_Tools.Core.Models.Analysis;
+using Revit_FA_Tools.Core.Services.ParameterMapping.Implementation;
+using DeviceSnapshot = Revit_FA_Tools.Models.DeviceSnapshot;
 
 namespace Revit_FA_Tools
 {
@@ -77,6 +79,7 @@ namespace Revit_FA_Tools
 
     /// <summary>
     /// Device snapshot service - converts Revit API objects to thread-safe DTOs on UI thread
+    /// Optimized for IDNAC notification devices with catalog-driven current extraction
     /// </summary>
     public class DeviceSnapshotService : IDeviceSnapshotService
     {
@@ -89,18 +92,32 @@ namespace Revit_FA_Tools
             System.Diagnostics.Debug.WriteLine($"DeviceSnapshotService: Filtered {electricalElements.Count} electrical devices from {elements.Count} total elements");
 
             var snapshots = new List<DeviceSnapshot>(electricalElements.Count);
+            var catalogStats = new Dictionary<string, int>();
+            
             foreach (var element in electricalElements)
             {
                 try
                 {
                     var snapshot = CreateSnapshot(element);
-                    if (snapshot != null) snapshots.Add(snapshot);
+                    if (snapshot != null) 
+                    {
+                        snapshots.Add(snapshot);
+                        
+                        // Track catalog usage statistics
+                        var currentSource = snapshot.ActualCustomProperties?.TryGetValue("CURRENT_SOURCE", out var source) == true 
+                            ? source.ToString() : "Unknown";
+                        catalogStats[currentSource] = catalogStats.GetValueOrDefault(currentSource) + 1;
+                    }
                 }
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"Failed to create snapshot for element {element?.Id?.Value}: {ex.Message}");
                 }
             }
+            
+            // Log catalog usage summary
+            LogCatalogUsageSummary(catalogStats, snapshots.Count);
+            
             return snapshots;
         }
 
@@ -117,9 +134,13 @@ namespace Revit_FA_Tools
                 string levelName = "Unknown";
                 
                 // First try: Get the level directly from the element
-                if (element.LevelId != null)
+                if (element.LevelId != null && element.LevelId != Autodesk.Revit.DB.ElementId.InvalidElementId)
                 {
-                    levelName = element.LevelId.ToString();
+                    var levelElement = element.Document.GetElement(element.LevelId) as Autodesk.Revit.DB.Level;
+                    if (levelElement != null)
+                    {
+                        levelName = levelElement.Name;
+                    }
                 }
                 // Second try: Get from schedule level parameter
                 else
@@ -173,14 +194,75 @@ namespace Revit_FA_Tools
                 
                 System.Diagnostics.Debug.WriteLine($"Element {elementId} ({familyName}): Watts = {watts}");
 
-                // Use device classification service for proper current/UL calculation
-                var classification = CandelaConfigurationService.ClassifyDevice(familyName, typeName);
-                var amps = classification.Current;
-                var unitLoads = classification.UnitLoads;
+                // Extract candela parameter for device catalog lookup
+                var candela = ExtractParameterValue(element, "CANDELA")?.ToString() ?? 
+                             ExtractParameterValue(element, "Candela")?.ToString() ??
+                             ExtractParameterValue(element, "CANDELA_RATING")?.ToString();
 
-                // Determine device characteristics from classification
-                var hasStrobe = classification.HasStrobe;
-                var hasSpeaker = classification.IsSpeaker;
+                // Enhanced current extraction with fallback chain
+                double amps = 0;
+                int unitLoads = 1;
+                string currentSource = "Unknown";
+                
+                // Strategy 1: Device catalog lookup (route to appropriate catalog)
+                var deviceType = FireAlarmCatalogFactory.DetermineDeviceType(familyName, typeName);
+                var catalogService = FireAlarmCatalogFactory.CreateCatalogService(deviceType);
+                var catalogResult = catalogService.FindDeviceSpec(familyName, typeName, candela, watts);
+                
+                if (catalogResult.FoundMatch)
+                {
+                    amps = catalogResult.Current;
+                    unitLoads = catalogResult.UnitLoads;
+                    currentSource = $"{deviceType} Catalog ({catalogResult.Source})";
+                    System.Diagnostics.Debug.WriteLine($"{deviceType} catalog match: {familyName} - Current: {amps}A, UL: {unitLoads}, Source: {catalogResult.Source}");
+                }
+                else
+                {
+                    // Strategy 2: CURRENT DRAW parameter fallback
+                    var currentDraw = ExtractParameterValue(element, "CURRENT DRAW") ?? 
+                                     ExtractParameterValue(element, "Current Draw") ??
+                                     ExtractParameterValue(element, "CURRENT_DRAW") ??
+                                     ExtractParameterValue(element, "CurrentDraw");
+                    
+                    if (currentDraw.HasValue && currentDraw.Value > 0)
+                    {
+                        amps = currentDraw.Value;
+                        currentSource = "CURRENT DRAW Parameter";
+                        System.Diagnostics.Debug.WriteLine($"Using CURRENT DRAW parameter: {amps}A");
+                    }
+                    else
+                    {
+                        // Strategy 3: Candela configuration fallback
+                        var classification = CandelaConfigurationService.ClassifyDevice(familyName, typeName);
+                        amps = classification.Current;
+                        unitLoads = classification.UnitLoads;
+                        currentSource = "Candela Configuration";
+                        System.Diagnostics.Debug.WriteLine($"Using Candela classification: {amps}A, UL: {unitLoads}");
+                    }
+                    
+                    // Log warning about missing catalog match
+                    System.Diagnostics.Debug.WriteLine($"WARNING: No {deviceType} catalog match for '{familyName}' - '{typeName}'. Using fallback: {currentSource}");
+                }
+
+                // Determine device characteristics
+                bool hasStrobe = false;
+                bool hasSpeaker = false;
+                
+                if (catalogResult.FoundMatch)
+                {
+                    // Use catalog information if available (works for both IDNAC and IDNET)
+                    hasStrobe = familyName?.ToLowerInvariant().Contains("strobe") == true ||
+                               typeName?.ToLowerInvariant().Contains("strobe") == true;
+                    hasSpeaker = familyName?.ToLowerInvariant().Contains("speaker") == true ||
+                                typeName?.ToLowerInvariant().Contains("speaker") == true;
+                }
+                else
+                {
+                    // Fall back to pattern-based detection
+                    hasStrobe = DetermineHasStrobe(familyName, typeName);
+                    hasSpeaker = DetermineHasSpeaker(familyName, typeName);
+                }
+                
                 var isIsolator = DetermineIsIsolator(familyName, typeName);
                 var isRepeater = DetermineIsRepeater(familyName, typeName);
 
@@ -192,17 +274,95 @@ namespace Revit_FA_Tools
                     unitLoads = config.Repeater.RepeaterUnitLoad;
                 }
 
-                return new DeviceSnapshot(
+                // Prepare custom properties for metadata
+                var customProperties = new Dictionary<string, object>
+                {
+                    ["CURRENT_SOURCE"] = currentSource,
+                    ["DEVICE_TYPE"] = deviceType.ToString()
+                };
+                
+                if (catalogResult.FoundMatch)
+                {
+                    customProperties["CATALOG_SOURCE"] = catalogResult.Source;
+                    // Type-specific metadata based on device type
+                    if (deviceType == FireAlarmDeviceType.IDNAC_Notification && catalogResult is IDNACDeviceSpecResult idnacResult)
+                    {
+                        customProperties["IDNAC_CATALOG_SKU"] = idnacResult.IDNACDeviceSpec?.SKU ?? "";
+                        customProperties["IDNAC_CATALOG_DESCRIPTION"] = idnacResult.IDNACDeviceSpec?.Description ?? "";
+                        customProperties["IDNAC_CANDELA"] = idnacResult.IDNACDeviceSpec?.Candela ?? "";
+                    }
+                    else if (deviceType == FireAlarmDeviceType.IDNET_Initiating && catalogResult is IDNETDeviceSpecResult idnetResult)
+                    {
+                        customProperties["IDNET_CATALOG_SKU"] = idnetResult.IDNETDeviceSpec?.SKU ?? "";
+                        customProperties["IDNET_CATALOG_DESCRIPTION"] = idnetResult.IDNETDeviceSpec?.Description ?? "";
+                        customProperties["IDNET_DEVICE_TYPE"] = idnetResult.IDNETDeviceSpec?.DeviceType ?? "";
+                    }
+                }
+                if (!string.IsNullOrEmpty(candela))
+                {
+                    customProperties["CANDELA_RATING"] = candela;
+                }
+
+                // Create device snapshot with enhanced metadata
+                var snapshot = new DeviceSnapshot(
                     (int)elementId, levelName, familyName, typeName,
                     watts, amps, unitLoads,
                     hasStrobe, hasSpeaker, isIsolator, isRepeater,
-                    levelName); // Pass levelName as Zone
+                    levelName, // Zone
+                    0.0, 0.0, 0.0, // X, Y, Z coordinates
+                    catalogResult.FoundMatch && deviceType == FireAlarmDeviceType.IDNET_Initiating ? catalogResult.Current : amps, // StandbyCurrent
+                    false, // HasOverride
+                    customProperties // CustomProperties
+                );
+                
+                return snapshot;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error creating device snapshot: {ex.Message}");
                 return null;
             }
+        }
+        
+        private void LogCatalogUsageSummary(Dictionary<string, int> catalogStats, int totalDevices)
+        {
+            System.Diagnostics.Debug.WriteLine("=== Device Catalog Usage Summary ===");
+            System.Diagnostics.Debug.WriteLine($"Total fire alarm devices processed: {totalDevices}");
+            
+            foreach (var stat in catalogStats.OrderByDescending(x => x.Value))
+            {
+                var percentage = totalDevices > 0 ? (stat.Value * 100.0 / totalDevices) : 0;
+                System.Diagnostics.Debug.WriteLine($"{stat.Key}: {stat.Value} devices ({percentage:F1}%)");
+            }
+            
+            // Calculate success rates for different catalog types
+            var idnacCatalogMatches = catalogStats.Where(x => x.Key.Contains("IDNAC_Notification Catalog")).Sum(x => x.Value);
+            var idnetCatalogMatches = catalogStats.Where(x => x.Key.Contains("IDNET_Initiating Catalog")).Sum(x => x.Value);
+            var totalCatalogMatches = idnacCatalogMatches + idnetCatalogMatches;
+            
+            var catalogSuccessRate = totalDevices > 0 ? (totalCatalogMatches * 100.0 / totalDevices) : 0;
+            
+            if (idnacCatalogMatches > 0)
+            {
+                var idnacRate = totalDevices > 0 ? (idnacCatalogMatches * 100.0 / totalDevices) : 0;
+                System.Diagnostics.Debug.WriteLine($"IDNAC catalog match rate: {idnacRate:F1}%");
+            }
+            
+            if (idnetCatalogMatches > 0)
+            {
+                var idnetRate = totalDevices > 0 ? (idnetCatalogMatches * 100.0 / totalDevices) : 0;
+                System.Diagnostics.Debug.WriteLine($"IDNET catalog match rate: {idnetRate:F1}%");
+            }
+            
+            if (catalogSuccessRate < 50)
+            {
+                System.Diagnostics.Debug.WriteLine($"WARNING: Low overall catalog match rate ({catalogSuccessRate:F1}%). Consider updating device catalogs or family name mappings.");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"Overall catalog match rate: {catalogSuccessRate:F1}% - Good coverage");
+            }
+            System.Diagnostics.Debug.WriteLine("==========================================");
         }
 
         private double? ExtractParameterValue(FamilyInstance element, string parameterName)

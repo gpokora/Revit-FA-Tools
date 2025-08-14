@@ -1,0 +1,882 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2025-08-13T00:00:00Z",
+  "description": "Complete AutoCall 4100ES Device Repository - Enhanced from FQQ Excel Analysis",
+  "manufacturer": "Johnson Controls - AutoCall",
+  "systemCompatibility": ["AutoCall 4100ES", "IDNAC"],
+  
+  "deviceFamilies": {
+    "hornStrobe": {
+      "description": "Horn/Strobe Combination Devices",
+      "familyId": "AV",
+      "helperType": 2,
+      "deviceTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A49AV-APPLW",
+              "baseDescription": "AV APPLIANCE ONLY WALL",
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4090-0015",
+                  "partCode": "A49AV-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 15cd Indoor",
+                  "setting": "15 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.088,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVW",
+                  "acode": "A49AVC-W"
+                },
+                "30": {
+                  "sku": "A4090-0030",
+                  "partCode": "A49AV-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 30cd Indoor",
+                  "setting": "30 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.109,
+                  "combinedCurrent": 0.132,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVW",
+                  "acode": "A49AVC-W"
+                },
+                "75": {
+                  "sku": "A4090-1075",
+                  "partCode": "A49AV-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 75cd Indoor",
+                  "setting": "75 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.221,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVW",
+                  "acode": "A49AVC-W"
+                },
+                "110": {
+                  "sku": "A4090-1110",
+                  "partCode": "A49AV-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 110cd Indoor",
+                  "setting": "110 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.305,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVW",
+                  "acode": "A49AVC-W"
+                },
+                "135": {
+                  "sku": "A4090-1135",
+                  "partCode": "A49AVH-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 135cd Indoor",
+                  "setting": "135 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.321,
+                  "combinedCurrent": 0.344,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVW",
+                  "acode": "A49AVHC-W"
+                },
+                "185": {
+                  "sku": "A4090-1185",
+                  "partCode": "A49AVH-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 185cd Indoor",
+                  "setting": "185 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.375,
+                  "combinedCurrent": 0.398,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVW",
+                  "acode": "A49AVHC-W"
+                }
+              },
+              "specialFrequency": [
+                {
+                  "sku": "A4090-2075",
+                  "partCode": "A49MTV-APPLW",
+                  "description": "AutoCall Wall Horn/Strobe 185cd 520Hz Indoor",
+                  "setting": "520Hz High 185 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.375,
+                  "combinedCurrent": 0.398,
+                  "unitLoads": 2,
+                  "ttapCompatible": true,
+                  "frequency": 520,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconMTVW",
+                  "acode": "A49MTVC-W"
+                }
+              ]
+            },
+            "led59Series": {
+              "baseSku": "A59AV-APPLWR",
+              "baseDescription": "AV LED APPLIANCE ONLY WALL RED",
+              "candelaRatings": {
+                "75": {
+                  "sku": "A59AV-75",
+                  "partCode": "A59AV-APPLWR",
+                  "description": "59 LED Wall Horn Strobe Red 75cd",
+                  "setting": "75 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.221,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconLEDAVW",
+                  "acode": "A59AVC-W"
+                },
+                "185": {
+                  "sku": "A59AV-185",
+                  "partCode": "A59AV-APPLWRH",
+                  "description": "59 LED Wall Horn Strobe Red Hi Cd 185cd",
+                  "setting": "185 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.375,
+                  "combinedCurrent": 0.398,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconLEDAVW",
+                  "acode": "A59AVHC-W"
+                }
+              }
+            }
+          },
+          "weatherproof": {
+            "standard": {
+              "baseSku": "A49AV-APPLW-O",
+              "baseDescription": "AV APPLIANCE ONLY WALL WP",
+              "candelaRatings": {
+                "75": {
+                  "sku": "A4090-1075-WP",
+                  "partCode": "A49AV-APPLW-O",
+                  "description": "AutoCall Wall Horn/Strobe 75cd Weatherproof",
+                  "setting": "WP75 cd 32-150°F",
+                  "hornCurrent": 0.025,
+                  "strobeCurrent": 0.195,
+                  "combinedCurrent": 0.228,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof",
+                  "icon": "iconAVW",
+                  "acode": "A49AVC-W-WP"
+                }
+              }
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A49AV-APPLC",
+              "baseDescription": "AV APPLIANCE ONLY CEILING",
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4091-0015",
+                  "partCode": "A49AV-APPLC",
+                  "description": "AutoCall Ceiling Horn/Strobe 15cd Indoor",
+                  "setting": "15 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.088,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVC",
+                  "acode": "A49AVC-C"
+                },
+                "75": {
+                  "sku": "A4091-1075",
+                  "partCode": "A49AV-APPLC",
+                  "description": "AutoCall Ceiling Horn/Strobe 75cd Indoor",
+                  "setting": "75 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.221,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVC",
+                  "acode": "A49AVC-C"
+                },
+                "110": {
+                  "sku": "A4091-1110",
+                  "partCode": "A49AV-APPLC",
+                  "description": "AutoCall Ceiling Horn/Strobe 110cd Indoor",
+                  "setting": "110 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.305,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVC",
+                  "acode": "A49AVC-C"
+                },
+                "135": {
+                  "sku": "A4091-1135",
+                  "partCode": "A49AVH-APPLC",
+                  "description": "AutoCall Ceiling Horn/Strobe 135cd Indoor",
+                  "setting": "135 cd",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.321,
+                  "combinedCurrent": 0.344,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAVC",
+                  "acode": "A49AVHC-C"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "strobe": {
+      "description": "Strobe-Only Devices",
+      "familyId": "VO",
+      "helperType": 3,
+      "deviceTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A49VO-APPLW",
+              "baseDescription": "VO APPLIANCE ONLY WALL",
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4092-0015",
+                  "partCode": "A49VO-APPLW",
+                  "description": "AutoCall Wall Strobe 15cd Indoor",
+                  "setting": "15 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.065,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOW",
+                  "acode": "A49VOC-W"
+                },
+                "30": {
+                  "sku": "A4092-0030",
+                  "partCode": "A49VO-APPLW",
+                  "description": "AutoCall Wall Strobe 30cd Indoor",
+                  "setting": "30 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.109,
+                  "combinedCurrent": 0.109,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOW",
+                  "acode": "A49VOC-W"
+                },
+                "75": {
+                  "sku": "A4092-1075",
+                  "partCode": "A49VO-APPLW",
+                  "description": "AutoCall Wall Strobe 75cd Indoor",
+                  "setting": "75 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.186,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOW",
+                  "acode": "A49VOC-W"
+                },
+                "110": {
+                  "sku": "A4092-1110",
+                  "partCode": "A49VO-APPLW",
+                  "description": "AutoCall Wall Strobe 110cd Indoor",
+                  "setting": "110 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.269,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOW",
+                  "acode": "A49VOC-W"
+                },
+                "185": {
+                  "sku": "A4092-1185",
+                  "partCode": "A49VO-APPLW",
+                  "description": "AutoCall Wall Strobe 185cd Indoor",
+                  "setting": "185 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.375,
+                  "combinedCurrent": 0.375,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOW",
+                  "acode": "A49VOC-W"
+                }
+              }
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A49VO-APPLC",
+              "baseDescription": "VO APPLIANCE ONLY CEILING",
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4093-0015",
+                  "partCode": "A49VO-APPLC",
+                  "description": "AutoCall Ceiling Strobe 15cd Indoor",
+                  "setting": "15 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.065,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOC",
+                  "acode": "A49VOC-C"
+                },
+                "30": {
+                  "sku": "A4093-0030",
+                  "partCode": "A49VO-APPLC",
+                  "description": "AutoCall Ceiling Strobe 30cd Indoor",
+                  "setting": "30 cd",
+                  "hornCurrent": 0.0,
+                  "strobeCurrent": 0.109,
+                  "combinedCurrent": 0.109,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "icon": "iconVOC",
+                  "acode": "A49VOC-C"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "horn": {
+      "description": "Horn-Only Devices",
+      "familyId": "AO",
+      "helperType": 1,
+      "deviceTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A49AO-APPLW",
+              "baseDescription": "AO APPLIANCE ONLY WALL",
+              "frequencyRatings": {
+                "400": {
+                  "sku": "A4094-0400",
+                  "partCode": "A49AO-APPLW",
+                  "description": "AutoCall Wall Horn 400Hz Indoor",
+                  "setting": "Horn",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.023,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconAOW",
+                  "acode": "A49AOC-W"
+                }
+              },
+              "specialFrequency": [
+                {
+                  "sku": "A4094-0520",
+                  "partCode": "A49MT-APPLW",
+                  "description": "AutoCall Wall Multi Tone Horn 520Hz Indoor",
+                  "setting": "520Hz High",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.023,
+                  "unitLoads": 2,
+                  "ttapCompatible": true,
+                  "frequency": 520,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconMTW",
+                  "acode": "A49MTC-W"
+                }
+              ]
+            },
+            "led59Series": {
+              "baseSku": "A59AO-APPLWR",
+              "baseDescription": "AO LED APPLIANCE ONLY WALL RED",
+              "frequencyRatings": {
+                "400": {
+                  "sku": "A59AO-400",
+                  "partCode": "A59AO-APPLWR",
+                  "description": "59 Series Wall Horn Red 400Hz",
+                  "setting": "Horn",
+                  "hornCurrent": 0.023,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.023,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 400,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconLEDAOW",
+                  "acode": "A59AOC-W"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "speaker": {
+      "description": "Speaker Devices for Voice Communications",
+      "familyId": "SP",
+      "helperType": 4,
+      "deviceTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A4097-SP",
+              "baseDescription": "SP APPLIANCE WALL",
+              "wattageRatings": {
+                "1.0": {
+                  "sku": "A4097-SP100",
+                  "partCode": "A4097-SP100",
+                  "description": "AutoCall Wall Speaker 1W",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.042,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0,
+                  "icon": "iconSPW",
+                  "acode": "A4097C-W"
+                },
+                "2.0": {
+                  "sku": "A4097-SP200",
+                  "partCode": "A4097-SP200",
+                  "description": "AutoCall Wall Speaker 2W",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.083,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 2.0,
+                  "icon": "iconSPW",
+                  "acode": "A4097C-W"
+                }
+              }
+            },
+            "hiFi": {
+              "baseSku": "A4097-SPHF",
+              "baseDescription": "SP HIFI APPLIANCE WALL",
+              "wattageRatings": {
+                "1.0": {
+                  "sku": "A4097-SPHF100",
+                  "partCode": "A4097-SPHF100",
+                  "description": "AutoCall Wall Speaker HiFi 1W",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.042,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0,
+                  "icon": "iconSPHFW",
+                  "acode": "A4097HFC-W"
+                }
+              }
+            }
+          },
+          "weatherproof": {
+            "standard": {
+              "baseSku": "A4097-SP-WP",
+              "baseDescription": "SP APPLIANCE WALL WP",
+              "wattageRatings": {
+                "1.0": {
+                  "sku": "A4097-SP100-WP",
+                  "partCode": "A4097-SP100-WP",
+                  "description": "AutoCall Wall Speaker 1W Weatherproof",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.045,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "weatherproof",
+                  "wattage": 1.0,
+                  "icon": "iconSPW",
+                  "acode": "A4097C-W-WP"
+                }
+              }
+            }
+          }
+        },
+        "ceiling": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A4098-SP",
+              "baseDescription": "SP APPLIANCE CEILING",
+              "wattageRatings": {
+                "0.25": {
+                  "sku": "A4098-SP025",
+                  "partCode": "A4098-SP025",
+                  "description": "AutoCall Ceiling Speaker 1/4W",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.021,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "wattage": 0.25,
+                  "icon": "iconSPC",
+                  "acode": "A4098C-C"
+                },
+                "0.5": {
+                  "sku": "A4098-SP050",
+                  "partCode": "A4098-SP050",
+                  "description": "AutoCall Ceiling Speaker 1/2W",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.031,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "wattage": 0.5,
+                  "icon": "iconSPC",
+                  "acode": "A4098C-C"
+                },
+                "1.0": {
+                  "sku": "A4098-SP100",
+                  "partCode": "A4098-SP100",
+                  "description": "AutoCall Ceiling Speaker 1W",
+                  "setting": "IDNAC Load",
+                  "currentDraw": 0.042,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "ceiling",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0,
+                  "icon": "iconSPC",
+                  "acode": "A4098C-C"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "speakerStrobe": {
+      "description": "Speaker/Strobe Combination Devices",
+      "familyId": "SSP",
+      "helperType": 5,
+      "deviceTypes": {
+        "wall": {
+          "indoor": {
+            "hiFi": {
+              "baseSku": "A4099-SPHF",
+              "baseDescription": "SSP HIFI APPLIANCE WALL",
+              "candelaRatings": {
+                "15": {
+                  "sku": "A4099-1015",
+                  "partCode": "A4099-SPHF15",
+                  "description": "AutoCall Wall Speaker/Strobe HiFi 15cd 1W Indoor",
+                  "setting": "15 cd",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.065,
+                  "combinedCurrent": 0.107,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0,
+                  "icon": "iconSSPHFW",
+                  "acode": "A4099HFVC-W"
+                },
+                "75": {
+                  "sku": "A4099-1075",
+                  "partCode": "A4099-SPHF75",
+                  "description": "AutoCall Wall Speaker/Strobe HiFi 75cd 1W Indoor",
+                  "setting": "75 cd",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.186,
+                  "combinedCurrent": 0.228,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0,
+                  "icon": "iconSSPHFW",
+                  "acode": "A4099HFVC-W"
+                },
+                "110": {
+                  "sku": "A4099-1110",
+                  "partCode": "A4099-SPHF110",
+                  "description": "AutoCall Wall Speaker/Strobe HiFi 110cd 1W Indoor",
+                  "setting": "110 cd",
+                  "hornCurrent": 0.042,
+                  "strobeCurrent": 0.269,
+                  "combinedCurrent": 0.311,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 0,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "wattage": 1.0,
+                  "icon": "iconSSPHFW",
+                  "acode": "A4099HFVC-W"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "chime": {
+      "description": "Chime Devices for Non-Emergency Notifications",
+      "familyId": "CHM",
+      "helperType": 6,
+      "deviceTypes": {
+        "wall": {
+          "indoor": {
+            "standard": {
+              "baseSku": "A4096-CHM",
+              "baseDescription": "CHM APPLIANCE WALL",
+              "toneRatings": {
+                "single": {
+                  "sku": "A4096-CHM1",
+                  "partCode": "A4096-CHM1",
+                  "description": "AutoCall Wall Chime Single Tone",
+                  "setting": "Single Tone",
+                  "hornCurrent": 0.020,
+                  "strobeCurrent": 0.0,
+                  "combinedCurrent": 0.020,
+                  "unitLoads": 1,
+                  "ttapCompatible": true,
+                  "frequency": 800,
+                  "mounting": "wall",
+                  "environmentalRating": "indoor",
+                  "icon": "iconCHMW",
+                  "acode": "A4096C-W"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  
+  "specialDevices": {
+    "isolators": {
+      "A4080-ISO": {
+        "description": "AutoCall IDNAC Isolator Module",
+        "partCode": "A4080-ISO",
+        "currentDraw": 0.003,
+        "unitLoads": 4,
+        "ttapCompatible": true,
+        "mounting": "junction_box",
+        "environmentalRating": "indoor",
+        "deviceId": "ISO",
+        "icon": "iconISO",
+        "acode": "A4080C-ISO"
+      }
+    },
+    "repeaters": {
+      "A4081-RPT": {
+        "description": "AutoCall IDNAC Repeater Panel",
+        "partCode": "A4081-RPT",
+        "currentDraw": 0.050,
+        "unitLoads": 4,
+        "ttapCompatible": false,
+        "mounting": "wall",
+        "environmentalRating": "indoor",
+        "deviceId": "RPT",
+        "icon": "iconRPT",
+        "acode": "A4081C-RPT"
+      }
+    }
+  },
+  
+  "electricalLimits": {
+    "idnacCircuit": {
+      "maxCurrent": 3.0,
+      "maxVoltage": 27.6,
+      "minVoltage": 16.0,
+      "maxDevices": 159,
+      "maxWireDistance": 10000,
+      "voltageDropLimit": 3.0,
+      "maxUnitLoads": 139
+    },
+    "unitLoadDefinition": {
+      "perUnitLoad": 0.0008,
+      "description": "Each unit load equals 0.8 mA (0.0008 amps)",
+      "exceptions": {
+        "mt520Hz": 2,
+        "isolators": 4,
+        "repeaters": 4
+      }
+    }
+  },
+  
+  "parameterMappingRules": {
+    "candelaExtraction": {
+      "patterns": ["(\\d+)\\s*(?:CD|CANDELA|CANDELAS)\\b"],
+      "validValues": [15, 30, 75, 95, 110, 135, 177, 185],
+      "defaultValue": 75
+    },
+    "wattageExtraction": {
+      "patterns": ["(\\d+(?:\\.\\d+)?)\\s*(?:W|WATT|WATTS)\\b"],
+      "validRange": [0.1, 100.0],
+      "defaultValue": 1.0
+    },
+    "frequencyExtraction": {
+      "patterns": ["(\\d+)\\s*(?:HZ|HERTZ)\\b"],
+      "validValues": [400, 520, 800],
+      "defaultValue": 400,
+      "specialHandling": {
+        "520": {
+          "unitLoads": 2,
+          "description": "Special 520Hz frequency requires 2 unit loads"
+        }
+      }
+    }
+  },
+
+  "deviceClassificationRules": {
+    "familyNamePatterns": {
+      "hornStrobe": ["HORN.*STROBE", "STROBE.*HORN", "HORN/STROBE", "COMBINATION"],
+      "strobe": ["STROBE(?!.*HORN)(?!.*SPEAKER)", "FLASH", "VISUAL"],
+      "horn": ["HORN(?!.*STROBE)(?!.*SPEAKER)", "AUDIBLE(?!.*STROBE)"],
+      "speaker": ["SPEAKER(?!.*STROBE)", "AUDIO", "VOICE", "MASS.*NOTIFICATION"],
+      "speakerStrobe": ["SPEAKER.*STROBE", "STROBE.*SPEAKER", "AUDIO.*VISUAL"],
+      "chime": ["CHIME", "TONE", "BELL"]
+    },
+    "mountingTypePatterns": {
+      "wall": ["WALL", "VERTICAL", "SURFACE"],
+      "ceiling": ["CEILING", "OVERHEAD", "RECESSED", "PENDANT"]
+    },
+    "environmentalPatterns": {
+      "weatherproof": ["WEATHERPROOF", "WP", "OUTDOOR", "NEMA", "IP65", "IP66"],
+      "indoor": ["INDOOR", "STANDARD", "REGULAR"]
+    }
+  },
+
+  "fqqMappingTable": {
+    "description": "Maps FQQ Excel device descriptions to actual AutoCall part numbers",
+    "mappings": {
+      "Wall Horn": {
+        "partCode": "A49AO-APPLW",
+        "family": "horn",
+        "deviceId": "AO"
+      },
+      "Wall Horn Strobe": {
+        "partCode": "A49AV-APPLW",
+        "family": "hornStrobe",
+        "deviceId": "AV"
+      },
+      "Wall Strobe": {
+        "partCode": "A49VO-APPLW",
+        "family": "strobe",
+        "deviceId": "VO"
+      },
+      "Ceiling Horn Strobe": {
+        "partCode": "A49AV-APPLC",
+        "family": "hornStrobe",
+        "deviceId": "AV"
+      },
+      "Ceiling Strobe": {
+        "partCode": "A49VO-APPLC",
+        "family": "strobe",
+        "deviceId": "VO"
+      },
+      "Wall Multi Tone Horn": {
+        "partCode": "A49MT-APPLW",
+        "family": "horn",
+        "deviceId": "MT"
+      },
+      "Wall Multi Tone Horn Strobe": {
+        "partCode": "A49MTV-APPLW",
+        "family": "hornStrobe",
+        "deviceId": "MTV"
+      },
+      "Wall Speaker": {
+        "partCode": "A4097-SP100",
+        "family": "speaker",
+        "deviceId": "SP"
+      },
+      "Wall Speaker Strobe": {
+        "partCode": "A4099-SPHF75",
+        "family": "speakerStrobe",
+        "deviceId": "SSP"
+      }
+    }
+  }
+}

@@ -1661,7 +1661,7 @@ namespace Revit_FA_Tools
                         var deviceUtil = analysis.SpareInfo?.DeviceUtilization ?? 0;
                         var maxUtilization = Math.Max(currentUtil, deviceUtil);
 
-                        // FIXED: Professional utilization category determination
+
                         string utilizationCategory = DetermineUtilizationCategory(analysis, maxUtilization);
 
                         gridData.Add(new IDNACAnalysisGridItem
@@ -1689,7 +1689,7 @@ namespace Revit_FA_Tools
 
         private void LoadIDNETGrid()
         {
-            // IMPLEMENTED: Load IDNET grid data if available
+
             if (_idnetResults == null || _idnetResults.AllDevices == null || !_idnetResults.AllDevices.Any())
             {
                 System.Diagnostics.Debug.WriteLine("No IDNET data to load in grid");

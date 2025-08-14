@@ -1,0 +1,445 @@
+{
+  "metadata": {
+    "version": "3.0.0",
+    "source": "FQQ_Autocall_1641.xlsm + VBA Scripts + 4100ES Technical Documentation",
+    "description": "Complete AutoCall 4100ES Fire Alarm Panel Engineering Specifications",
+    "lastUpdated": "2025-08-13",
+    "author": "AutoCall Engineering Team",
+    "standards": ["NFPA 72", "UL 864", "UL 2572", "CSFM", "FM"],
+    "documentReferences": [
+      "AC4100-1034 Rev. 7 09/2022 - 4100ES Voice Datasheet",
+      "900-408 Rev U - Wiring Guidelines",
+      "AC4090-0011 Rev. 28 06/2023 - Device Compatibility Chart"
+    ]
+  },
+
+  "systemParameters": {
+    "nominalVoltage": 24.0,
+    "voltageRange": {
+      "minimum": 16.0,
+      "maximum": 33.0,
+      "idnacRegulated": 29.0,
+      "idnacNote": "IDNAC provides regulated 29V for alarm conditions"
+    },
+    "operatingTemperature": {
+      "minimum_F": 32,
+      "maximum_F": 120,
+      "minimum_C": 0,
+      "maximum_C": 49
+    },
+    "operatingHumidity": {
+      "maximum": 93,
+      "condition": "non-condensing at 90°F (32°C) maximum"
+    },
+    "spareCapacity": {
+      "electrical": 0.20,
+      "devices": 0.20,
+      "unitLoads": 0.20,
+      "description": "20% spare capacity applied to all calculations",
+      "batteryCalculation": "Actual unit loads recommended vs worst-case 139 UL"
+    }
+  },
+
+  "idnacSpecifications": {
+    "description": "IDNAC (Individual Device Network Appliance Circuit) - 2nd generation addressable notification",
+    "circuitLimits": {
+      "maxCurrent_A": 3.0,
+      "usableCurrent_A": 2.4,
+      "maxDeviceAddresses": 127,
+      "usableDeviceAddresses": 101,
+      "maxUnitLoads": 139,
+      "usableUnitLoads": 111,
+      "maxDistanceToDevice_ft": 4000,
+      "maxTotalWireLength_ft": 10000,
+      "circuitsPerPowerSupply": 3,
+      "regulatedVoltage": 29.0,
+      "voltageDropAllowed": 6.0,
+      "voltageDropNote": "6V drop allowed due to 29V regulated output vs 3V for standard NAC"
+    },
+    "unitLoadDefinitions": {
+      "standardDevice": 1,
+      "multiTone520Hz": 2,
+      "isolatorModule": 4,
+      "repeaterModule": 4,
+      "unitLoadCurrent_mA": 0.8,
+      "unitLoadCurrent_A": 0.0008
+    },
+    "batteryCalculationFormula": {
+      "formula": "UnitLoads × 0.0008A × 24hr × CircuitCount",
+      "example_60UL": "60 × 0.0008 × 24 × 3 = 3.5 Ah",
+      "example_45UL": "45 × 0.0008 × 24 × 3 = 2.6 Ah", 
+      "example_139UL": "139 × 0.0008 × 24 × 3 = 8.0 Ah",
+      "recommendation": "Use actual device count, not worst-case 139 UL"
+    },
+    "repeaterSpecifications": {
+      "unitLoadsProvided": 139,
+      "currentProvided_A": 3.0,
+      "maxRepeatersPerBranch": 8,
+      "description": "Provides fresh 139 unit loads and 3A signal",
+      "isolationNote": "Electrically isolated from main panel"
+    },
+    "wiringRequirements": {
+      "preferredType": "Unshielded Twisted Pair (UTP)",
+      "maxCapacitance_uF": 0.60,
+      "maxCablePerChannel_ft": 10000,
+      "maxDistanceToFurthest_ft": 4000,
+      "wireGaugeRange": ["18 AWG", "16 AWG", "14 AWG", "12 AWG"],
+      "classASupported": true,
+      "classBSupported": true,
+      "tTapSupported": true,
+      "isolationSupported": true
+    }
+  },
+
+  "idnetSpecifications": {
+    "description": "IDNet (Individual Device Network) - Latest generation addressable device communications",
+    "versions": {
+      "idnet": {
+        "description": "Legacy IDNet - requires STP wiring",
+        "maxDevices": 250,
+        "isolation": false,
+        "wiringType": "STP"
+      },
+      "idnetPlus": {
+        "description": "IDNet+ - Electrically isolated, improved noise immunity",
+        "maxDevices": 250,
+        "isolation": true,
+        "wiringType": "UTP"
+      },
+      "idnet2": {
+        "description": "IDNet 2 - 250 point isolated with 2 short circuit isolating outputs",
+        "maxDevices": 250,
+        "isolation": true,
+        "loops": 2,
+        "wiringType": "UTP"
+      },
+      "idnet2Plus2": {
+        "description": "IDNet 2+2 - 250 point isolated with 4 short circuit isolating outputs",
+        "maxDevices": 250,
+        "isolation": true,
+        "loops": 4,
+        "wiringType": "UTP"
+      }
+    },
+    "circuitLimits": {
+      "maxDevicesPerChannel": 250,
+      "maxUnitLoadsPerChannel": 250,
+      "maxCableLength_ft": 12500,
+      "maxDistanceClassB_ft": 5000,
+      "maxResistance_ohms": 50,
+      "unitLoadCurrent_mA": 0.8,
+      "unitLoadCurrent_A": 0.0008
+    },
+    "panelCompatibility": {
+      "4007ES": "IDNet+ with up to 250 devices (standard 100, optional 250)",
+      "4010ES": "IDNet 2 or IDNet 2+2",
+      "4100ES": "IDNet 2 or IDNet 2+2"
+    }
+  },
+
+  "nacSpecifications": {
+    "description": "NAC (Notification Appliance Circuit) - Conventional notification appliances",
+    "circuitTypes": {
+      "conventional": {
+        "maxCurrent_A": 3.0,
+        "voltageDropAllowed_V": 3.0,
+        "endOfLineResistor_ohms": 4700,
+        "wiringType": "Class A or Class B"
+      },
+      "reversePolarityDC": {
+        "description": "RP (DC) NAC - Reverse polarity supervision",
+        "maxCurrent_A": 3.0,
+        "supervision": "Reverse polarity",
+        "compatibility": "Conventional horns, bells, strobes"
+      },
+      "audio": {
+        "description": "Audio NAC for conventional speakers",
+        "supervision": "Constant supervision",
+        "compatibility": "Conventional speakers only - do not mix with TrueAlert ES"
+      }
+    },
+    "wiringRequirements": {
+      "wireGaugeRange": ["18 AWG", "16 AWG", "14 AWG", "12 AWG"],
+      "preferredType": "UTP except where STP required",
+      "classASupported": true,
+      "classBSupported": true
+    }
+  },
+
+  "amplifierSpecifications": {
+    "flex35": {
+      "modelNumbers": ["A100-9625", "A100-9626"],
+      "nominalPower_W": 35,
+      "usablePower_W": 28,
+      "maxSpeakers": 100,
+      "blockSize": 2,
+      "current_A": 5.5,
+      "voltageOptions": ["25V", "70V"],
+      "constantSupervision": true,
+      "maxPerBay": 2,
+      "naaCurrent": {
+        "25V": 1.4,
+        "70V": 0.5
+      }
+    },
+    "flex50": {
+      "modelNumbers": ["A100-9635", "A100-9636"],
+      "nominalPower_W": 50,
+      "usablePower_W": 40,
+      "maxSpeakers": 100,
+      "blockSize": 2,
+      "current_A": 5.55,
+      "voltageOptions": ["25V", "70V"],
+      "constantSupervision": true,
+      "maxPerBay": 2,
+      "naaCurrent": {
+        "25V": 2.0,
+        "70V": 0.714
+      },
+      "maxWiring": {
+        "25V_uF": 0.65,
+        "70V_uF": 0.074,
+        "70V_maxDistance_ft": 3000
+      }
+    },
+    "amp100W": {
+      "modelNumbers": ["A100-9645", "A100-9646"],
+      "nominalPower_W": 100,
+      "usablePower_W": 80,
+      "maxSpeakers": 100,
+      "blockSize": 4,
+      "current_A": 9.6,
+      "voltageOptions": ["25V", "70V"],
+      "constantSupervision": true,
+      "maxPerBay": 1,
+      "naaCurrent": {
+        "25V": 4.0,
+        "70V": 1.43
+      },
+      "maxWiring": {
+        "25V_uF": 1.3,
+        "70V_uF": 0.15,
+        "70V_maxDistance_ft": 6000
+      }
+    },
+    "nonAlarmAudio": {
+      "reservedCapacity": 0.30,
+      "description": "30% of amplifier capacity reserved for 20kHz supervision tone",
+      "maxLoadWithNAA": 0.70,
+      "inputVoltageReduction": "Reduce to 70% if speaker load >70% of amp capacity"
+    }
+  },
+
+  "powerSupplySpecifications": {
+    "esPs": {
+      "description": "ES-PS Power Supply for 4100ES systems",
+      "maxOutput_A": 12.7,
+      "maxOutputWithIDNAC_A": 9.7,
+      "regulated24V_A": 5.0,
+      "idnacCircuitsSupported": 3,
+      "batteryCharging": true,
+      "maxBatteryCapacity_Ah": 110,
+      "remoteBatteryThreshold_Ah": 50,
+      "blocks": 2,
+      "mountingPositions": ["Blocks G and H", "Blocks C and D"]
+    },
+    "batteryCalculations": {
+      "formula": "Total Unit Loads × 0.0008A × 24hr",
+      "derating": "Apply 20% spare capacity",
+      "cabinetRules": {
+        "mainCabinet": "Up to 50 Ah batteries",
+        "remoteCabinet": "Required for >50 Ah",
+        "costImpact": "$600+ additional for remote battery cabinet"
+      }
+    }
+  },
+
+  "wireResistanceTable": {
+    "description": "Standard copper wire resistances at 75°C (ohms per 1000 feet)",
+    "temperatures": {
+      "20C": "Room temperature",
+      "50C": "Elevated temperature", 
+      "75C": "High temperature rating"
+    },
+    "resistances_75C": {
+      "18_AWG": 6.385,
+      "16_AWG": 4.016,
+      "14_AWG": 2.525,
+      "12_AWG": 1.588,
+      "10_AWG": 0.999,
+      "8_AWG": 0.628,
+      "6_AWG": 0.395,
+      "4_AWG": 0.249,
+      "2_AWG": 0.156,
+      "1_0_AWG": 0.098
+    }
+  },
+
+  "voltageDropCalculations": {
+    "formula": "Vdrop = I × R × (2L/1000)",
+    "variables": {
+      "I": "Current in Amps",
+      "R": "Wire resistance in ohms per 1000 feet",
+      "L": "One-way wire length in feet",
+      "2": "Factor for round-trip current path"
+    },
+    "limits": {
+      "standardNAC": {
+        "maxVoltageDrop_V": 3.0,
+        "maxVoltageDropPercent": 12.5
+      },
+      "idnac": {
+        "maxVoltageDrop_V": 6.0,
+        "maxVoltageDropPercent": 20.7,
+        "advantage": "Higher voltage drop allowed due to 29V regulated output"
+      }
+    }
+  },
+
+  "cabinetSpecifications": {
+    "expansionBay": {
+      "blockDefinition": "4 in. W × 5 in. H (102mm × 127mm)",
+      "slotDefinition": "2 in. W × 8 in. H (51mm × 203mm)",
+      "blocksPerBay": 8,
+      "availableBlocks": {
+        "threeBayPanel": 24,
+        "fiveBayPanel": 40
+      }
+    },
+    "moduleLoading": {
+      "audioController": ["Block A", "Block B"],
+      "networkRiser": ["Block A"],
+      "audioRiser": ["Block B"],
+      "flex35Amplifiers": ["Blocks E,F", "Blocks C,D", "Blocks A,B"],
+      "flex50Amplifiers": ["Blocks E,F", "Blocks C,D"],
+      "amp100W": ["Blocks E,F,G,H"],
+      "esPs": ["Blocks G,H", "Blocks C,D"],
+      "esPsBackup": ["Blocks E,F ONLY"]
+    }
+  },
+
+  "addressingParameters": {
+    "idnet": {
+      "addressRange": "1-250 per channel",
+      "maxChannels": 4,
+      "totalCapacity": 1000
+    },
+    "idnac": {
+      "addressRange": "1-127 per circuit",
+      "maxCircuits": "Unlimited (power supply limited)",
+      "tTapSupported": true,
+      "isolationSupported": true,
+      "repeaterAddressing": "Independent 1-127 range per repeater"
+    }
+  },
+
+  "engineeringFormulas": {
+    "idnacCurrentLimit": {
+      "formula": "Math.Ceiling(TotalCurrent_A / 2.4A)",
+      "description": "Number of IDNACs needed based on current"
+    },
+    "idnacUnitLoadLimit": {
+      "formula": "Math.Ceiling(TotalUnitLoads / 111)",
+      "description": "Number of IDNACs needed based on unit loads"
+    },
+    "amplifierSizing": {
+      "formula": "Math.Ceiling(TotalWattage / UsableWattage)",
+      "spareCapacity": "20% derating applied to usable wattage"
+    },
+    "batteryCalculation": {
+      "standby": "UnitLoads × 0.0008A × 24hr × CircuitCount",
+      "alarm": "AlarmCurrent_A × 0.25hr (15 minutes)",
+      "total": "StandbyCurrent + AlarmCurrent"
+    },
+    "voltageDropCheck": {
+      "formula": "Current × Resistance × (2 × Distance / 1000)",
+      "limit": "Must be ≤ allowed voltage drop for circuit type"
+    }
+  },
+
+  "systemLimitations": {
+    "idnac": {
+      "maxBranches": 8,
+      "maxRepeatersPerBranch": 8,
+      "maxDCAIPerBranch": 4,
+      "maxDCAIPerBranch_4007ES": 2,
+      "maxWirePerBranch_ft": 4000,
+      "maxWirePerIDNAC_ft": 10000
+    },
+    "speakers": {
+      "maxPerCircuit": 100,
+      "constantSupervisionDerating": 0.70,
+      "doNotMix": "Do not mix TrueAlert ES with conventional speakers"
+    },
+    "phone": {
+      "maxDistance_ft": 7500,
+      "maxSimultaneousPhones": 7,
+      "wireType": "18 AWG STP"
+    }
+  },
+
+  "selectionNavigatorDefaults": {
+    "worstCase": {
+      "idnacUnitLoads": 139,
+      "idnacAlarmLoad_mA": 3000,
+      "idnacAddresses": 127,
+      "impact": "Oversizes batteries significantly"
+    },
+    "recommended": {
+      "useActualDeviceCounts": true,
+      "applySpareCapacity": 0.20,
+      "costSavings": "$600+ battery cabinet savings typical"
+    }
+  },
+
+  "compatibilityMatrix": {
+    "wiringInConduit": {
+      "idnet2_ruiPlus": "UTP allowed",
+      "idnet_rui": "STP required",
+      "idnac": "UTP preferred, STP if mixed with legacy",
+      "conventionalNAC": "UTP except where noted",
+      "audio": "UTP, avoid mixing with other signals"
+    },
+    "shieldingRequirements": {
+      "idnetLegacy": "STP required",
+      "idnetPlus": "UTP acceptable", 
+      "idnet2": "UTP standard",
+      "phone": "STP required",
+      "digitalRiser": "STP required"
+    }
+  },
+
+  "qualityAssurance": {
+    "testingRequirements": [
+      "End-to-end circuit continuity",
+      "Voltage drop verification under load",
+      "Address conflict detection",
+      "Isolation integrity testing",
+      "Battery capacity verification"
+    ],
+    "commissioning": [
+      "Full system functional test",
+      "Battery discharge test",
+      "Amplifier performance verification",
+      "Network communications test",
+      "Spare capacity validation"
+    ]
+  },
+
+  "engineeringNotes": {
+    "criticalFactors": [
+      "Use actual unit loads vs worst-case 139 for battery sizing",
+      "IDNAC allows 6V drop vs 3V for standard NAC",
+      "Current limit typically reached before unit load limit",
+      "T-Tap wiring requires proper isolation",
+      "Amplifier NAA reserves 30% capacity"
+    ],
+    "commonMistakes": [
+      "Using worst-case 139 UL for battery calculations",
+      "Mixing TrueAlert ES with conventional speakers",
+      "Incorrect wire resistance calculations",
+      "Ignoring spare capacity requirements",
+      "Inadequate isolation in T-Tap circuits"
+    ]
+  }
+}
